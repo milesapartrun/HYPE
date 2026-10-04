@@ -75,6 +75,10 @@ const todayView = document.getElementById("todayView");
 const weekTitle = document.getElementById("weekTitle");
 const heroYear = document.getElementById("heroYear");
 
+const weekPrevBtn = document.getElementById("weekPrevBtn");
+const weekNextBtn = document.getElementById("weekNextBtn");
+const weekTodayBtn = document.getElementById("weekTodayBtn");
+
 const weekStrip = document.getElementById("weekStrip");
 const sessionsEl = document.getElementById("sessions");
 const selectedDateLabel = document.getElementById("selectedDateLabel");
@@ -369,6 +373,25 @@ function renderPlan() {
 
   heroYear.textContent =
     start.getFullYear();
+
+  /*
+   * Die kleine Überschrift oberhalb
+   * des Wochenbereichs passt sich an.
+   */
+  const weekEyebrow =
+    document.querySelector(
+      ".week-navigation .eyebrow"
+    );
+
+  if (weekEyebrow) {
+    const currentWeekStart =
+      startOfWeek(new Date());
+
+    weekEyebrow.textContent =
+      iso(start) === iso(currentWeekStart)
+        ? "DIESE WOCHE"
+        : "WOCHENPLAN";
+  }
 
   renderWeekStrip();
 
@@ -938,6 +961,10 @@ function renderOverviewWeek() {
             ? "today"
             : ""
         }"
+        data-date="${dateString}"
+        role="button"
+        tabindex="0"
+        aria-label="${formatLongDate(date)} öffnen"
       >
 
         <div class="overview-day-head">
@@ -1056,6 +1083,76 @@ function renderOverviewWeek() {
   `;
 
   overviewContent.innerHTML = html;
+
+  /*
+   * Klick auf einen Wochentag:
+   * direkt zur Wochenansicht springen
+   * und genau diesen Tag auswählen.
+   */
+  attachOverviewDayNavigation();
+}
+
+
+/*
+ * Macht jeden Tag in der Wochenübersicht
+ * anklickbar.
+ */
+function attachOverviewDayNavigation() {
+  overviewContent
+    .querySelectorAll(".overview-day")
+    .forEach(dayElement => {
+
+      const dateString =
+        dayElement.dataset.date;
+
+      const openDay = () => {
+
+        selected =
+          parseDate(dateString);
+
+        currentView =
+          "plan";
+
+        setView("plan");
+
+      };
+
+
+      dayElement.addEventListener(
+        "click",
+        event => {
+
+          /*
+           * Klicks innerhalb der Tageskarte
+           * öffnen ebenfalls direkt den Tag.
+           */
+          event.preventDefault();
+
+          openDay();
+
+        }
+      );
+
+
+      dayElement.addEventListener(
+        "keydown",
+        event => {
+
+          if (
+            event.key === "Enter" ||
+            event.key === " "
+          ) {
+
+            event.preventDefault();
+
+            openDay();
+
+          }
+
+        }
+      );
+
+    });
 }
 
 
@@ -1972,6 +2069,82 @@ document
     );
 
   });
+
+
+/* =========================
+   WEEK NAVIGATION
+========================= */
+
+/*
+ * Vorherige Woche
+ *
+ * Der aktuell ausgewählte Wochentag
+ * bleibt dabei erhalten.
+ *
+ * Beispiel:
+ * Dienstag dieser Woche
+ * → Dienstag nächste Woche
+ */
+weekPrevBtn.addEventListener(
+  "click",
+  () => {
+
+    selected =
+      addDays(
+        selected,
+        -7
+      );
+
+    renderPlan();
+
+  }
+);
+
+
+/*
+ * Nächste Woche
+ */
+weekNextBtn.addEventListener(
+  "click",
+  () => {
+
+    selected =
+      addDays(
+        selected,
+        7
+      );
+
+    renderPlan();
+
+  }
+);
+
+
+/*
+ * Klick auf die Wochenüberschrift:
+ * zurück zur aktuellen Woche.
+ *
+ * Der ausgewählte Tag wird dabei
+ * ebenfalls auf heute gesetzt.
+ */
+weekTodayBtn.addEventListener(
+  "click",
+  () => {
+
+    selected =
+      new Date();
+
+    selected.setHours(
+      12,
+      0,
+      0,
+      0
+    );
+
+    renderPlan();
+
+  }
+);
 
 
 /* =========================
