@@ -6,100 +6,73 @@ const sportMeta = {
   running: {
     icon: "🏃",
     label: "Laufen",
-
-    title:
-      "z. B. Easy Run 45 min",
-
-    notes:
-      "Pace, Distanz, Intervalle, Laufgefühl …"
-
+    title: "z. B. Easy Run 45 min",
+    notes: "Pace, Distanz, Intervalle, Laufgefühl …"
   },
 
   strength: {
     icon: "🏋️",
     label: "Gym",
-
-    title:
-      "z. B. Oberkörper Push",
-
-    notes:
-      "Übungen, Sätze, Wiederholungen, Gewichte …"
-
+    title: "z. B. Oberkörper Push",
+    notes: "Übungen, Sätze, Wiederholungen, Gewichte …"
   },
 
   hyrox: {
     icon: "🔥",
     label: "HYROX",
-
-    title:
-      "z. B. HYROX Simulation",
-
-    notes:
-      "Stationen, Splits, Lauf-Pace, Gewichte …"
-
+    title: "z. B. HYROX Simulation",
+    notes: "Stationen, Splits, Lauf-Pace, Gewichte …"
   },
 
   cycling: {
     icon: "🚴",
     label: "Rad",
-
-    title:
-      "z. B. Zone 2 Ride 60 min",
-
-    notes:
-      "Distanz, Watt, Strecke, Höhenmeter …"
-
+    title: "z. B. Zone 2 Ride 60 min",
+    notes: "Distanz, Watt, Strecke, Höhenmeter …"
   },
 
   swimming: {
     icon: "🏊",
     label: "Schwimmen",
-
-    title:
-      "z. B. 2.000 m Technik",
-
-    notes:
-      "Bahnen, Intervalle, Pace, Technik …"
-
+    title: "z. B. 2.000 m Technik",
+    notes: "Bahnen, Intervalle, Pace, Technik …"
   },
 
   mobility: {
     icon: "🧘",
     label: "Mobility",
-
-    title:
-      "z. B. Hüfte & Sprunggelenk",
-
-    notes:
-      "Bereiche, Übungen, Dauer, Beweglichkeit …"
-
+    title: "z. B. Hüfte & Sprunggelenk",
+    notes: "Bereiche, Übungen, Dauer, Beweglichkeit …"
   },
 
   rest: {
     icon: "😴",
     label: "Recovery",
-
-    title:
-      "z. B. Recovery & Sauna",
-
-    notes:
-      "Schlaf, Spaziergang, Sauna, Stretching …"
-
+    title: "z. B. Recovery & Sauna",
+    notes: "Schlaf, Spaziergang, Sauna, Stretching …"
   }
 
 };
 
 
-/*
-  Bestehende Trainings bleiben erhalten.
-  Falls ältere Trainings noch keine neuen Felder
-  haben, werden diese automatisch ergänzt.
-*/
+/* -------------------------------- */
+/* DATEN LADEN                       */
+/* -------------------------------- */
 
-let sessions =
-  JSON.parse(
-    localStorage.getItem(KEY) || "[]"
-  );
+let sessions = [];
+
+try {
+
+  sessions =
+    JSON.parse(
+      localStorage.getItem(KEY) || "[]"
+    );
+
+} catch (error) {
+
+  sessions = [];
+
+}
 
 
 sessions =
@@ -108,7 +81,7 @@ sessions =
     ...session,
 
     completed:
-      session.completed || false,
+      session.completed === true,
 
     actualIntensity:
       session.actualIntensity ??
@@ -130,6 +103,10 @@ selected.setHours(
 
 let editingId = null;
 
+
+/* -------------------------------- */
+/* HILFSFUNKTIONEN                  */
+/* -------------------------------- */
 
 const pad = n =>
   String(n).padStart(2, "0");
@@ -180,6 +157,22 @@ const esc = s =>
       }[c])
     );
 
+
+function save() {
+
+  localStorage.setItem(
+    KEY,
+    JSON.stringify(
+      sessions
+    )
+  );
+
+}
+
+
+/* -------------------------------- */
+/* WOCHENTAGE                        */
+/* -------------------------------- */
 
 function weekDays() {
 
@@ -266,7 +259,7 @@ function render() {
   );
 
 
-  /* WEEK DAYS */
+  /* WEEK STRIP */
 
   const strip =
     document.getElementById(
@@ -305,6 +298,7 @@ function render() {
               : ""
           }"
           data-date="${date}"
+          type="button"
         >
 
           ${d.toLocaleDateString(
@@ -314,11 +308,9 @@ function render() {
             }
           ).slice(0, 2).toUpperCase()}
 
-
           <strong>
             ${d.getDate()}
           </strong>
-
 
           ${
             isToday
@@ -329,7 +321,6 @@ function render() {
               `
               : ""
           }
-
 
           ${
             list.length
@@ -387,7 +378,7 @@ function render() {
         d =>
           iso(d) === s.date
       ) &&
-      s.completed
+      s.completed === true
     ).length;
 
 
@@ -402,7 +393,7 @@ function render() {
 
 
 /* -------------------------------- */
-/* SESSIONS                          */
+/* TRAININGS DARSTELLEN              */
 /* -------------------------------- */
 
 function renderSessions() {
@@ -441,6 +432,7 @@ function renderSessions() {
         <button
           class="primary"
           id="emptyAdd"
+          type="button"
         >
           Erste Einheit planen
         </button>
@@ -661,6 +653,7 @@ function renderSessions() {
                   : ""
               }"
               data-id="${s.id}"
+              type="button"
               aria-label="${
                 s.completed
                   ? "Training als offen markieren"
@@ -678,6 +671,7 @@ function renderSessions() {
             <button
               class="edit-btn"
               data-id="${s.id}"
+              type="button"
             >
               Bearbeiten
             </button>
@@ -686,6 +680,7 @@ function renderSessions() {
             <button
               class="icon-btn delete"
               data-id="${s.id}"
+              type="button"
               aria-label="Löschen"
             >
               ×
@@ -700,91 +695,124 @@ function renderSessions() {
     }).join("");
 
 
-  /* COMPLETE */
+  /* -------------------------------- */
+  /* TRAINING ABHAKEN                 */
+  /* -------------------------------- */
 
   el
-    .querySelectorAll(".complete-btn")
+    .querySelectorAll(
+      ".complete-btn"
+    )
     .forEach(button => {
 
-      button.onclick = () => {
+      button.addEventListener(
+        "click",
+        function () {
 
-        const session =
-          sessions.find(
-            s =>
-              s.id ===
-              button.dataset.id
+          const id =
+            this.dataset.id;
+
+
+          const session =
+            sessions.find(
+              s =>
+                String(s.id) ===
+                String(id)
+            );
+
+
+          if (!session) {
+            return;
+          }
+
+
+          session.completed =
+            !session.completed;
+
+
+          if (
+            session.completed === false
+          ) {
+
+            session.actualIntensity =
+              null;
+
+          }
+
+
+          save();
+
+          render();
+
+        }
+      );
+
+    });
+
+
+  /* -------------------------------- */
+  /* BEARBEITEN                       */
+  /* -------------------------------- */
+
+  el
+    .querySelectorAll(
+      ".edit-btn"
+    )
+    .forEach(button => {
+
+      button.addEventListener(
+        "click",
+        function () {
+
+          openEditDialog(
+            this.dataset.id
           );
 
-
-        if (!session) {
-          return;
         }
-
-
-        session.completed =
-          !session.completed;
-
-
-        if (!session.completed) {
-
-          session.actualIntensity =
-            null;
-
-        }
-
-
-        save();
-
-        render();
-
-      };
+      );
 
     });
 
 
-  /* EDIT */
+  /* -------------------------------- */
+  /* LÖSCHEN                          */
+  /* -------------------------------- */
 
   el
-    .querySelectorAll(".edit-btn")
+    .querySelectorAll(
+      ".delete"
+    )
     .forEach(button => {
 
-      button.onclick = () => {
+      button.addEventListener(
+        "click",
+        function () {
 
-        openEditDialog(
-          button.dataset.id
-        );
+          const id =
+            this.dataset.id;
 
-      };
+
+          sessions =
+            sessions.filter(
+              s =>
+                String(s.id) !==
+                String(id)
+            );
+
+
+          save();
+
+          render();
+
+        }
+      );
 
     });
 
 
-  /* DELETE */
-
-  el
-    .querySelectorAll(".delete")
-    .forEach(button => {
-
-      button.onclick = () => {
-
-        sessions =
-          sessions.filter(
-            s =>
-              s.id !==
-              button.dataset.id
-          );
-
-
-        save();
-
-        render();
-
-      };
-
-    });
-
-
-  /* ACTUAL INTENSITY */
+  /* -------------------------------- */
+  /* TATSÄCHLICHE INTENSITÄT         */
+  /* -------------------------------- */
 
   el
     .querySelectorAll(
@@ -792,34 +820,39 @@ function renderSessions() {
     )
     .forEach(select => {
 
-      select.onchange = () => {
+      select.addEventListener(
+        "change",
+        function () {
 
-        const session =
-          sessions.find(
-            s =>
-              s.id ===
-              select.dataset.id
-          );
+          const session =
+            sessions.find(
+              s =>
+                String(s.id) ===
+                String(
+                  this.dataset.id
+                )
+            );
 
 
-        if (!session) {
-          return;
+          if (!session) {
+            return;
+          }
+
+
+          session.actualIntensity =
+            this.value === ""
+              ? null
+              : Number(
+                  this.value
+                );
+
+
+          save();
+
+          render();
+
         }
-
-
-        session.actualIntensity =
-          select.value === ""
-            ? null
-            : Number(
-                select.value
-              );
-
-
-        save();
-
-        render();
-
-      };
+      );
 
     });
 
@@ -863,6 +896,10 @@ function updatePlaceholders() {
 }
 
 
+/* -------------------------------- */
+/* NEUES TRAINING                    */
+/* -------------------------------- */
+
 function openNewDialog() {
 
   editingId = null;
@@ -886,21 +923,34 @@ function openNewDialog() {
     "Training speichern";
 
 
-  document
-    .getElementById(
-      "sessionForm"
-    )
-    .reset();
+  document.getElementById(
+    "sport"
+  ).value =
+    "running";
+
+
+  document.getElementById(
+    "title"
+  ).value =
+    "";
 
 
   document.getElementById(
     "duration"
-  ).value = 60;
+  ).value =
+    60;
 
 
   document.getElementById(
     "intensity"
-  ).value = 3;
+  ).value =
+    3;
+
+
+  document.getElementById(
+    "notes"
+  ).value =
+    "";
 
 
   updatePlaceholders();
@@ -911,12 +961,17 @@ function openNewDialog() {
 }
 
 
+/* -------------------------------- */
+/* TRAINING BEARBEITEN               */
+/* -------------------------------- */
+
 function openEditDialog(id) {
 
   const session =
     sessions.find(
       s =>
-        s.id === id
+        String(s.id) ===
+        String(id)
     );
 
 
@@ -925,7 +980,8 @@ function openEditDialog(id) {
   }
 
 
-  editingId = id;
+  editingId =
+    session.id;
 
 
   document.getElementById(
@@ -985,7 +1041,7 @@ function openEditDialog(id) {
 
 
 /* -------------------------------- */
-/* SPORT CHANGE                      */
+/* SPORTART ÄNDERN                   */
 /* -------------------------------- */
 
 document.getElementById(
@@ -997,165 +1053,190 @@ document.getElementById(
 
 
 /* -------------------------------- */
-/* ADD                                */
+/* + TRAINING                        */
 /* -------------------------------- */
 
 document.getElementById(
   "addBtn"
-).onclick =
-  openNewDialog;
+).addEventListener(
+  "click",
+  openNewDialog
+);
 
 
 /* -------------------------------- */
-/* CLOSE                              */
+/* DIALOG SCHLIESSEN                 */
 /* -------------------------------- */
 
 document.getElementById(
   "closeDialog"
-).onclick =
-  () =>
+).addEventListener(
+  "click",
+  () => {
+
+    editingId = null;
+
+    dialog.close();
+
+  }
+);
+
+
+/* -------------------------------- */
+/* SPEICHERN                         */
+/* -------------------------------- */
+
+document.getElementById(
+  "saveSessionBtn"
+).addEventListener(
+  "click",
+  () => {
+
+    const sport =
+      document.getElementById(
+        "sport"
+      ).value;
+
+
+    const title =
+      document.getElementById(
+        "title"
+      ).value.trim();
+
+
+    const duration =
+      document.getElementById(
+        "duration"
+      ).value;
+
+
+    const intensity =
+      document.getElementById(
+        "intensity"
+      ).value;
+
+
+    const notes =
+      document.getElementById(
+        "notes"
+      ).value.trim();
+
+
+    /*
+      Browser-seitige Prüfung.
+      Ohne Titel wird nichts gespeichert.
+    */
+
+    if (!title) {
+
+      document.getElementById(
+        "title"
+      ).focus();
+
+      return;
+
+    }
+
+
+    /* BEARBEITEN */
+
+    if (editingId !== null) {
+
+      const session =
+        sessions.find(
+          s =>
+            String(s.id) ===
+            String(editingId)
+        );
+
+
+      if (session) {
+
+        session.sport =
+          sport;
+
+        session.title =
+          title;
+
+        session.duration =
+          duration;
+
+        session.intensity =
+          intensity;
+
+        session.notes =
+          notes;
+
+      }
+
+    }
+
+
+    /* NEUES TRAINING */
+
+    else {
+
+      sessions.push({
+
+        id:
+          Date.now().toString(),
+
+        date:
+          iso(selected),
+
+        sport:
+          sport,
+
+        title:
+          title,
+
+        duration:
+          duration,
+
+        intensity:
+          intensity,
+
+        notes:
+          notes,
+
+        completed:
+          false,
+
+        actualIntensity:
+          null,
+
+        created:
+          Date.now()
+
+      });
+
+    }
+
+
+    save();
+
+
+    editingId =
+      null;
+
+
     dialog.close();
 
 
-/* -------------------------------- */
-/* SAVE / EDIT                        */
-/* -------------------------------- */
+    render();
 
-document
-  .getElementById(
-    "sessionForm"
-  )
-  .addEventListener(
-    "submit",
-    e => {
-
-      e.preventDefault();
-
-
-      const sport =
-        document.getElementById(
-          "sport"
-        ).value;
-
-
-      const title =
-        document.getElementById(
-          "title"
-        ).value;
-
-
-      const duration =
-        document.getElementById(
-          "duration"
-        ).value;
-
-
-      const intensity =
-        document.getElementById(
-          "intensity"
-        ).value;
-
-
-      const notes =
-        document.getElementById(
-          "notes"
-        ).value;
-
-
-      /* EDIT EXISTING */
-
-      if (editingId) {
-
-        const session =
-          sessions.find(
-            s =>
-              s.id ===
-              editingId
-          );
-
-
-        if (session) {
-
-          session.sport =
-            sport;
-
-          session.title =
-            title;
-
-          session.duration =
-            duration;
-
-          session.intensity =
-            intensity;
-
-          session.notes =
-            notes;
-
-        }
-
-      }
-
-
-      /* CREATE NEW */
-
-      else {
-
-        sessions.push({
-
-          id:
-            crypto.randomUUID(),
-
-          date:
-            iso(selected),
-
-          sport:
-            sport,
-
-          title:
-            title,
-
-          duration:
-            duration,
-
-          intensity:
-            intensity,
-
-          notes:
-            notes,
-
-          completed:
-            false,
-
-          actualIntensity:
-            null,
-
-          created:
-            Date.now()
-
-        });
-
-      }
-
-
-      save();
-
-      dialog.close();
-
-      editingId = null;
-
-      render();
-
-    }
-  );
+  }
+);
 
 
 /* -------------------------------- */
-/* TODAY                             */
+/* HEUTE                             */
 /* -------------------------------- */
 
 document.getElementById(
   "todayBtn"
-).onclick =
+).addEventListener(
+  "click",
   () => {
 
     selected =
@@ -1170,16 +1251,18 @@ document.getElementById(
 
     render();
 
-  };
+  }
+);
 
 
 /* -------------------------------- */
-/* ALL                               */
+/* ALLE                              */
 /* -------------------------------- */
 
 document.getElementById(
   "allBtn"
-).onclick =
+).addEventListener(
+  "click",
   () => {
 
     const s =
@@ -1192,7 +1275,8 @@ document.getElementById(
 
     render();
 
-  };
+  }
+);
 
 
 /* -------------------------------- */
@@ -1201,14 +1285,16 @@ document.getElementById(
 
 document.getElementById(
   "settingsBtn"
-).onclick =
+).addEventListener(
+  "click",
   () => {
 
     alert(
       "V1: Trainings werden lokal auf diesem Gerät gespeichert."
     );
 
-  };
+  }
+);
 
 
 /* -------------------------------- */
@@ -1225,5 +1311,9 @@ if (
 
 }
 
+
+/* -------------------------------- */
+/* START                             */
+/* -------------------------------- */
 
 render();
