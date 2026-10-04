@@ -203,7 +203,7 @@
   </main>
 
 
-  <!-- NEW TRAINING DIALOG -->
+  <!-- NEW / EDIT TRAINING DIALOG -->
 
   <dialog id="sessionDialog">
 
@@ -216,11 +216,14 @@
 
         <div>
 
-          <span class="muted">
+          <span
+            class="muted"
+            id="dialogEyebrow"
+          >
             NEUES TRAINING
           </span>
 
-          <h3>
+          <h3 id="dialogTitle">
             Einheit planen
           </h3>
 
@@ -236,6 +239,8 @@
 
       </div>
 
+
+      <!-- SPORT -->
 
       <label>
 
@@ -276,6 +281,8 @@
       </label>
 
 
+      <!-- TITLE -->
+
       <label>
 
         Titel
@@ -283,11 +290,13 @@
         <input
           id="title"
           required
-          placeholder="z. B. Intervall 6 × 800 m"
+          placeholder="z. B. Easy Run 45 min"
         >
 
       </label>
 
+
+      <!-- DURATION + INTENSITY -->
 
       <div class="two">
 
@@ -307,12 +316,12 @@
 
         <label>
 
-          Intensität
+          Geplante Intensität
 
           <select id="intensity">
 
             <option value="1">
-              1 — easy
+              1 — sehr leicht
             </option>
 
             <option value="2">
@@ -341,6 +350,8 @@
       </div>
 
 
+      <!-- NOTES -->
+
       <label>
 
         Notiz
@@ -348,7 +359,7 @@
         <textarea
           id="notes"
           rows="3"
-          placeholder="Ziel, Übungen, Pace, Distanz …"
+          placeholder="Ziel, Pace, Distanz …"
         ></textarea>
 
       </label>
@@ -357,6 +368,7 @@
       <button
         class="primary full"
         type="submit"
+        id="saveSessionBtn"
       >
         Training speichern
       </button>
