@@ -1,302 +1,978 @@
-/* =========================================================
-   HYPE DOM COMPATIBILITY FIX
-   Passt app.js an die bestehende index.html an.
-========================================================= */
-
-(() => {
-  const renameId = (oldId, newId) => {
-    const element =
-      document.getElementById(oldId);
-
-    if (
-      element &&
-      !document.getElementById(newId)
-    ) {
-      element.id = newId;
-    }
-  };
-
-  /* PLAN */
-  renameId(
-    "sessions",
-    "trainingList"
-  );
-
-  /* TRAINING DIALOG */
-  renameId(
-    "trainingDialog",
-    "sessionDialog"
-  );
-
-  renameId(
-    "trainingForm",
-    "sessionForm"
-  );
-
-  renameId(
-    "sportInput",
-    "sessionSport"
-  );
-
-  renameId(
-    "titleInput",
-    "sessionTitle"
-  );
-
-  renameId(
-    "durationInput",
-    "sessionDuration"
-  );
-
-  renameId(
-    "notesInput",
-    "sessionNotes"
-  );
-
-  renameId(
-    "closeDialogBtn",
-    "closeSessionDialogBtn"
-  );
-
-  /* DIE INDEX.HTML HAT KEIN SICHTBARES DATUMSFELD.
-     Deshalb wird es intern angelegt. */
-  if (
-    !document.getElementById(
-      "sessionDate"
-    )
-  ) {
-    const dateInput =
-      document.createElement(
-        "input"
-      );
-
-    dateInput.type =
-      "hidden";
-
-    dateInput.id =
-      "sessionDate";
-
-    document.body.appendChild(
-      dateInput
-    );
-  }
-
-  /* WOCHE */
-  if (
-    !document.getElementById(
-      "weekRange"
-    )
-  ) {
-    const weekRange =
-      document.createElement(
-        "span"
-      );
-
-    weekRange.id =
-      "weekRange";
-
-    weekRange.hidden =
-      true;
-
-    document.body.appendChild(
-      weekRange
-    );
-  }
-
-  /* HEUTE */
-  renameId(
-    "todayJumpBtn",
-    "todayBtn"
-  );
-
-  /* ÜBERSICHT */
-  renameId(
-    "periodPrevBtn",
-    "overviewPrevBtn"
-  );
-
-  renameId(
-    "periodNextBtn",
-    "overviewNextBtn"
-  );
-
-  renameId(
-    "periodTodayBtn",
-    "overviewTodayBtn"
-  );
-
-  /* ÜBERSICHT-PERIODEN */
-  document
-    .querySelectorAll(
-      "[data-period]"
-    )
-    .forEach(button => {
-      if (
-        !button.dataset
-          .overviewPeriod
-      ) {
-        button.dataset
-          .overviewPeriod =
-          button.dataset.period;
-      }
-    });
-
-  /* ÜBERSICHT-CONTENT */
-  const overviewContent =
-    document.getElementById(
-      "overviewContent"
-    );
-
-  if (overviewContent) {
-    overviewContent.dataset
-      .overviewContent = "";
-  }
-
-  const periodTitle =
-    document.getElementById(
-      "periodTitle"
-    );
-
-  if (periodTitle) {
-    periodTitle.dataset
-      .overviewTitle = "";
-  }
-})();
 const KEY = "hype_sessions_v1";
 
 const sportMeta = {
   running: {
     icon: "🏃",
     label: "Laufen",
-    color: "#d7ff3f"
+    placeholder: "z. B. Easy Run"
   },
-  cycling: {
-    icon: "⚡",
-    label: "Rad",
-    color: "#d7ff3f"
-  },
+
   strength: {
     icon: "🏋️",
-    label: "Kraft",
-    color: "#d7ff3f"
+    label: "Krafttraining",
+    placeholder: "z. B. Upper Body"
+  },
+
+  hyrox: {
+    icon: "⚡",
+    label: "HYROX",
+    placeholder: "z. B. HYROX Intervals"
+  },
+
+  cycling: {
+    icon: "🚴",
+    label: "Rad",
+    placeholder: "z. B. Zone 2 Ride"
+  },
+
+  swimming: {
+    icon: "🏊",
+    label: "Schwimmen",
+    placeholder: "z. B. Technik & Ausdauer"
+  },
+
+  mobility: {
+    icon: "🧘",
+    label: "Mobility",
+    placeholder: "z. B. 20 min Mobility"
+  },
+
+  rest: {
+    icon: "😴",
+    label: "Erholung",
+    placeholder: "z. B. Rest Day"
   }
 };
 
-const defaultPlan = {
-  monday: [],
-  tuesday: [],
-  wednesday: [],
-  thursday: [],
-  friday: [],
-  saturday: [],
-  sunday: []
-};
+/* =========================
+   STATE
+========================= */
 
 let sessions = loadSessions();
-let currentWeekOffset = 0;
-let currentOverviewPeriod = "week";
-let currentOverviewDate = new Date();
+
+let selected = new Date();
+selected.setHours(12, 0, 0, 0);
+
+let editingId = null;
+
 let currentView = "plan";
-let selectedDayKey = getDayKey(new Date());
-let editingSessionId = null;
-let shareWeekStart = startOfWeek(new Date());
-let profileDisplayName = "Deine";
 
-const appContent = document.getElementById("appContent");
-const bottomNav = document.getElementById("bottomNav");
-const planView = document.getElementById("planView");
-const overviewView = document.getElementById("overviewView");
-const profileView = document.getElementById("profileView");
+let overviewPeriod = "week";
 
-const weekTitle = document.getElementById("weekTitle");
-const weekRange = document.getElementById("weekRange");
-const weekStrip = document.getElementById("weekStrip");
-const trainingList = document.getElementById("trainingList");
-const addTrainingBtn = document.getElementById("addTrainingBtn");
-const sessionDialog = document.getElementById("sessionDialog");
-const sessionForm = document.getElementById("sessionForm");
-const sessionTitleInput = document.getElementById("sessionTitle");
-const sessionSportInput = document.getElementById("sessionSport");
-const sessionDateInput = document.getElementById("sessionDate");
-const sessionDurationInput = document.getElementById("sessionDuration");
-const sessionNotesInput = document.getElementById("sessionNotes");
-const closeSessionDialogBtn = document.getElementById("closeSessionDialogBtn");
-const cancelSessionBtn = document.getElementById("cancelSessionBtn");
+let overviewDate = new Date();
+overviewDate.setHours(12, 0, 0, 0);
 
-const profileGreeting = document.getElementById("profileGreeting");
-const profileName = document.getElementById("profileName");
-const profileEmail = document.getElementById("profileEmail");
-const editProfileBtn = document.getElementById("editProfileBtn");
-const profileDialog = document.getElementById("profileDialog");
-const profileForm = document.getElementById("profileForm");
-const profileFirstNameInput = document.getElementById("profileFirstNameInput");
-const profileEmailEdit = document.getElementById("profileEmailEdit");
-const closeProfileDialogBtn = document.getElementById("closeProfileDialogBtn");
-
-const weeklyShareName = document.getElementById("weeklyShareName");
-const weeklyShareRange = document.getElementById("weeklyShareRange");
-const weeklyShareDays = document.getElementById("weeklyShareDays");
-const weeklyShareSummary = document.getElementById("weeklyShareSummary");
-const weeklyShareCard = document.getElementById("weeklyShareCard");
-const weeklyShareFooter = document.getElementById("weeklyShareFooter");
-const shareWeekTitle = document.getElementById("shareWeekTitle");
-const shareWeekPrevBtn = document.getElementById("shareWeekPrevBtn");
-const shareWeekNextBtn = document.getElementById("shareWeekNextBtn");
-const shareWeekCurrentBtn = document.getElementById("shareWeekCurrentBtn");
-const shareWeekBtn = document.getElementById("shareWeekBtn");
-const shareHypeProfileBtn = document.getElementById("shareHypeProfileBtn");
-const logoutBtn = document.getElementById("logoutBtn");
-
-const overviewPeriodButtons = document.querySelectorAll(
-  "[data-overview-period]"
+let shareWeekStart = startOfWeek(
+  new Date()
 );
 
-const navButtons = document.querySelectorAll(
-  "[data-view]"
-);
+let profileDisplayName = "";
 
-function loadSessions() {
-  try {
-    const stored = localStorage.getItem(KEY);
+/* =========================
+   DOM
+========================= */
 
-    if (!stored) {
-      return [];
+const planView =
+  document.getElementById("planView");
+
+const overviewView =
+  document.getElementById("overviewView");
+
+const profileView =
+  document.getElementById("profileView");
+
+const todayView =
+  document.getElementById("todayView");
+
+const bottomNav =
+  document.getElementById("bottomNav");
+
+const weekTitle =
+  document.getElementById("weekTitle");
+
+const heroYear =
+  document.getElementById("heroYear");
+
+const weekPrevBtn =
+  document.getElementById("weekPrevBtn");
+
+const weekNextBtn =
+  document.getElementById("weekNextBtn");
+
+const todayJumpBtn =
+  document.getElementById("todayJumpBtn");
+
+const weekStrip =
+  document.getElementById("weekStrip");
+
+const sessionsEl =
+  document.getElementById("sessions");
+
+const selectedDateLabel =
+  document.getElementById("selectedDateLabel");
+
+const weeklyInsight =
+  document.getElementById("weeklyInsight");
+
+const addTrainingBtn =
+  document.getElementById("addTrainingBtn");
+
+const calendarExportBtn =
+  document.getElementById("calendarExportBtn");
+
+const overviewContent =
+  document.getElementById("overviewContent");
+
+const periodTitle =
+  document.getElementById("periodTitle");
+
+const periodPrevBtn =
+  document.getElementById("periodPrevBtn");
+
+const periodNextBtn =
+  document.getElementById("periodNextBtn");
+
+const periodTodayBtn =
+  document.getElementById("periodTodayBtn");
+
+const todayTitle =
+  document.getElementById("todayTitle");
+
+const todayContent =
+  document.getElementById("todayContent");
+
+const trainingDialog =
+  document.getElementById("trainingDialog");
+
+const trainingForm =
+  document.getElementById("trainingForm");
+
+const dialogTitle =
+  document.getElementById("dialogTitle");
+
+const closeDialogBtn =
+  document.getElementById("closeDialogBtn");
+
+const sportInput =
+  document.getElementById("sportInput");
+
+const titleInput =
+  document.getElementById("titleInput");
+
+const durationInput =
+  document.getElementById("durationInput");
+
+const intensityInput =
+  document.getElementById("intensityInput");
+
+const notesInput =
+  document.getElementById("notesInput");
+
+/* =========================
+   PROFILE DOM
+========================= */
+
+const profileGreeting =
+  document.getElementById("profileGreeting");
+
+const profileName =
+  document.getElementById("profileName");
+
+const profileEmail =
+  document.getElementById("profileEmail");
+
+const editProfileBtn =
+  document.getElementById("editProfileBtn");
+
+const profileDialog =
+  document.getElementById("profileDialog");
+
+const profileForm =
+  document.getElementById("profileForm");
+
+const profileFirstNameInput =
+  document.getElementById(
+    "profileFirstNameInput"
+  );
+
+const profileEmailEdit =
+  document.getElementById(
+    "profileEmailEdit"
+  );
+
+const closeProfileDialogBtn =
+  document.getElementById(
+    "closeProfileDialogBtn"
+  );
+
+const weeklyShareName =
+  document.getElementById("weeklyShareName");
+
+const weeklyShareRange =
+  document.getElementById("weeklyShareRange");
+
+const weeklyShareDays =
+  document.getElementById("weeklyShareDays");
+
+const weeklyShareSummary =
+  document.getElementById("weeklyShareSummary");
+
+const weeklyShareCard =
+  document.getElementById("weeklyShareCard");
+
+const weeklyShareFooter =
+  document.getElementById(
+    "weeklyShareFooter"
+  );
+
+const shareWeekTitle =
+  document.getElementById(
+    "shareWeekTitle"
+  );
+
+const shareWeekPrevBtn =
+  document.getElementById(
+    "shareWeekPrevBtn"
+  );
+
+const shareWeekNextBtn =
+  document.getElementById(
+    "shareWeekNextBtn"
+  );
+
+const shareWeekCurrentBtn =
+  document.getElementById(
+    "shareWeekCurrentBtn"
+  );
+
+const shareWeekBtn =
+  document.getElementById("shareWeekBtn");
+
+const shareHypeProfileBtn =
+  document.getElementById(
+    "shareHypeProfileBtn"
+  );
+
+const logoutBtn =
+  document.getElementById("logoutBtn");
+
+/* =========================
+   PROFILE CLEANUP
+========================= */
+
+function cleanupProfileHeadings() {
+  if (!profileView) {
+    return;
+  }
+
+  const elements =
+    profileView.querySelectorAll(
+      "h1, h2, h3, h4, .eyebrow, .section-label, .section-title"
+    );
+
+  elements.forEach(element => {
+    const text =
+      element.textContent
+        .replace(/\s+/g, " ")
+        .trim()
+        .toUpperCase();
+
+    /* DEIN HYPE entfernen */
+    if (text === "DEIN HYPE") {
+      element.remove();
+      return;
     }
 
-    const parsed = JSON.parse(stored);
+    /* HYPE unter "Woche teilen" entfernen */
+    if (
+      weeklyShareCard &&
+      weeklyShareCard.contains(element) &&
+      text === "HYPE" &&
+      !element.closest("button") &&
+      !element.closest("a")
+    ) {
+      element.remove();
+    }
+  });
 
-    return Array.isArray(parsed)
-      ? parsed
-      : [];
-  } catch (error) {
-    console.warn("HYPE sessions could not be loaded:", error);
-    return [];
+  /*
+    Falls "HYPE" nicht als Überschrift,
+    sondern als normales Textelement
+    im Share-Bereich vorhanden ist,
+    ebenfalls entfernen.
+  */
+
+  if (weeklyShareCard) {
+    weeklyShareCard
+      .querySelectorAll("*")
+      .forEach(element => {
+        const text =
+          element.textContent
+            .replace(/\s+/g, " ")
+            .trim()
+            .toUpperCase();
+
+        if (
+          text === "HYPE" &&
+          element.children.length === 0 &&
+          !element.closest("button") &&
+          !element.closest("a")
+        ) {
+          element.remove();
+        }
+      });
   }
 }
 
-function saveSessions() {
-  try {
-    localStorage.setItem(
-      KEY,
-      JSON.stringify(sessions)
+/* =========================
+   PROFILE / SHARE STYLES
+========================= */
+
+function ensureProfileShareStyles() {
+  if (
+    document.getElementById(
+      "hypeProfileShareStyles"
+    )
+  ) {
+    return;
+  }
+
+  const style =
+    document.createElement("style");
+
+  style.id =
+    "hypeProfileShareStyles";
+
+  style.textContent = `
+    #profileView #profileGreeting {
+      margin-bottom: 28px;
+    }
+
+    #profileView #profileName {
+      display: block;
+      margin: 0 0 7px 0;
+      line-height: 1.15;
+    }
+
+    #profileView #profileEmail {
+      display: block;
+      margin: 0;
+      line-height: 1.45;
+      overflow-wrap: anywhere;
+    }
+
+    #profileView #profileEmailEdit {
+      display: block;
+      margin: 10px 0 0 0;
+      line-height: 1.4;
+      overflow-wrap: anywhere;
+    }
+
+    #profileView #editProfileBtn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 18px;
+      white-space: nowrap;
+    }
+
+    #profileView #weeklyShareCard {
+      overflow: hidden;
+    }
+
+    /* =========================
+       WOCHEN-NAVIGATION
+    ========================= */
+
+    #profileView .hype-share-week-navigation {
+      display: grid;
+      grid-template-columns: 44px minmax(0, 1fr) 44px;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      margin-top: 18px;
+      margin-bottom: 14px;
+    }
+
+    #profileView .hype-share-week-arrow {
+      appearance: none;
+      -webkit-appearance: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      padding: 0;
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: 13px;
+      background: #15181d;
+      color: #f5f6f7;
+      box-shadow: none;
+      font-family: inherit;
+      font-size: 26px;
+      font-weight: 500;
+      line-height: 1;
+      cursor: pointer;
+      transition:
+        background .15s ease,
+        border-color .15s ease,
+        color .15s ease,
+        transform .15s ease;
+    }
+
+    #profileView .hype-share-week-arrow:hover {
+      background: #1d2127;
+      border-color: rgba(215,255,63,.35);
+      color: #d7ff3f;
+    }
+
+    #profileView .hype-share-week-arrow:active {
+      transform: scale(.96);
+    }
+
+    #profileView .hype-share-week-center {
+      min-width: 0;
+      text-align: center;
+    }
+
+    #profileView .hype-share-week-label {
+      display: block;
+      margin-bottom: 7px;
+      color: #6f7680;
+      font-size: 9px;
+      line-height: 1;
+      font-weight: 850;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+    }
+
+    #profileView .hype-share-week-value {
+      display: block;
+      color: #f5f6f7;
+      font-size: clamp(14px, 4vw, 17px);
+      line-height: 1.25;
+      font-weight: 850;
+      letter-spacing: -.015em;
+    }
+
+    #profileView .hype-share-current-week {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 30px;
+    }
+
+    #profileView .hype-share-current-week button {
+      appearance: none;
+      -webkit-appearance: none;
+      min-height: 34px;
+      padding: 0 14px;
+      border: 1px solid rgba(215,255,63,.18);
+      border-radius: 999px;
+      background: rgba(215,255,63,.055);
+      color: #d7ff3f;
+      box-shadow: none;
+      font-family: inherit;
+      font-size: 9px;
+      line-height: 1;
+      font-weight: 850;
+      letter-spacing: .11em;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+
+    #profileView .hype-share-current-week button:hover {
+      background: rgba(215,255,63,.10);
+      border-color: rgba(215,255,63,.35);
+    }
+
+    #profileView .hype-share-legacy-control {
+      display: none !important;
+    }
+
+    /* =========================
+       3. TANOS WOCHE + DATUM
+       KOMPLETT AUSBLENDEN
+    ========================= */
+
+    #profileView #weeklyShareName,
+    #profileView #weeklyShareRange {
+      display: none !important;
+      visibility: hidden !important;
+      height: 0 !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      overflow: hidden !important;
+    }
+
+    /* =========================
+       TAGE
+    ========================= */
+
+    #profileView #weeklyShareDays {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: 7px;
+      width: 100%;
+      margin: 0;
+    }
+
+    #profileView .weekly-share-day {
+      min-width: 0;
+      min-height: 132px;
+      padding: 12px 8px 10px;
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 14px;
+      background: #12151a;
+      overflow: hidden;
+    }
+
+    #profileView .weekly-share-day.completed {
+      border-color: rgba(215,255,63,.35);
+      background:
+        linear-gradient(
+          180deg,
+          rgba(215,255,63,.08),
+          rgba(215,255,63,.025)
+        ),
+        #12151a;
+    }
+
+    #profileView .weekly-share-day-top {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      margin-bottom: 11px;
+    }
+
+    #profileView .weekly-share-day-top span {
+      color: #8d949e;
+      font-size: 9px;
+      line-height: 1;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+    }
+
+    #profileView .weekly-share-day-top strong {
+      color: #f5f6f7;
+      font-size: 19px;
+      line-height: 1;
+      font-weight: 900;
+    }
+
+    #profileView .weekly-share-day-training {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      min-width: 0;
+    }
+
+    #profileView .weekly-share-day-training span {
+      display: block;
+      min-width: 0;
+      color: #d7dbe0;
+      font-size: 9px;
+      line-height: 1.3;
+      font-weight: 700;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    #profileView .weekly-share-day-training .completed-training {
+      color: #d7ff3f;
+    }
+
+    #profileView .weekly-share-day-training .empty-day {
+      color: #565d67;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    #profileView .weekly-share-day-training .more-training {
+      color: #737b86;
+      font-size: 8px;
+      font-weight: 700;
+    }
+
+    /* =========================
+       SUMMARY
+    ========================= */
+
+    #profileView #weeklyShareSummary {
+      margin-top: 16px;
+    }
+
+    #profileView .weekly-share-stats {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    #profileView .weekly-share-stat {
+      min-width: 0;
+      padding: 15px 14px;
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 14px;
+      background: #12151a;
+    }
+
+    #profileView .weekly-share-stat strong {
+      display: block;
+      margin: 0 0 4px;
+      color: #d7ff3f;
+      font-size: 22px;
+      line-height: 1;
+      font-weight: 900;
+    }
+
+    #profileView .weekly-share-stat span {
+      display: block;
+      color: #8d949e;
+      font-size: 9px;
+      line-height: 1.2;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    #profileView .weekly-share-empty {
+      padding: 17px 16px;
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 14px;
+      background: #12151a;
+    }
+
+    #profileView .weekly-share-empty strong {
+      display: block;
+      margin: 0 0 5px;
+      color: #f5f6f7;
+      font-size: 14px;
+      line-height: 1.3;
+      font-weight: 850;
+    }
+
+    #profileView .weekly-share-empty span {
+      display: block;
+      color: #8d949e;
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    /* =========================
+       FOOTER
+    ========================= */
+
+    #profileView #weeklyShareFooter {
+      display: none !important;
+    }
+
+    #profileView #shareWeekBtn {
+      width: 100%;
+      margin-top: 18px;
+      min-height: 48px;
+      border-radius: 13px;
+    }
+
+    #profileView #shareHypeProfileBtn {
+      width: 100%;
+      min-height: 48px;
+      border-radius: 13px;
+    }
+
+    /* =========================
+       SHARE IMAGE PREVIEW
+    ========================= */
+
+    #profileView .weekly-share-image-preview {
+      margin-top: 18px;
+      padding: 14px;
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 16px;
+      background: #111419;
+    }
+
+    #profileView .weekly-share-image-preview-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    #profileView .weekly-share-image-preview-head > div {
+      min-width: 0;
+    }
+
+    #profileView .weekly-share-image-preview-head strong {
+      display: block;
+      margin-top: 5px;
+      color: #f5f6f7;
+      font-size: 14px;
+      line-height: 1.2;
+    }
+
+    #profileView .weekly-share-preview-close {
+      flex: 0 0 auto;
+      width: 34px;
+      height: 34px;
+      padding: 0;
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: 10px;
+      background: #181b20;
+      color: #f5f6f7;
+      font-size: 20px;
+      line-height: 1;
+    }
+
+    #profileView .weekly-share-image {
+      display: block;
+      width: 100%;
+      height: auto;
+      border-radius: 12px;
+      background: #0b0d10;
+    }
+
+    @media (max-width: 520px) {
+      #profileView .hype-share-week-navigation {
+        grid-template-columns: 40px minmax(0, 1fr) 40px;
+        gap: 9px;
+      }
+
+      #profileView .hype-share-week-arrow {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+      }
+
+      #profileView #weeklyShareDays {
+        gap: 5px;
+      }
+
+      #profileView .weekly-share-day {
+        min-height: 128px;
+        padding: 11px 6px 9px;
+        border-radius: 12px;
+      }
+
+      #profileView .weekly-share-day-top span {
+        font-size: 8px;
+      }
+
+      #profileView .weekly-share-day-top strong {
+        font-size: 18px;
+      }
+
+      #profileView .weekly-share-day-training span {
+        font-size: 8px;
+      }
+
+      #profileView .weekly-share-stats {
+        gap: 7px;
+      }
+    }
+  `;
+
+  document.head.appendChild(style);
+}
+
+/* =========================
+   NEUE SHARE-WOCHEN-NAVIGATION
+========================= */
+
+function ensureShareWeekNavigation() {
+  if (!weeklyShareCard) {
+    return;
+  }
+
+  if (
+    document.getElementById(
+      "hypeShareWeekNavigation"
+    )
+  ) {
+    return;
+  }
+
+  [
+    shareWeekPrevBtn,
+    shareWeekNextBtn,
+    shareWeekCurrentBtn,
+    shareWeekTitle
+  ].forEach(element => {
+    if (!element) {
+      return;
+    }
+
+    element.classList.add(
+      "hype-share-legacy-control"
     );
-  } catch (error) {
-    console.warn("HYPE sessions could not be saved:", error);
+  });
+
+  const navigation =
+    document.createElement("div");
+
+  navigation.id =
+    "hypeShareWeekNavigation";
+
+  navigation.className =
+    "hype-share-week-navigation";
+
+  const previousButton =
+    document.createElement("button");
+
+  previousButton.type =
+    "button";
+
+  previousButton.className =
+    "hype-share-week-arrow";
+
+  previousButton.textContent =
+    "‹";
+
+  previousButton.setAttribute(
+    "aria-label",
+    "Vorherige Woche"
+  );
+
+  previousButton.addEventListener(
+    "click",
+    () => {
+      moveShareWeek(-1);
+    }
+  );
+
+  const center =
+    document.createElement("div");
+
+  center.className =
+    "hype-share-week-center";
+
+  const label =
+    document.createElement("span");
+
+  label.className =
+    "hype-share-week-label";
+
+  label.textContent =
+    "AUSGEWÄHLTE WOCHE";
+
+  const value =
+    document.createElement("strong");
+
+  value.id =
+    "hypeShareWeekValue";
+
+  value.className =
+    "hype-share-week-value";
+
+  center.appendChild(label);
+  center.appendChild(value);
+
+  const nextButton =
+    document.createElement("button");
+
+  nextButton.type =
+    "button";
+
+  nextButton.className =
+    "hype-share-week-arrow";
+
+  nextButton.textContent =
+    "›";
+
+  nextButton.setAttribute(
+    "aria-label",
+    "Nächste Woche"
+  );
+
+  nextButton.addEventListener(
+    "click",
+    () => {
+      moveShareWeek(1);
+    }
+  );
+
+  navigation.appendChild(
+    previousButton
+  );
+
+  navigation.appendChild(
+    center
+  );
+
+  navigation.appendChild(
+    nextButton
+  );
+
+  const currentWeekRow =
+    document.createElement("div");
+
+  currentWeekRow.id =
+    "hypeShareCurrentWeek";
+
+  currentWeekRow.className =
+    "hype-share-current-week";
+
+  const currentWeekButton =
+    document.createElement("button");
+
+  currentWeekButton.type =
+    "button";
+
+  currentWeekButton.textContent =
+    "Aktuelle Woche";
+
+  currentWeekButton.setAttribute(
+    "aria-label",
+    "Aktuelle Woche auswählen"
+  );
+
+  currentWeekButton.addEventListener(
+    "click",
+    () => {
+      shareWeekStart =
+        startOfWeek(
+          new Date()
+        );
+
+      renderWeeklySharePreview();
+    }
+  );
+
+  currentWeekRow.appendChild(
+    currentWeekButton
+  );
+
+  if (weeklyShareName) {
+    weeklyShareName.parentNode.insertBefore(
+      navigation,
+      weeklyShareName
+    );
+
+    weeklyShareName.parentNode.insertBefore(
+      currentWeekRow,
+      weeklyShareName
+    );
+  } else {
+    weeklyShareCard.appendChild(
+      navigation
+    );
+
+    weeklyShareCard.appendChild(
+      currentWeekRow
+    );
   }
 }
 
-function generateId() {
-  return (
-    Date.now().toString(36) +
-    Math.random().toString(36).slice(2)
-  );
+/* =========================
+   HELPERS
+========================= */
+
+function pad(value) {
+  return String(value).padStart(2, "0");
 }
 
-function pad(number) {
-  return String(number).padStart(2, "0");
-}
-
-function dateToInputValue(date) {
+function iso(date) {
   return [
     date.getFullYear(),
     pad(date.getMonth() + 1),
@@ -304,1930 +980,203 @@ function dateToInputValue(date) {
   ].join("-");
 }
 
-function parseInputDate(value) {
-  if (!value) {
-    return null;
-  }
-
-  const parts = value.split("-");
-
-  if (parts.length !== 3) {
-    return null;
-  }
+function parseDate(value) {
+  const [
+    year,
+    month,
+    day
+  ] = value.split("-").map(Number);
 
   return new Date(
-    Number(parts[0]),
-    Number(parts[1]) - 1,
-    Number(parts[2])
-  );
-}
-
-function isSameDay(a, b) {
-  if (!a || !b) {
-    return false;
-  }
-
-  return (
-    a.getFullYear() === b.getFullYear() &&
-    a.getMonth() === b.getMonth() &&
-    a.getDate() === b.getDate()
-  );
-}
-
-function startOfWeek(date) {
-  const result = new Date(date);
-
-  result.setHours(
-    0,
+    year,
+    month - 1,
+    day,
+    12,
     0,
     0,
     0
   );
+}
 
-  const day = result.getDay();
+function startOfWeek(date) {
+  const d = new Date(date);
+
+  d.setHours(12, 0, 0, 0);
+
+  const day = d.getDay();
 
   const diff =
     day === 0
       ? -6
       : 1 - day;
 
-  result.setDate(
-    result.getDate() + diff
-  );
+  d.setDate(d.getDate() + diff);
 
-  return result;
+  return d;
 }
 
 function endOfWeek(date) {
-  const result =
-    startOfWeek(date);
+  const d = startOfWeek(date);
 
-  result.setDate(
-    result.getDate() + 6
-  );
+  d.setDate(d.getDate() + 6);
 
-  result.setHours(
-    23,
-    59,
-    59,
-    999
-  );
-
-  return result;
+  return d;
 }
 
 function addDays(date, amount) {
-  const result =
-    new Date(date);
+  const d = new Date(date);
 
-  result.setDate(
-    result.getDate() + amount
+  d.setDate(
+    d.getDate() + amount
   );
 
-  return result;
+  return d;
 }
 
 function addMonths(date, amount) {
-  const result =
-    new Date(date);
+  const d = new Date(date);
 
-  result.setMonth(
-    result.getMonth() + amount
+  d.setDate(1);
+
+  d.setMonth(
+    d.getMonth() + amount
   );
 
-  return result;
+  return d;
 }
 
 function addYears(date, amount) {
-  const result =
-    new Date(date);
+  const d = new Date(date);
 
-  result.setFullYear(
-    result.getFullYear() + amount
+  d.setDate(1);
+  d.setMonth(0);
+
+  d.setFullYear(
+    d.getFullYear() + amount
   );
 
-  return result;
+  return d;
 }
 
-function getDayKey(date) {
-  const keys = [
-    "sunday",
-    "monday",
-    "tuesday",
-    "wednesday",
-    "thursday",
-    "friday",
-    "saturday"
-  ];
-
-  return keys[date.getDay()];
+function esc(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 }
 
-function getGermanDayName(date) {
-  const names = [
-    "Sonntag",
-    "Montag",
-    "Dienstag",
-    "Mittwoch",
-    "Donnerstag",
-    "Freitag",
-    "Samstag"
-  ];
-
-  return names[date.getDay()];
-}
-
-function getShortDayName(date) {
-  const names = [
-    "So",
-    "Mo",
-    "Di",
-    "Mi",
-    "Do",
-    "Fr",
-    "Sa"
-  ];
-
-  return names[date.getDay()];
-}
-
-function getMonthName(date) {
-  return date.toLocaleDateString(
+function formatLongDate(date) {
+  return new Intl.DateTimeFormat(
     "de-DE",
     {
+      weekday: "long",
+      day: "numeric",
       month: "long"
     }
-  );
-}
-
-function formatDate(date) {
-  return date.toLocaleDateString(
-    "de-DE",
-    {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric"
-    }
-  );
+  ).format(date);
 }
 
 function formatShortDate(date) {
-  return date.toLocaleDateString(
+  return new Intl.DateTimeFormat(
     "de-DE",
     {
-      day: "2-digit",
-      month: "2-digit"
+      day: "numeric",
+      month: "short"
     }
-  );
+  ).format(date);
 }
 
 function formatMonthYear(date) {
-  return date.toLocaleDateString(
+  return new Intl.DateTimeFormat(
     "de-DE",
     {
       month: "long",
       year: "numeric"
     }
+  ).format(date);
+}
+
+function formatShareWeek(date) {
+  const start =
+    startOfWeek(date);
+
+  const end =
+    endOfWeek(date);
+
+  const startText =
+    new Intl.DateTimeFormat(
+      "de-DE",
+      {
+        day: "numeric",
+        month: "short"
+      }
+    ).format(start);
+
+  const endText =
+    new Intl.DateTimeFormat(
+      "de-DE",
+      {
+        day: "numeric",
+        month: "short"
+      }
+    ).format(end);
+
+  return `${startText} – ${endText}`;
+}
+
+function isToday(date) {
+  return (
+    iso(date) ===
+    iso(new Date())
   );
 }
 
-function getWeekNumber(date) {
-  const target =
-    new Date(
-      Date.UTC(
-        date.getFullYear(),
-        date.getMonth(),
-        date.getDate()
-      )
-    );
+function isFutureDate(dateString) {
+  const today = new Date();
 
-  const dayNr =
-    target.getUTCDay() || 7;
-
-  target.setUTCDate(
-    target.getUTCDate() +
-      4 -
-      dayNr
+  today.setHours(
+    0,
+    0,
+    0,
+    0
   );
 
-  const yearStart =
-    new Date(
-      Date.UTC(
-        target.getUTCFullYear(),
-        0,
+  const target =
+    parseDate(dateString);
+
+  target.setHours(
+    0,
+    0,
+    0,
+    0
+  );
+
+  return target > today;
+}
+
+function getFutureMessage(dateString) {
+  const date =
+    parseDate(dateString);
+
+  if (
+    iso(
+      addDays(
+        new Date(),
         1
       )
-    );
-
-  return Math.ceil(
-    (
-      (
-        target -
-        yearStart
-      ) /
-        86400000 +
-      1
-    ) /
-      7
-  );
-}
-
-function formatWeekLabel(start) {
-  const end =
-    endOfWeek(start);
-
-  return `KW ${getWeekNumber(
-    start
-  )} · ${formatShortDate(
-    start
-  )}–${formatShortDate(
-    end
-  )}`;
-}
-
-function getSessionsForWeek(start) {
-  const weekStart =
-    startOfWeek(start);
-
-  const weekEnd =
-    endOfWeek(start);
-
-  return sessions
-    .filter(session => {
-      const date =
-        parseInputDate(
-          session.date
-        );
-
-      return (
-        date &&
-        date >= weekStart &&
-        date <= weekEnd
-      );
-    })
-    .sort(
-      (a, b) =>
-        parseInputDate(a.date) -
-        parseInputDate(b.date)
-    );
-}
-
-function getSessionsForDate(date) {
-  const value =
-    dateToInputValue(date);
-
-  return sessions
-    .filter(
-      session =>
-        session.date === value
-    )
-    .sort(
-      (a, b) =>
-        (a.createdAt || 0) -
-        (b.createdAt || 0)
-    );
-}
-
-function getSessionsForMonth(date) {
-  return sessions.filter(session => {
-    const sessionDate =
-      parseInputDate(
-        session.date
-      );
-
-    return (
-      sessionDate &&
-      sessionDate.getFullYear() ===
-        date.getFullYear() &&
-      sessionDate.getMonth() ===
-        date.getMonth()
-    );
-  });
-}
-
-function getSessionsForYear(date) {
-  return sessions.filter(session => {
-    const sessionDate =
-      parseInputDate(
-        session.date
-      );
-
-    return (
-      sessionDate &&
-      sessionDate.getFullYear() ===
-        date.getFullYear()
-    );
-  });
-}
-
-function getSessionStatus(session) {
-  return (
-    session.status ||
-    "planned"
-  );
-}
-
-function getStatusLabel(status) {
-  const labels = {
-    planned: "Geplant",
-    completed: "Erledigt",
-    modified: "Geändert",
-    skipped: "Übersprungen"
-  };
-
-  return (
-    labels[status] ||
-    "Geplant"
-  );
-}
-
-function getSportMeta(sport) {
-  return (
-    sportMeta[sport] ||
-    sportMeta.running
-  );
-}
-
-function getSessionIcon(session) {
-  return getSportMeta(
-    session.sport
-  ).icon;
-}
-
-function getSessionTitle(session) {
-  return (
-    session.title ||
-    getSportMeta(
-      session.sport
-    ).label
-  );
-}
-
-function getSessionDurationLabel(session) {
-  if (!session.duration) {
-    return "";
-  }
-
-  return `${session.duration} min`;
-}
-
-function getSessionSummary(session) {
-  const parts = [];
-
-  const duration =
-    getSessionDurationLabel(
-      session
-    );
-
-  if (duration) {
-    parts.push(duration);
-  }
-
-  if (session.notes) {
-    parts.push(
-      session.notes
-    );
-  }
-
-  return parts.join(" · ");
-}
-
-function getStatusClass(status) {
-  return `status-${status || "planned"}`;
-}
-
-function escapeHtml(value) {
-  return String(
-    value ?? ""
-  )
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
-}
-
-function cleanupProfileHeadings() {
-  if (!profileView) {
-    return;
-  }
-
-  profileView
-    .querySelectorAll("*")
-    .forEach(element => {
-      const text =
-        element.textContent
-          ?.trim();
-
-      if (
-        text === "DEIN HYPE" ||
-        text === "HYPE"
-      ) {
-        if (
-          element.children.length ===
-          0
-        ) {
-          element.remove();
-        }
-      }
-    });
-}
-
-function applyFinalFourChanges() {
-  if (!profileView) {
-    return;
-  }
-
-  profileView
-    .querySelectorAll("*")
-    .forEach(element => {
-      const text =
-        element.textContent
-          ?.trim();
-
-      if (
-        text === "DEIN HYPE" ||
-        text === "HYPE"
-      ) {
-        if (
-          element.children.length ===
-          0
-        ) {
-          element.remove();
-        }
-      }
-    });
-
-  const recommendation =
-    Array.from(
-      profileView.querySelectorAll(
-        "*"
-      )
-    ).find(
-      element =>
-        element.textContent
-          ?.trim() ===
-        "Trainiert jemand genauso gerne wie du?"
-    );
-
-  if (recommendation) {
-    recommendation.style.whiteSpace =
-      "nowrap";
-  }
-}
-
-function renderWeekHeader() {
-  if (!weekTitle) {
-    return;
-  }
-
-  const base =
-    startOfWeek(
-      new Date()
-    );
-
-  const start =
-    addDays(
-      base,
-      currentWeekOffset * 7
-    );
-
-  const end =
-    endOfWeek(start);
-
-  weekTitle.textContent =
-    currentWeekOffset === 0
-      ? "Diese Woche"
-      : `KW ${getWeekNumber(
-          start
-        )}`;
-
-  if (weekRange) {
-    weekRange.textContent =
-      `${formatShortDate(
-        start
-      )} – ${formatShortDate(
-        end
-      )}`;
-  }
-}
-
-function renderWeekStrip() {
-  if (!weekStrip) {
-    return;
-  }
-
-  const base =
-    startOfWeek(
-      new Date()
-    );
-
-  const start =
-    addDays(
-      base,
-      currentWeekOffset * 7
-    );
-
-  weekStrip.innerHTML = "";
-
-  for (
-    let index = 0;
-    index < 7;
-    index += 1
+    ) === dateString
   ) {
-    const date =
-      addDays(
-        start,
-        index
-      );
-
-    const dayKey =
-      getDayKey(date);
-
-    const daySessions =
-      getSessionsForDate(
-        date
-      );
-
-    const button =
-      document.createElement(
-        "button"
-      );
-
-    button.type =
-      "button";
-
-    button.className =
-      "week-day";
-
-    if (
-      isSameDay(
-        date,
-        new Date()
-      )
-    ) {
-      button.classList.add(
-        "today"
-      );
-    }
-
-    if (
-      dayKey ===
-      selectedDayKey
-    ) {
-      button.classList.add(
-        "active"
-      );
-    }
-
-    button.innerHTML = `
-      <span class="week-day-name">
-        ${getShortDayName(
-          date
-        )}
-      </span>
-
-      <span class="week-day-number">
-        ${date.getDate()}
-      </span>
-
-      <span class="week-day-dots">
-        ${daySessions
-          .slice(0, 3)
-          .map(
-            session =>
-              `<i>${escapeHtml(
-                getSessionIcon(
-                  session
-                )
-              )}</i>`
-          )
-          .join("")}
-      </span>
-    `;
-
-    button.addEventListener(
-      "click",
-      () => {
-        selectedDayKey =
-          dayKey;
-
-        renderWeekStrip();
-        renderTrainingList();
-      }
-    );
-
-    weekStrip.appendChild(
-      button
-    );
+    return "Diese Einheit kommt erst morgen. Du kannst sie noch nicht abhaken.";
   }
+
+  return `Diese Einheit kommt erst am ${formatLongDate(date)}. Du kannst sie noch nicht abhaken.`;
 }
 
-function renderTrainingList() {
-  if (!trainingList) {
-    return;
-  }
-
-  const base =
-    startOfWeek(
-      new Date()
-    );
-
-  const weekStart =
-    addDays(
-      base,
-      currentWeekOffset * 7
-    );
-
-  const selectedDate =
-    addDays(
-      weekStart,
-      [
-        "monday",
-        "tuesday",
-        "wednesday",
-        "thursday",
-        "friday",
-        "saturday",
-        "sunday"
-      ].indexOf(
-        selectedDayKey
-      )
-    );
-
-  const daySessions =
-    getSessionsForDate(
-      selectedDate
-    );
-
-  trainingList.innerHTML = "";
-
-  if (
-    daySessions.length ===
-    0
-  ) {
-    trainingList.innerHTML = `
-      <div class="empty-state">
-        <div class="empty-state-icon">
-          ${isSameDay(
-            selectedDate,
-            new Date()
-          ) ? "⚡" : "＋"}
-        </div>
-
-        <strong>
-          Keine Einheiten geplant
-        </strong>
-
-        <span>
-          Füge für diesen Tag dein Training hinzu.
-        </span>
-      </div>
-    `;
-
-    return;
-  }
-
-  daySessions.forEach(
-    session => {
-      const card =
-        document.createElement(
-          "article"
-        );
-
-      card.className =
-        "training-card";
-
-      const meta =
-        getSportMeta(
-          session.sport
-        );
-
-      const status =
-        getSessionStatus(
-          session
-        );
-
-      card.innerHTML = `
-        <div class="training-card-main">
-
-          <div class="training-card-icon">
-            ${escapeHtml(
-              meta.icon
-            )}
-          </div>
-
-          <div class="training-card-content">
-
-            <div class="training-card-topline">
-
-              <span class="training-card-sport">
-                ${escapeHtml(
-                  meta.label
-                )}
-              </span>
-
-              <span class="training-card-status ${getStatusClass(
-                status
-              )}">
-                ${escapeHtml(
-                  getStatusLabel(
-                    status
-                  )
-                )}
-              </span>
-
-            </div>
-
-            <h3>
-              ${escapeHtml(
-                getSessionTitle(
-                  session
-                )
-              )}
-            </h3>
-
-            <p>
-              ${escapeHtml(
-                getSessionSummary(
-                  session
-                )
-              )}
-            </p>
-
-          </div>
-
-        </div>
-
-        <div class="training-card-actions">
-
-          <button
-            type="button"
-            class="training-action"
-            data-action="complete"
-          >
-            ✓
-          </button>
-
-          <button
-            type="button"
-            class="training-action"
-            data-action="edit"
-          >
-            ✎
-          </button>
-
-          <button
-            type="button"
-            class="training-action danger"
-            data-action="delete"
-          >
-            ×
-          </button>
-
-        </div>
-      `;
-
-      card
-        .querySelectorAll(
-          "[data-action]"
-        )
-        .forEach(
-          button => {
-            button.addEventListener(
-              "click",
-              event => {
-                event.stopPropagation();
-
-                const action =
-                  button.dataset.action;
-
-                if (
-                  action ===
-                  "complete"
-                ) {
-                  toggleSessionCompleted(
-                    session.id
-                  );
-                }
-
-                if (
-                  action ===
-                  "edit"
-                ) {
-                  openSessionDialog(
-                    session
-                  );
-                }
-
-                if (
-                  action ===
-                  "delete"
-                ) {
-                  deleteSession(
-                    session.id
-                  );
-                }
-              }
-            );
-          }
-        );
-
-      card.addEventListener(
-        "click",
-        () => {
-          openSessionDialog(
-            session
-          );
-        }
-      );
-
-      trainingList.appendChild(
-        card
-      );
-    }
-  );
-}
-
-function renderPlan() {
-  renderWeekHeader();
-  renderWeekStrip();
-  renderTrainingList();
-}
-
-function openSessionDialog(
-  session = null,
-  date = null
-) {
-  if (!sessionDialog) {
-    return;
-  }
-
-  editingSessionId =
-    session?.id ||
-    null;
-
-  if (sessionTitleInput) {
-    sessionTitleInput.value =
-      session?.title ||
-      "";
-  }
-
-  if (sessionSportInput) {
-    sessionSportInput.value =
-      session?.sport ||
-      "running";
-  }
-
-  if (sessionDateInput) {
-    sessionDateInput.value =
-      session?.date ||
-      dateToInputValue(
-        date ||
-          new Date()
-      );
-  }
-
-  if (sessionDurationInput) {
-    sessionDurationInput.value =
-      session?.duration ||
-      "";
-  }
-
-  if (sessionNotesInput) {
-    sessionNotesInput.value =
-      session?.notes ||
-      "";
-  }
-
-  const title =
-    sessionDialog.querySelector(
-      "[data-dialog-title]"
-    );
-
-  if (title) {
-    title.textContent =
-      session
-        ? "Training bearbeiten"
-        : "Training hinzufügen";
-  }
-
-  sessionDialog.showModal?.();
-
-  if (
-    !sessionDialog.open
-  ) {
-    sessionDialog.classList.add(
-      "open"
-    );
-  }
-}
-
-function closeSessionDialog() {
-  if (!sessionDialog) {
-    return;
-  }
-
-  if (
-    typeof sessionDialog.close ===
-    "function"
-  ) {
-    sessionDialog.close();
-  }
-
-  sessionDialog.classList.remove(
-    "open"
-  );
-
-  editingSessionId =
-    null;
-}
-
-function createOrUpdateSession() {
-  const date =
-    sessionDateInput?.value;
-
-  const sport =
-    sessionSportInput?.value ||
-    "running";
-
-  const title =
-    sessionTitleInput?.value.trim() ||
-    getSportMeta(
-      sport
-    ).label;
-
-  const duration =
-    Number(
-      sessionDurationInput?.value
-    ) || 0;
-
-  const notes =
-    sessionNotesInput?.value.trim() ||
-    "";
-
-  if (!date) {
-    return;
-  }
-
-  if (
-    editingSessionId
-  ) {
-    const session =
-      sessions.find(
-        item =>
-          item.id ===
-          editingSessionId
-      );
-
-    if (session) {
-      session.title =
-        title;
-
-      session.sport =
-        sport;
-
-      session.date =
-        date;
-
-      session.duration =
-        duration;
-
-      session.notes =
-        notes;
-
-      session.updatedAt =
-        Date.now();
-    }
-  } else {
-    sessions.push({
-      id:
-        generateId(),
-
-      title,
-
-      sport,
-
-      date,
-
-      duration,
-
-      notes,
-
-      status:
-        "planned",
-
-      createdAt:
-        Date.now()
-    });
-  }
-
-  saveSessions();
-
-  closeSessionDialog();
-
-  const parsedDate =
-    parseInputDate(
-      date
-    );
-
-  if (parsedDate) {
-    currentWeekOffset =
-      Math.round(
-        (
-          startOfWeek(
-            parsedDate
-          ) -
-          startOfWeek(
-            new Date()
-          )
-        ) /
-          (
-            7 *
-            24 *
-            60 *
-            60 *
-            1000
-          )
-      );
-
-    selectedDayKey =
-      getDayKey(
-        parsedDate
-      );
-  }
-
-  renderAll();
-}
-
-function toggleSessionCompleted(
-  id
-) {
-  const session =
-    sessions.find(
-      item =>
-        item.id === id
-    );
-
-  if (!session) {
-    return;
-  }
-
-  const current =
-    getSessionStatus(
-      session
-    );
-
-  session.status =
-    current === "completed"
-      ? "planned"
-      : "completed";
-
-  session.updatedAt =
-    Date.now();
-
-  saveSessions();
-
-  renderAll();
-}
-
-function deleteSession(id) {
-  const session =
-    sessions.find(
-      item =>
-        item.id === id
-    );
-
-  if (!session) {
-    return;
-  }
-
-  const confirmed =
-    window.confirm(
-      `Training "${getSessionTitle(
-        session
-      )}" wirklich löschen?`
-    );
-
-  if (!confirmed) {
-    return;
-  }
-
-  sessions =
-    sessions.filter(
-      item =>
-        item.id !== id
-    );
-
-  saveSessions();
-
-  renderAll();
-}
-
-function renderOverview() {
-  if (!overviewView) {
-    return;
-  }
-
-  renderOverviewPeriodButtons();
-
-  if (
-    currentOverviewPeriod ===
-    "week"
-  ) {
-    renderOverviewWeek();
-  }
-
-  if (
-    currentOverviewPeriod ===
-    "month"
-  ) {
-    renderOverviewMonth();
-  }
-
-  if (
-    currentOverviewPeriod ===
-    "year"
-  ) {
-    renderOverviewYear();
-  }
-}
-
-function renderOverviewPeriodButtons() {
-  overviewPeriodButtons.forEach(
-    button => {
-      button.classList.toggle(
-        "active",
-        button.dataset.overviewPeriod ===
-          currentOverviewPeriod
-      );
-    }
-  );
-}
-
-function renderOverviewWeek() {
-  const start =
-    startOfWeek(
-      currentOverviewDate
-    );
-
-  const weekSessions =
-    getSessionsForWeek(
-      start
-    );
-
-  const completed =
-    weekSessions.filter(
-      session =>
-        getSessionStatus(
-          session
-        ) ===
-        "completed"
-    ).length;
-
-  const planned =
-    weekSessions.length;
-
-  overviewView.innerHTML = `
-    <div class="overview-content">
-
-      <div class="overview-period-title">
-        ${formatWeekLabel(
-          start
-        )}
-      </div>
-
-      <div class="overview-summary-grid">
-
-        <div class="overview-summary-card">
-          <strong>
-            ${planned}
-          </strong>
-          <span>
-            Geplant
-          </span>
-        </div>
-
-        <div class="overview-summary-card">
-          <strong>
-            ${completed}
-          </strong>
-          <span>
-            Erledigt
-          </span>
-        </div>
-
-      </div>
-
-      <div class="overview-week-list">
-
-        ${weekSessions.length
-          ? weekSessions
-              .map(
-                session => `
-                  <div class="overview-session">
-                    <span>
-                      ${escapeHtml(
-                        getSessionIcon(
-                          session
-                        )
-                      )}
-                    </span>
-
-                    <div>
-                      <strong>
-                        ${escapeHtml(
-                          getSessionTitle(
-                            session
-                          )
-                        )}
-                      </strong>
-
-                      <small>
-                        ${escapeHtml(
-                          getGermanDayName(
-                            parseInputDate(
-                              session.date
-                            )
-                          )
-                        )}
-                        ·
-                        ${escapeHtml(
-                          getSessionSummary(
-                            session
-                          )
-                        )}
-                      </small>
-                    </div>
-                  </div>
-                `
-              )
-              .join("")
-          : `
-              <div class="empty-state">
-                Keine Trainings in dieser Woche.
-              </div>
-            `}
-
-      </div>
-
-    </div>
-  `;
-}
-
-function renderOverviewMonth() {
-  const monthSessions =
-    getSessionsForMonth(
-      currentOverviewDate
-    );
-
-  const completed =
-    monthSessions.filter(
-      session =>
-        getSessionStatus(
-          session
-        ) ===
-        "completed"
-    ).length;
-
-  overviewView.innerHTML = `
-    <div class="overview-content">
-
-      <div class="overview-period-title">
-        ${formatMonthYear(
-          currentOverviewDate
-        )}
-      </div>
-
-      <div class="overview-summary-grid">
-
-        <div class="overview-summary-card">
-          <strong>
-            ${monthSessions.length}
-          </strong>
-          <span>
-            Einheiten
-          </span>
-        </div>
-
-        <div class="overview-summary-card">
-          <strong>
-            ${completed}
-          </strong>
-          <span>
-            Erledigt
-          </span>
-        </div>
-
-      </div>
-
-      <div class="month-overview-grid">
-
-        ${Array.from(
-          {
-            length: 12
-          },
-          (_, index) => {
-            const month =
-              new Date(
-                currentOverviewDate.getFullYear(),
-                index,
-                1
-              );
-
-            const count =
-              getSessionsForMonth(
-                month
-              ).length;
-
-            return `
-              <button
-                type="button"
-                class="month-overview-card"
-                data-month="${index}"
-              >
-
-                <strong>
-                  ${getMonthName(
-                    month
-                  )}
-                </strong>
-
-                <span>
-                  ${count}
-                  ${
-                    count === 1
-                      ? "Einheit"
-                      : "Einheiten"
-                  }
-                </span>
-
-              </button>
-            `;
-          }
-        ).join("")}
-
-      </div>
-
-    </div>
-  `;
-
-  overviewView
-    .querySelectorAll(
-      "[data-month]"
-    )
-    .forEach(
-      button => {
-        button.addEventListener(
-          "click",
-          () => {
-            currentOverviewDate =
-              new Date(
-                currentOverviewDate.getFullYear(),
-                Number(
-                  button.dataset.month
-                ),
-                1
-              );
-
-            currentOverviewPeriod =
-              "month";
-
-            renderOverview();
-          }
-        );
-      }
-    );
-}
-
-function renderOverviewYear() {
-  const yearSessions =
-    getSessionsForYear(
-      currentOverviewDate
-    );
-
-  const completed =
-    yearSessions.filter(
-      session =>
-        getSessionStatus(
-          session
-        ) ===
-        "completed"
-    ).length;
-
-  overviewView.innerHTML = `
-    <div class="overview-content">
-
-      <div class="overview-period-title">
-        ${currentOverviewDate.getFullYear()}
-      </div>
-
-      <div class="overview-summary-grid">
-
-        <div class="overview-summary-card">
-          <strong>
-            ${yearSessions.length}
-          </strong>
-          <span>
-            Einheiten
-          </span>
-        </div>
-
-        <div class="overview-summary-card">
-          <strong>
-            ${completed}
-          </strong>
-          <span>
-            Erledigt
-          </span>
-        </div>
-
-      </div>
-
-      <div class="year-overview-grid">
-
-        ${Array.from(
-          {
-            length: 12
-          },
-          (_, index) => {
-            const month =
-              new Date(
-                currentOverviewDate.getFullYear(),
-                index,
-                1
-              );
-
-            const count =
-              getSessionsForMonth(
-                month
-              ).length;
-
-            return `
-              <button
-                type="button"
-                class="year-month-card"
-                data-month="${index}"
-              >
-
-                <strong>
-                  ${getMonthName(
-                    month
-                  )}
-                </strong>
-
-                <span>
-                  ${count}
-                  ${
-                    count === 1
-                      ? "Einheit"
-                      : "Einheiten"
-                  }
-                </span>
-
-              </button>
-            `;
-          }
-        ).join("")}
-
-      </div>
-
-    </div>
-  `;
-
-  overviewView
-    .querySelectorAll(
-      "[data-month]"
-    )
-    .forEach(
-      button => {
-        button.addEventListener(
-          "click",
-          () => {
-            currentOverviewDate =
-              new Date(
-                currentOverviewDate.getFullYear(),
-                Number(
-                  button.dataset.month
-                ),
-                1
-              );
-
-            currentOverviewPeriod =
-              "month";
-
-            renderOverview();
-          }
-        );
-      }
-    );
-}
-
-/* PROFILE AVATAR */
-
-function ensureProfileAvatarStyles() {
-  if (
-    document.getElementById(
-      "hypeProfileAvatarStyles"
-    )
-  ) {
-    return;
-  }
-
-  const style =
-    document.createElement(
-      "style"
-    );
-
-  style.id =
-    "hypeProfileAvatarStyles";
-
-  style.textContent = `
-    #profileView .hype-profile-avatar-wrap {
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      justify-content:center;
-      gap:9px;
-      width:100%;
-      margin:0 0 24px;
-    }
-
-    #profileView .hype-profile-avatar-button {
-      position:relative;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      width:104px;
-      height:104px;
-      padding:0;
-      border:2px solid #d7ff3f;
-      border-radius:50%;
-      background:#111419;
-      overflow:hidden;
-      cursor:pointer;
-      box-shadow:0 0 0 5px rgba(215,255,63,.06);
-    }
-
-    #profileView .hype-profile-avatar-fallback {
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      width:100%;
-      height:100%;
-      color:#d7ff3f;
-      font-size:34px;
-      line-height:1;
-      font-weight:900;
-    }
-
-    #profileView .hype-profile-avatar-image {
-      display:block;
-      width:100%;
-      height:100%;
-      object-fit:cover;
-    }
-
-    #profileView .hype-profile-avatar-edit {
-      position:absolute;
-      right:2px;
-      bottom:2px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      width:30px;
-      height:30px;
-      border:2px solid #0b0d10;
-      border-radius:50%;
-      background:#d7ff3f;
-      color:#0b0d10;
-      font-size:14px;
-      font-weight:900;
-    }
-
-    #profileView .hype-profile-avatar-label {
-      color:#8d949e;
-      font-size:11px;
-      line-height:1.2;
-      font-weight:800;
-      text-align:center;
-    }
-
-    #profileView .hype-profile-avatar-status {
-      min-height:16px;
-      color:#d7ff3f;
-      font-size:11px;
-      line-height:1.3;
-      font-weight:800;
-      text-align:center;
-    }
-
-    #hypeProfileAvatarInput {
-      display:none;
-    }
-  `;
-
-  document.head.appendChild(
-    style
-  );
-}
-
-function getAvatarInitials(user) {
-  const firstName =
-    user?.user_metadata?.first_name
-      ? String(
-          user.user_metadata.first_name
-        ).trim()
-      : "";
-
-  if (firstName) {
-    return firstName
-      .charAt(0)
-      .toUpperCase();
-  }
-
-  const email =
-    user?.email
-      ? String(
-          user.email
-        ).trim()
-      : "";
-
-  if (email) {
-    return email
-      .charAt(0)
-      .toUpperCase();
-  }
-
-  return "H";
-}
-
-function ensureProfileAvatarUI() {
-  if (!profileView) {
-    return;
-  }
-
-  if (
-    document.getElementById(
-      "hypeProfileAvatar"
-    )
-  ) {
-    return;
-  }
-
-  const accountCard =
-    profileView.querySelector(
-      ".profile-account-card"
-    );
-
-  if (!accountCard) {
-    return;
-  }
-
-  const wrap =
-    document.createElement(
-      "div"
-    );
-
-  wrap.id =
-    "hypeProfileAvatar";
-
-  wrap.className =
-    "hype-profile-avatar-wrap";
-
-  wrap.innerHTML = `
-    <button
-      type="button"
-      id="hypeProfileAvatarButton"
-      class="hype-profile-avatar-button"
-      aria-label="Profilbild ändern"
-    >
-      <span
-        id="hypeProfileAvatarFallback"
-        class="hype-profile-avatar-fallback"
-      >
-        H
-      </span>
-
-      <img
-        id="hypeProfileAvatarImage"
-        class="hype-profile-avatar-image"
-        alt="Profilbild"
-        hidden
-      >
-
-      <span
-        class="hype-profile-avatar-edit"
-        aria-hidden="true"
-      >
-        ✎
-      </span>
-    </button>
-
-    <input
-      id="hypeProfileAvatarInput"
-      type="file"
-      accept="image/jpeg,image/png,image/webp"
-    >
-
-    <span
-      class="hype-profile-avatar-label"
-    >
-      Profilbild ändern
-    </span>
-
-    <span
-      id="hypeProfileAvatarStatus"
-      class="hype-profile-avatar-status"
-      aria-live="polite"
-    ></span>
-  `;
-
-  accountCard.prepend(
-    wrap
-  );
-
-  const button =
-    document.getElementById(
-      "hypeProfileAvatarButton"
-    );
-
-  const input =
-    document.getElementById(
-      "hypeProfileAvatarInput"
-    );
-
-  button?.addEventListener(
-    "click",
-    () => {
-      input.value = "";
-      input.click();
-    }
-  );
-
-  input?.addEventListener(
-    "change",
-    async event => {
-      const file =
-        event.target.files?.[0];
-
-      if (!file) {
-        return;
-      }
-
-      await handleProfileAvatarUpload(
-        file
-      );
-
-      input.value = "";
-    }
-  );
-}
-
-function renderProfileAvatar(user) {
-  ensureProfileAvatarStyles();
-  ensureProfileAvatarUI();
-
-  const fallback =
-    document.getElementById(
-      "hypeProfileAvatarFallback"
-    );
-
-  const image =
-    document.getElementById(
-      "hypeProfileAvatarImage"
-    );
-
-  if (
-    !fallback ||
-    !image
-  ) {
-    return;
-  }
-
-  fallback.textContent =
-    getAvatarInitials(
-      user
-    );
-
-  const avatarUrl =
-    user?.user_metadata?.avatar_url
-      ? String(
-          user.user_metadata.avatar_url
-        ).trim()
-      : "";
-
-  if (avatarUrl) {
-    image.src =
-      avatarUrl;
-
-    image.hidden =
-      false;
-
-    fallback.hidden =
-      true;
-
-    image.onerror =
-      () => {
-        image.hidden =
-          true;
-
-        fallback.hidden =
-          false;
-      };
-  } else {
-    image.removeAttribute(
-      "src"
-    );
-
-    image.hidden =
-      true;
-
-    fallback.hidden =
-      false;
-  }
-}
-
-async function handleProfileAvatarUpload(
-  file
-) {
-  const status =
-    document.getElementById(
-      "hypeProfileAvatarStatus"
-    );
-
-  const button =
-    document.getElementById(
-      "hypeProfileAvatarButton"
-    );
-
-  if (
-    typeof uploadProfileAvatar !==
-    "function"
-  ) {
-    if (status) {
-      status.textContent =
-        "Upload-Funktion nicht verfügbar.";
-    }
-
-    return;
-  }
-
-  if (status) {
-    status.textContent =
-      "Profilbild wird gespeichert …";
-  }
-
-  if (button) {
-    button.disabled =
-      true;
-  }
-
-  try {
-    const result =
-      await uploadProfileAvatar(
-        file
-      );
-
-    if (!result?.success) {
-      throw new Error(
-        result?.error ||
-        "Das Profilbild konnte nicht gespeichert werden."
-      );
-    }
-
-    const user =
-      result.user ||
-      await getProfileUser();
-
-    renderProfileAvatar(
-      user
-    );
-
-    if (status) {
-      status.textContent =
-        "Profilbild gespeichert.";
-    }
-  } catch (error) {
-    console.error(
-      "HYPE profile avatar error:",
-      error
-    );
-
-    if (status) {
-      status.textContent =
-        error.message ||
-        "Profilbild konnte nicht gespeichert werden.";
-    }
-  } finally {
-    if (button) {
-      button.disabled =
-        false;
-    }
-  }
-}
-
-/* PROFILE */
+/* =========================
+   USER / PROFILE
+========================= */
 
 async function getProfileUser() {
   if (
@@ -2246,15 +1195,15 @@ async function getProfileUser() {
 
     if (error) {
       console.error(
-        "HYPE profile user error:",
+        "HYPE user lookup error:",
         error
       );
 
       return null;
     }
 
-    return data?.user ||
-      null;
+    return data?.user || null;
+
   } catch (error) {
     console.error(
       "HYPE profile error:",
@@ -2265,6 +1214,22 @@ async function getProfileUser() {
   }
 }
 
+async function getUserFirstName() {
+  const user =
+    await getProfileUser();
+
+  const firstName =
+    user?.user_metadata?.first_name;
+
+  return firstName
+    ? String(firstName).trim()
+    : "";
+}
+
+/* =========================
+   PROFILE
+========================= */
+
 async function renderProfile() {
   const user =
     await getProfileUser();
@@ -2273,11 +1238,10 @@ async function renderProfile() {
     return;
   }
 
-  ensureProfileAvatarStyles();
-  ensureProfileAvatarUI();
-  renderProfileAvatar(
-    user
-  );
+  shareWeekStart =
+    startOfWeek(
+      new Date()
+    );
 
   cleanupProfileHeadings();
 
@@ -2288,9 +1252,11 @@ async function renderProfile() {
         ).trim()
       : "";
 
+  const displayName =
+    firstName || "Deine";
+
   profileDisplayName =
-    firstName ||
-    "Deine";
+    displayName;
 
   if (profileGreeting) {
     profileGreeting.textContent =
@@ -2307,8 +1273,7 @@ async function renderProfile() {
 
   if (profileEmail) {
     profileEmail.textContent =
-      user.email ||
-      "";
+      user.email || "";
   }
 
   if (profileEmailEdit) {
@@ -2323,79 +1288,331 @@ async function renderProfile() {
       firstName;
   }
 
-  renderWeeklySharePreview();
-
-  applyFinalFourChanges();
-}
-
-/* WEEK NAVIGATION */
-
-function moveWeek(amount) {
-  currentWeekOffset +=
-    amount;
-
-  renderPlan();
-}
-
-function goToCurrentWeek() {
-  currentWeekOffset =
-    0;
-
-  selectedDayKey =
-    getDayKey(
-      new Date()
+  if (!firstName) {
+    setTimeout(
+      () => {
+        openProfileDialog(true);
+      },
+      150
     );
+  }
 
-  renderPlan();
+  renderWeeklySharePreview(
+    displayName
+  );
+
+  applyFinalThreeChanges();
 }
 
-/* OVERVIEW NAVIGATION */
+/* =========================
+   PROFILE EDIT
+========================= */
 
-function moveOverviewPeriod(
-  amount
+function openProfileDialog(
+  focusInput = false
 ) {
-  if (
-    currentOverviewPeriod ===
-    "week"
-  ) {
-    currentOverviewDate =
-      addDays(
-        currentOverviewDate,
-        amount * 7
-      );
-  }
-
-  if (
-    currentOverviewPeriod ===
-    "month"
-  ) {
-    currentOverviewDate =
-      addMonths(
-        currentOverviewDate,
-        amount
-      );
-  }
-
-  if (
-    currentOverviewPeriod ===
-    "year"
-  ) {
-    currentOverviewDate =
-      addYears(
-        currentOverviewDate,
-        amount
-      );
-  }
-
-  renderOverview();
-}
-
-/* SHARE WEEK */
-
-function renderWeeklySharePreview() {
-  if (!weeklyShareCard) {
+  if (!profileDialog) {
     return;
   }
+
+  if (profileFirstNameInput) {
+    getUserFirstName()
+      .then(
+        firstName => {
+          profileFirstNameInput.value =
+            firstName || "";
+
+          if (focusInput) {
+            setTimeout(
+              () => {
+                profileFirstNameInput.focus();
+              },
+              100
+            );
+          }
+        }
+      );
+  }
+
+  if (
+    typeof profileDialog.showModal ===
+    "function"
+  ) {
+    if (!profileDialog.open) {
+      profileDialog.showModal();
+    }
+  } else {
+    profileDialog.setAttribute(
+      "open",
+      ""
+    );
+  }
+}
+
+function closeProfileDialog() {
+  if (!profileDialog) {
+    return;
+  }
+
+  if (
+    typeof profileDialog.close ===
+    "function"
+  ) {
+    profileDialog.close();
+  } else {
+    profileDialog.removeAttribute(
+      "open"
+    );
+  }
+}
+
+async function saveProfileName() {
+  if (!profileFirstNameInput) {
+    return;
+  }
+
+  const firstName =
+    profileFirstNameInput.value.trim();
+
+  if (!firstName) {
+    alert(
+      "Bitte gib deinen Vornamen ein."
+    );
+
+    profileFirstNameInput.focus();
+
+    return;
+  }
+
+  if (firstName.length > 40) {
+    alert(
+      "Der Vorname darf maximal 40 Zeichen haben."
+    );
+
+    return;
+  }
+
+  if (
+    typeof updateProfileFirstName !==
+    "function"
+  ) {
+    alert(
+      "Die Profilfunktion ist momentan nicht verfügbar."
+    );
+
+    return;
+  }
+
+  const submitButton =
+    profileForm?.querySelector(
+      'button[type="submit"]'
+    );
+
+  if (submitButton) {
+    submitButton.disabled =
+      true;
+
+    submitButton.textContent =
+      "Speichern …";
+  }
+
+  try {
+    const result =
+      await updateProfileFirstName(
+        firstName
+      );
+
+    if (!result?.success) {
+      throw new Error(
+        result?.error ||
+        "Der Name konnte nicht gespeichert werden."
+      );
+    }
+
+    closeProfileDialog();
+
+    await renderProfile();
+
+  } catch (error) {
+    console.error(
+      "HYPE profile save error:",
+      error
+    );
+
+    alert(
+      error.message ||
+      "Der Name konnte nicht gespeichert werden."
+    );
+
+  } finally {
+    if (submitButton) {
+      submitButton.disabled =
+        false;
+
+      submitButton.textContent =
+        "Profil speichern";
+    }
+  }
+}
+
+/* =========================
+   STORAGE
+========================= */
+
+function loadSessions() {
+  try {
+    const raw =
+      localStorage.getItem(KEY);
+
+    if (!raw) {
+      return [];
+    }
+
+    const data =
+      JSON.parse(raw);
+
+    if (!Array.isArray(data)) {
+      return [];
+    }
+
+    return data.map(
+      session => ({
+        ...session,
+
+        completed:
+          Boolean(
+            session.completed
+          ),
+
+        actualIntensity:
+          session.actualIntensity ===
+          undefined
+            ? null
+            : session.actualIntensity,
+
+        postNotes:
+          session.postNotes || ""
+      })
+    );
+
+  } catch (error) {
+    console.error(
+      "HYPE storage error:",
+      error
+    );
+
+    return [];
+  }
+}
+
+function save() {
+  localStorage.setItem(
+    KEY,
+    JSON.stringify(sessions)
+  );
+}
+
+/* =========================
+   SESSION QUERIES
+========================= */
+
+function sessionsForDate(dateString) {
+  return sessions
+    .filter(
+      session =>
+        session.date === dateString
+    )
+    .sort(
+      (a, b) =>
+        Number(
+          a.createdAt || 0
+        ) -
+        Number(
+          b.createdAt || 0
+        )
+    );
+}
+
+function sessionsForWeek(date) {
+  const start =
+    startOfWeek(date);
+
+  const end =
+    endOfWeek(date);
+
+  const startIso =
+    iso(start);
+
+  const endIso =
+    iso(end);
+
+  return sessions.filter(
+    session =>
+      session.date >= startIso &&
+      session.date <= endIso
+  );
+}
+
+function sessionsForMonth(date) {
+  const year =
+    date.getFullYear();
+
+  const month =
+    date.getMonth();
+
+  return sessions.filter(
+    session => {
+      const d =
+        parseDate(session.date);
+
+      return (
+        d.getFullYear() === year &&
+        d.getMonth() === month
+      );
+    }
+  );
+}
+
+function sessionsForYear(year) {
+  return sessions.filter(
+    session =>
+      parseDate(
+        session.date
+      ).getFullYear() === year
+  );
+}
+
+/* =========================
+   SHARE WEEK
+========================= */
+
+function setShareWeek(
+  date
+) {
+  shareWeekStart =
+    startOfWeek(date);
+
+  renderWeeklySharePreview();
+}
+
+function moveShareWeek(
+  amount
+) {
+  shareWeekStart =
+    addDays(
+      shareWeekStart,
+      amount * 7
+    );
+
+  renderWeeklySharePreview();
+}
+
+function renderWeeklySharePreview(
+  displayName
+) {
+  ensureProfileShareStyles();
+  ensureShareWeekNavigation();
+  cleanupProfileHeadings();
 
   const weekStart =
     startOfWeek(
@@ -2408,17 +1625,14 @@ function renderWeeklySharePreview() {
     );
 
   const weekSessions =
-    getSessionsForWeek(
+    sessionsForWeek(
       weekStart
     );
 
   const completed =
     weekSessions.filter(
       session =>
-        getSessionStatus(
-          session
-        ) ===
-        "completed"
+        session.completed
     );
 
   const totalMinutes =
@@ -2431,249 +1645,484 @@ function renderWeeklySharePreview() {
       0
     );
 
+  const cleanName =
+    displayName ||
+    profileDisplayName ||
+    "Deine";
+
+  profileDisplayName =
+    cleanName;
+
+  const newWeekValue =
+    document.getElementById(
+      "hypeShareWeekValue"
+    );
+
+  if (newWeekValue) {
+    newWeekValue.textContent =
+      formatShareWeek(
+        weekStart
+      );
+  }
+
+  if (shareWeekPrevBtn) {
+    shareWeekPrevBtn.textContent =
+      "‹";
+
+    shareWeekPrevBtn.setAttribute(
+      "aria-label",
+      "Vorherige Woche"
+    );
+  }
+
+  if (shareWeekNextBtn) {
+    shareWeekNextBtn.textContent =
+      "›";
+
+    shareWeekNextBtn.setAttribute(
+      "aria-label",
+      "Nächste Woche"
+    );
+  }
+
+  if (shareWeekCurrentBtn) {
+    shareWeekCurrentBtn.textContent =
+      "Aktuelle Woche";
+
+    shareWeekCurrentBtn.setAttribute(
+      "aria-label",
+      "Aktuelle Woche auswählen"
+    );
+  }
+
   if (shareWeekTitle) {
     shareWeekTitle.textContent =
-      `${formatShortDate(
-        weekStart
-      )} – ${formatShortDate(
-        weekEnd
-      )}`;
+      "";
+    shareWeekTitle.style.display =
+      "none";
   }
+
+  /* Tanos Woche + Datum komplett entfernen */
 
   if (weeklyShareName) {
     weeklyShareName.textContent =
-      profileDisplayName;
+      "";
+
+    weeklyShareName.style.display =
+      "none";
+
+    weeklyShareName.style.visibility =
+      "hidden";
+
+    weeklyShareName.style.height =
+      "0";
+
+    weeklyShareName.style.margin =
+      "0";
+
+    weeklyShareName.style.padding =
+      "0";
   }
 
   if (weeklyShareRange) {
     weeklyShareRange.textContent =
-      `${formatShortDate(
-        weekStart
-      )} – ${formatShortDate(
-        weekEnd
-      )}`;
+      "";
+
+    weeklyShareRange.style.display =
+      "none";
+
+    weeklyShareRange.style.visibility =
+      "hidden";
+
+    weeklyShareRange.style.height =
+      "0";
+
+    weeklyShareRange.style.margin =
+      "0";
+
+    weeklyShareRange.style.padding =
+      "0";
   }
 
   if (weeklyShareDays) {
+    const days = [];
+
+    for (
+      let i = 0;
+      i < 7;
+      i++
+    ) {
+      const date =
+        addDays(
+          weekStart,
+          i
+        );
+
+      const daySessions =
+        sessionsForDate(
+          iso(date)
+        );
+
+      const completedDay =
+        daySessions.filter(
+          session =>
+            session.completed
+        );
+
+      const weekday =
+        new Intl.DateTimeFormat(
+          "de-DE",
+          {
+            weekday: "short"
+          }
+        )
+          .format(date)
+          .replace(".", "");
+
+      const trainingTitles =
+        daySessions
+          .map(
+            session => ({
+              title:
+                session.title,
+              completed:
+                Boolean(
+                  session.completed
+                )
+            })
+          );
+
+      days.push(`
+        <div class="weekly-share-day ${
+          completedDay.length
+            ? "completed"
+            : ""
+        }">
+
+          <div class="weekly-share-day-top">
+
+            <span>
+              ${esc(weekday)}
+            </span>
+
+            <strong>
+              ${date.getDate()}
+            </strong>
+
+          </div>
+
+          <div class="weekly-share-day-training">
+
+            ${
+              trainingTitles.length
+                ? trainingTitles
+                    .slice(0, 2)
+                    .map(
+                      training =>
+                        `
+                          <span class="${
+                            training.completed
+                              ? "completed-training"
+                              : ""
+                          }">
+                            ${esc(
+                              training.title
+                            )}
+                          </span>
+                        `
+                    )
+                    .join("")
+                : `
+                  <span class="empty-day">
+                    —
+                  </span>
+                `
+            }
+
+            ${
+              trainingTitles.length > 2
+                ? `
+                  <span class="more-training">
+                    +${trainingTitles.length - 2} weitere
+                  </span>
+                `
+                : ""
+            }
+
+          </div>
+
+        </div>
+      `);
+    }
+
     weeklyShareDays.innerHTML =
-      Array.from(
-        {
-          length: 7
-        },
-        (_, index) => {
-          const date =
-            addDays(
-              weekStart,
-              index
-            );
-
-          const daySessions =
-            getSessionsForDate(
-              date
-            );
-
-          return `
-            <div class="weekly-share-day">
-
-              <strong>
-                ${getShortDayName(
-                  date
-                )}
-              </strong>
-
-              <span>
-                ${date.getDate()}
-              </span>
-
-              ${
-                daySessions.length
-                  ? daySessions
-                      .map(
-                        session =>
-                          `
-                            <small>
-                              ${escapeHtml(
-                                getSessionIcon(
-                                  session
-                                )
-                              )}
-                              ${escapeHtml(
-                                getSessionTitle(
-                                  session
-                                )
-                              )}
-                            </small>
-                          `
-                      )
-                      .join("")
-                  : `
-                    <small>
-                      —
-                    </small>
-                  `
-              }
-
-            </div>
-          `;
-        }
-      ).join("");
+      days.join("");
   }
 
   if (weeklyShareSummary) {
-    weeklyShareSummary.innerHTML = `
-      <strong>
-        ${completed.length}
-      </strong>
+    if (!weekSessions.length) {
+      weeklyShareSummary.innerHTML = `
+        <div class="weekly-share-empty">
 
-      <span>
-        erledigte Trainings ·
-        ${totalMinutes} min
-      </span>
-    `;
-  }
-}
+          <strong>
+            Noch kein Training in dieser Woche
+          </strong>
 
-/* PROFILE DIALOG */
+          <span>
+            Für diese Woche sind noch keine Einheiten geplant.
+          </span>
 
-async function openProfileDialog(
-  focusInput = false
-) {
-  if (!profileDialog) {
-    return;
-  }
+        </div>
+      `;
+    } else {
+      weeklyShareSummary.innerHTML = `
+        <div class="weekly-share-stats">
 
-  const user =
-    await getProfileUser();
+          <div class="weekly-share-stat">
 
-  if (
-    profileFirstNameInput
-  ) {
-    profileFirstNameInput.value =
-      user?.user_metadata?.first_name ||
-      "";
-  }
+            <strong>
+              ${completed.length}
+            </strong>
 
-  if (profileEmailEdit) {
-    profileEmailEdit.textContent =
-      user?.email
-        ? `E-Mail: ${user.email}`
-        : "";
-  }
+            <span>
+              ${
+                completed.length === 1
+                  ? "Training erledigt"
+                  : "Trainings erledigt"
+              }
+            </span>
 
-  profileDialog.showModal?.();
+          </div>
 
-  if (
-    !profileDialog.open
-  ) {
-    profileDialog.classList.add(
-      "open"
-    );
-  }
+          <div class="weekly-share-stat">
 
-  if (
-    focusInput &&
-    profileFirstNameInput
-  ) {
-    setTimeout(
-      () => {
-        profileFirstNameInput.focus();
-      },
-      50
-    );
-  }
-}
+            <strong>
+              ${totalMinutes}
+            </strong>
 
-function closeProfileDialog() {
-  if (!profileDialog) {
-    return;
-  }
+            <span>
+              Minuten erledigt
+            </span>
 
-  profileDialog.close?.();
+          </div>
 
-  profileDialog.classList.remove(
-    "open"
-  );
-}
-
-async function saveProfile() {
-  const firstName =
-    profileFirstNameInput?.value.trim() ||
-    "";
-
-  if (
-    typeof updateProfileFirstName !==
-    "function"
-  ) {
-    return;
-  }
-
-  const result =
-    await updateProfileFirstName(
-      firstName
-    );
-
-  if (!result?.success) {
-    alert(
-      result?.error ||
-      "Profil konnte nicht gespeichert werden."
-    );
-
-    return;
-  }
-
-  closeProfileDialog();
-
-  renderProfile();
-}
-
-/* SHARE */
-
-async function shareHypeProfile() {
-  const firstName =
-    profileDisplayName ||
-    "Deine";
-
-  const text =
-    `${firstName}s Woche mit HYPE.`;
-
-  if (
-    navigator.share
-  ) {
-    try {
-      await navigator.share({
-        title:
-          "HYPE",
-        text
-      });
-
-      return;
-    } catch (error) {
-      if (
-        error?.name ===
-        "AbortError"
-      ) {
-        return;
-      }
+        </div>
+      `;
     }
   }
+
+  if (weeklyShareFooter) {
+    weeklyShareFooter.innerHTML =
+      "";
+
+    weeklyShareFooter.style.display =
+      "none";
+  }
+
+  applyFinalThreeChanges();
+}
+
+function firstNameForPossessive(
+  name
+) {
+  const clean =
+    String(name || "").trim();
+
+  if (!clean) {
+    return "Deine Woche";
+  }
+
+  if (
+    clean.endsWith("s") ||
+    clean.endsWith("x") ||
+    clean.endsWith("z")
+  ) {
+    return `${clean}’ Woche`;
+  }
+
+  return `${clean}s Woche`;
+}
+
+/* =========================
+   DIE DREI ÄNDERUNGEN
+========================= */
+
+function applyFinalThreeChanges() {
+  if (!profileView) {
+    return;
+  }
+
+  /*
+    1. HYPE unter "Woche teilen"
+       komplett entfernen
+  */
+
+  if (weeklyShareCard) {
+    weeklyShareCard
+      .querySelectorAll("*")
+      .forEach(element => {
+        const text =
+          element.textContent
+            .replace(/\s+/g, " ")
+            .trim()
+            .toUpperCase();
+
+        if (
+          text === "HYPE" &&
+          element.children.length === 0 &&
+          !element.closest("button") &&
+          !element.closest("a")
+        ) {
+          element.remove();
+        }
+      });
+  }
+
+  /*
+    2. Tanos Woche entfernen
+  */
+
+  if (weeklyShareName) {
+    weeklyShareName.textContent =
+      "";
+
+    weeklyShareName.style.display =
+      "none";
+
+    weeklyShareName.style.visibility =
+      "hidden";
+
+    weeklyShareName.style.height =
+      "0";
+
+    weeklyShareName.style.margin =
+      "0";
+
+    weeklyShareName.style.padding =
+      "0";
+  }
+
+  /*
+    3. Datum unter Tanos Woche entfernen
+  */
+
+  if (weeklyShareRange) {
+    weeklyShareRange.textContent =
+      "";
+
+    weeklyShareRange.style.display =
+      "none";
+
+    weeklyShareRange.style.visibility =
+      "hidden";
+
+    weeklyShareRange.style.height =
+      "0";
+
+    weeklyShareRange.style.margin =
+      "0";
+
+    weeklyShareRange.style.padding =
+      "0";
+  }
+
+  /*
+    Zusätzlich den alten Share-Titel
+    ausblenden, falls er noch vorhanden ist.
+  */
+
+  if (shareWeekTitle) {
+    shareWeekTitle.textContent =
+      "";
+
+    shareWeekTitle.style.display =
+      "none";
+  }
+}
+
+/* =========================
+   SHARE HYPE
+========================= */
+
+async function shareHype() {
+  const shareData = {
+    title:
+      "HYPE – HYbrid Plan & Execution",
+
+    text:
+      "Ich nutze HYPE für meine Trainingsplanung. Probier's aus:",
+
+    url:
+      window.location.href
+  };
+
+  try {
+    if (navigator.share) {
+      await navigator.share(
+        shareData
+      );
+
+      return;
+    }
+
+    await copyHypeLink();
+
+    alert(
+      "Der HYPE-Link wurde kopiert. Du kannst ihn jetzt über WhatsApp, Instagram oder Nachrichten verschicken."
+    );
+
+  } catch (error) {
+    if (
+      error?.name ===
+      "AbortError"
+    ) {
+      return;
+    }
+
+    console.error(
+      "HYPE share error:",
+      error
+    );
+
+    await copyHypeLink();
+
+    alert(
+      "Der HYPE-Link wurde kopiert."
+    );
+  }
+}
+
+async function copyHypeLink() {
+  const text =
+    `HYPE – HYbrid Plan & Execution\n${window.location.href}`;
 
   try {
     await navigator.clipboard.writeText(
       text
     );
-
-    alert(
-      "Text kopiert."
+  } catch (error) {
+    console.error(
+      "HYPE clipboard error:",
+      error
     );
-  } catch {
-    alert(text);
   }
 }
 
-function createWeeklyCalendarExport() {
+/* =========================
+   WEEK SHARE IMAGE
+========================= */
+
+async function createWeeklyShareImage() {
+  const firstName =
+    await getUserFirstName();
+
+  const displayName =
+    firstName ||
+    "Athlete";
+
   const weekStart =
     startOfWeek(
-      new Date()
+      shareWeekStart
     );
 
   const weekEnd =
@@ -2682,75 +2131,928 @@ function createWeeklyCalendarExport() {
     );
 
   const weekSessions =
-    getSessionsForWeek(
+    sessionsForWeek(
       weekStart
+    );
+
+  const completed =
+    weekSessions.filter(
+      session =>
+        session.completed
+    );
+
+  const totalMinutes =
+    completed.reduce(
+      (sum, session) =>
+        sum +
+        Number(
+          session.duration || 0
+        ),
+      0
+    );
+
+  const canvas =
+    document.createElement(
+      "canvas"
+    );
+
+  canvas.width = 1080;
+  canvas.height = 1920;
+
+  const ctx =
+    canvas.getContext("2d");
+
+  if (!ctx) {
+    throw new Error(
+      "Canvas wird nicht unterstützt."
+    );
+  }
+
+  ctx.fillStyle =
+    "#0b0d10";
+
+  ctx.fillRect(
+    0,
+    0,
+    1080,
+    1920
+  );
+
+  const glow =
+    ctx.createRadialGradient(
+      870,
+      150,
+      0,
+      870,
+      150,
+      720
+    );
+
+  glow.addColorStop(
+    0,
+    "rgba(215,255,63,.18)"
+  );
+
+  glow.addColorStop(
+    0.45,
+    "rgba(215,255,63,.05)"
+  );
+
+  glow.addColorStop(
+    1,
+    "rgba(215,255,63,0)"
+  );
+
+  ctx.fillStyle =
+    glow;
+
+  ctx.fillRect(
+    0,
+    0,
+    1080,
+    1920
+  );
+
+  ctx.fillStyle =
+    "#d7ff3f";
+
+  ctx.fillRect(
+    80,
+    72,
+    120,
+    6
+  );
+
+  ctx.fillStyle =
+    "#f5f6f7";
+
+  ctx.font =
+    "900 74px Arial";
+
+  ctx.fillText(
+    "HYPE",
+    80,
+    155
+  );
+
+  ctx.fillStyle =
+    "#8d949e";
+
+  ctx.font =
+    "700 20px Arial";
+
+  ctx.fillText(
+    "HYBRID PLAN & EXECUTION",
+    83,
+    190
+  );
+
+  ctx.fillStyle =
+    "#d7ff3f";
+
+  ctx.font =
+    "800 20px Arial";
+
+  ctx.fillText(
+    "DEINE WOCHE",
+    80,
+    275
+  );
+
+  ctx.fillStyle =
+    "#f5f6f7";
+
+  ctx.font =
+    "900 58px Arial";
+
+  const nameTitle =
+    `${displayName}s Woche`;
+
+  ctx.fillText(
+    nameTitle,
+    80,
+    350
+  );
+
+  ctx.fillStyle =
+    "#8d949e";
+
+  ctx.font =
+    "600 25px Arial";
+
+  ctx.fillText(
+    `${formatShortDate(
+      weekStart
+    )} – ${formatShortDate(
+      weekEnd
+    )}`,
+    83,
+    395
+  );
+
+  drawShareStat(
+    ctx,
+    80,
+    470,
+    String(
+      completed.length
+    ),
+    "TRAININGS"
+  );
+
+  drawShareStat(
+    ctx,
+    540,
+    470,
+    String(
+      totalMinutes
+    ),
+    "MINUTEN"
+  );
+
+  const dayStartY =
+    690;
+
+  const rowHeight =
+    143;
+
+  for (
+    let i = 0;
+    i < 7;
+    i++
+  ) {
+    const date =
+      addDays(
+        weekStart,
+        i
+      );
+
+    const daySessions =
+      sessionsForDate(
+        iso(date)
+      );
+
+    const y =
+      dayStartY +
+      i * rowHeight;
+
+    const hasCompleted =
+      daySessions.some(
+        session =>
+          session.completed
+      );
+
+    ctx.fillStyle =
+      hasCompleted
+        ? "#151a13"
+        : "#14171c";
+
+    roundRect(
+      ctx,
+      70,
+      y,
+      940,
+      116,
+      22
+    );
+
+    ctx.fill();
+
+    if (hasCompleted) {
+      ctx.fillStyle =
+        "#d7ff3f";
+
+      ctx.fillRect(
+        70,
+        y + 22,
+        5,
+        72
+      );
+    }
+
+    ctx.fillStyle =
+      "#8d949e";
+
+    ctx.font =
+      "800 18px Arial";
+
+    const weekday =
+      new Intl.DateTimeFormat(
+        "de-DE",
+        {
+          weekday: "short"
+        }
+      )
+        .format(date)
+        .replace(".", "")
+        .toUpperCase();
+
+    ctx.fillText(
+      weekday,
+      105,
+      y + 42
+    );
+
+    ctx.fillStyle =
+      "#f5f6f7";
+
+    ctx.font =
+      "900 30px Arial";
+
+    ctx.fillText(
+      String(
+        date.getDate()
+      ),
+      106,
+      y + 78
+    );
+
+    if (!daySessions.length) {
+      ctx.fillStyle =
+        "#626973";
+
+      ctx.font =
+        "600 20px Arial";
+
+      ctx.fillText(
+        "Kein Training",
+        270,
+        y + 62
+      );
+
+      continue;
+    }
+
+    const visibleSessions =
+      daySessions.slice(
+        0,
+        2
+      );
+
+    visibleSessions.forEach(
+      (
+        session,
+        index
+      ) => {
+        const meta =
+          sportMeta[
+            session.sport
+          ] ||
+          sportMeta.running;
+
+        const lineY =
+          y +
+          39 +
+          index * 37;
+
+        ctx.font =
+          "28px Arial";
+
+        ctx.fillText(
+          meta.icon,
+          270,
+          lineY
+        );
+
+        ctx.fillStyle =
+          session.completed
+            ? "#d7ff3f"
+            : "#f5f6f7";
+
+        ctx.font =
+          "750 20px Arial";
+
+        const rawTitle =
+          String(
+            session.title ||
+            "Training"
+          );
+
+        const maxTitleWidth =
+          520;
+
+        const title =
+          fitCanvasText(
+            ctx,
+            rawTitle,
+            maxTitleWidth
+          );
+
+        ctx.fillText(
+          title,
+          315,
+          lineY
+        );
+
+        ctx.fillStyle =
+          "#737b86";
+
+        ctx.font =
+          "600 16px Arial";
+
+        ctx.fillText(
+          `${session.duration || 0} min`,
+          855,
+          lineY
+        );
+      }
+    );
+
+    if (
+      daySessions.length > 2
+    ) {
+      ctx.fillStyle =
+        "#737b86";
+
+      ctx.font =
+        "600 14px Arial";
+
+      ctx.fillText(
+        `+${daySessions.length - 2} weitere`,
+        315,
+        y + 101
+      );
+    }
+  }
+
+  ctx.fillStyle =
+    "#d7ff3f";
+
+  ctx.font =
+    "900 24px Arial";
+
+  ctx.fillText(
+    "TRAIN SMART. STAY HYPE.",
+    80,
+    1770
+  );
+
+  return new Promise(
+    (resolve, reject) => {
+      canvas.toBlob(
+        blob => {
+          if (!blob) {
+            reject(
+              new Error(
+                "Die Share-Grafik konnte nicht erstellt werden."
+              )
+            );
+
+            return;
+          }
+
+          resolve(blob);
+        },
+        "image/png",
+        1
+      );
+    }
+  );
+}
+
+function fitCanvasText(
+  ctx,
+  text,
+  maxWidth
+) {
+  const clean =
+    String(text || "");
+
+  if (
+    ctx.measureText(clean)
+      .width <= maxWidth
+  ) {
+    return clean;
+  }
+
+  let result =
+    clean;
+
+  while (
+    result.length > 1 &&
+    ctx.measureText(
+      `${result}…`
+    ).width > maxWidth
+  ) {
+    result =
+      result.slice(
+        0,
+        -1
+      );
+  }
+
+  return `${result}…`;
+}
+
+function drawShareStat(
+  ctx,
+  x,
+  y,
+  value,
+  label
+) {
+  ctx.fillStyle =
+    "#14171c";
+
+  roundRect(
+    ctx,
+    x,
+    y,
+    460,
+    150,
+    24
+  );
+
+  ctx.fill();
+
+  ctx.fillStyle =
+    "#d7ff3f";
+
+  ctx.font =
+    "900 54px Arial";
+
+  ctx.fillText(
+    value,
+    x + 28,
+    y + 68
+  );
+
+  ctx.fillStyle =
+    "#8d949e";
+
+  ctx.font =
+    "800 17px Arial";
+
+  ctx.fillText(
+    label,
+    x + 29,
+    y + 110
+  );
+}
+
+function roundRect(
+  ctx,
+  x,
+  y,
+  width,
+  height,
+  radius
+) {
+  ctx.beginPath();
+
+  ctx.moveTo(
+    x + radius,
+    y
+  );
+
+  ctx.lineTo(
+    x + width - radius,
+    y
+  );
+
+  ctx.quadraticCurveTo(
+    x + width,
+    y,
+    x + width,
+    y + radius
+  );
+
+  ctx.lineTo(
+    x + width,
+    y + height - radius
+  );
+
+  ctx.quadraticCurveTo(
+    x + width,
+    y + height,
+    x + width - radius,
+    y + height
+  );
+
+  ctx.lineTo(
+    x + radius,
+    y + height
+  );
+
+  ctx.quadraticCurveTo(
+    x,
+    y + height,
+    x,
+    y + height - radius
+  );
+
+  ctx.lineTo(
+    x,
+    y + radius
+  );
+
+  ctx.quadraticCurveTo(
+    x,
+    y,
+    x + radius,
+    y
+  );
+
+  ctx.closePath();
+}
+
+/* =========================
+   SHARE WEEK ACTION
+========================= */
+
+async function shareLastWeek() {
+  if (shareWeekBtn) {
+    shareWeekBtn.disabled =
+      true;
+
+    shareWeekBtn.textContent =
+      "Grafik wird erstellt …";
+  }
+
+  try {
+    const blob =
+      await createWeeklyShareImage();
+
+    showShareImagePreview(
+      blob
+    );
+
+    const file =
+      new File(
+        [blob],
+        "HYPE-meine-Woche.png",
+        {
+          type: "image/png"
+        }
+      );
+
+    if (
+      navigator.share &&
+      navigator.canShare &&
+      navigator.canShare({
+        files: [file]
+      })
+    ) {
+      await navigator.share({
+        title:
+          "Meine Woche mit HYPE",
+
+        text:
+          "Meine Trainingswoche mit HYPE.",
+
+        files: [file]
+      });
+
+      return;
+    }
+
+    const url =
+      URL.createObjectURL(blob);
+
+    const link =
+      document.createElement("a");
+
+    link.href =
+      url;
+
+    link.download =
+      "HYPE-meine-Woche.png";
+
+    document.body.appendChild(
+      link
+    );
+
+    link.click();
+
+    link.remove();
+
+    setTimeout(
+      () => {
+        URL.revokeObjectURL(
+          url
+        );
+      },
+      1000
+    );
+
+  } catch (error) {
+    if (
+      error?.name !==
+      "AbortError"
+    ) {
+      console.error(
+        "HYPE weekly share error:",
+        error
+      );
+
+      alert(
+        "Die Wochen-Grafik konnte nicht erstellt werden."
+      );
+    }
+
+  } finally {
+    if (shareWeekBtn) {
+      shareWeekBtn.disabled =
+        false;
+
+      shareWeekBtn.textContent =
+        "📸 Auf Instagram teilen";
+    }
+  }
+}
+
+/* =========================
+   SHARE IMAGE PREVIEW
+========================= */
+
+function showShareImagePreview(
+  blob
+) {
+  if (!weeklyShareCard) {
+    return;
+  }
+
+  let preview =
+    document.getElementById(
+      "weeklyShareImagePreview"
+    );
+
+  if (!preview) {
+    preview =
+      document.createElement(
+        "div"
+      );
+
+    preview.id =
+      "weeklyShareImagePreview";
+
+    preview.className =
+      "weekly-share-image-preview";
+
+    weeklyShareCard.parentNode.insertBefore(
+      preview,
+      weeklyShareCard.nextSibling
+    );
+  }
+
+  const oldUrl =
+    preview.dataset.url;
+
+  if (oldUrl) {
+    URL.revokeObjectURL(
+      oldUrl
+    );
+  }
+
+  const url =
+    URL.createObjectURL(
+      blob
+    );
+
+  preview.dataset.url =
+    url;
+
+  preview.innerHTML = `
+    <div class="weekly-share-image-preview-head">
+
+      <div>
+        <div class="eyebrow">
+          DEINE SHARE-KARTE
+        </div>
+
+        <strong>
+          Bereit zum Teilen
+        </strong>
+      </div>
+
+      <button
+        type="button"
+        class="weekly-share-preview-close"
+        aria-label="Vorschau schließen"
+      >
+        ×
+      </button>
+
+    </div>
+
+    <img
+      src="${url}"
+      alt="HYPE Wochenkarte"
+      class="weekly-share-image"
+    >
+  `;
+
+  const closeButton =
+    preview.querySelector(
+      ".weekly-share-preview-close"
+    );
+
+  if (closeButton) {
+    closeButton.addEventListener(
+      "click",
+      () => {
+        const currentUrl =
+          preview.dataset.url;
+
+        if (currentUrl) {
+          URL.revokeObjectURL(
+            currentUrl
+          );
+        }
+
+        preview.dataset.url =
+          "";
+
+        preview.innerHTML =
+          "";
+      }
+    );
+  }
+}
+
+/* =========================
+   CALENDAR EXPORT
+========================= */
+
+function calendarEscape(value) {
+  return String(value ?? "")
+    .replace(/\\/g, "\\\\")
+    .replace(/\r?\n/g, "\\n")
+    .replace(/;/g, "\\;")
+    .replace(/,/g, "\\,");
+}
+
+function calendarDate(date) {
+  return [
+    date.getFullYear(),
+    pad(date.getMonth() + 1),
+    pad(date.getDate())
+  ].join("");
+}
+
+function calendarDateTimeUTC(date) {
+  return (
+    date.getUTCFullYear() +
+    pad(date.getUTCMonth() + 1) +
+    pad(date.getUTCDate()) +
+    "T" +
+    pad(date.getUTCHours()) +
+    pad(date.getUTCMinutes()) +
+    pad(date.getUTCSeconds()) +
+    "Z"
+  );
+}
+
+function createCalendarFile() {
+  const weekStart =
+    startOfWeek(selected);
+
+  const weekEndExclusive =
+    addDays(
+      weekStart,
+      7
+    );
+
+  const weekSessions =
+    sessions.filter(
+      session => {
+        if (!session.date) {
+          return false;
+        }
+
+        const sessionDate =
+          parseDate(
+            session.date
+          );
+
+        return (
+          sessionDate >=
+            weekStart &&
+          sessionDate <
+            weekEndExclusive
+        );
+      }
     );
 
   if (!weekSessions.length) {
     alert(
-      "Keine Trainings für diese Woche vorhanden."
+      "Für diese Woche sind noch keine Trainings geplant."
     );
 
     return;
   }
 
+  const dtStamp =
+    calendarDateTimeUTC(
+      new Date()
+    );
+
   const events =
     weekSessions.map(
       session => {
-        const date =
-          parseInputDate(
+        const meta =
+          sportMeta[
+            session.sport
+          ] ||
+          sportMeta.running;
+
+        const title =
+          `${meta.label} · ${session.title}`;
+
+        let description =
+          [
+            "HYPE Training",
+            `Sport: ${meta.label}`,
+            `Dauer: ${session.duration || 0} min`,
+            `Intensität: ${session.intensity || 0}/5`
+          ].join("\n");
+
+        if (session.notes) {
+          description +=
+            `\n\n${session.notes}`;
+        }
+
+        const start =
+          parseDate(
             session.date
           );
 
-        const nextDay =
+        const end =
           addDays(
-            date,
+            start,
             1
           );
 
         const uid =
-          `${session.id}@hype`;
+          `hype-${session.id}@hype`;
 
         return [
           "BEGIN:VEVENT",
-          `UID:${uid}`,
-          `DTSTAMP:${dateToCalendarDate(
-            new Date()
-          )}`,
-          `DTSTART;VALUE=DATE:${dateToCalendarDate(
-            date
-          )}`,
-          `DTEND;VALUE=DATE:${dateToCalendarDate(
-            nextDay
-          )}`,
-          `SUMMARY:${calendarEscape(
-            getSessionTitle(
-              session
-            )
-          )}`,
-          `DESCRIPTION:${calendarEscape(
-            getSessionSummary(
-              session
-            )
-          )}`,
+          `UID:${calendarEscape(uid)}`,
+          `DTSTAMP:${dtStamp}`,
+          `DTSTART;VALUE=DATE:${calendarDate(start)}`,
+          `DTEND;VALUE=DATE:${calendarDate(end)}`,
+          `SUMMARY:${calendarEscape(title)}`,
+          `DESCRIPTION:${calendarEscape(description)}`,
           "END:VEVENT"
         ].join("\r\n");
       }
     );
 
-  const content =
+  const calendar =
     [
       "BEGIN:VCALENDAR",
       "VERSION:2.0",
       "PRODID:-//HYPE//Training Planner//DE",
       "CALSCALE:GREGORIAN",
+      "METHOD:PUBLISH",
       ...events,
       "END:VCALENDAR"
     ].join("\r\n");
 
   const blob =
     new Blob(
-      [content],
+      [calendar],
       {
         type:
           "text/calendar;charset=utf-8"
@@ -2763,15 +3065,13 @@ function createWeeklyCalendarExport() {
     );
 
   const link =
-    document.createElement(
-      "a"
-    );
+    document.createElement("a");
 
   link.href =
     url;
 
   link.download =
-    `HYPE-${dateToInputValue(
+    `HYPE-${calendarDate(
       weekStart
     )}.ics`;
 
@@ -2793,95 +3093,1820 @@ function createWeeklyCalendarExport() {
   );
 }
 
-function dateToCalendarDate(
-  date
-) {
-  return [
-    date.getFullYear(),
-    pad(
-      date.getMonth() + 1
-    ),
-    pad(
-      date.getDate()
-    )
-  ].join("");
+/* =========================
+   PLAN
+========================= */
+
+function renderPlan() {
+  const start =
+    startOfWeek(selected);
+
+  const end =
+    endOfWeek(selected);
+
+  const startText =
+    new Intl.DateTimeFormat(
+      "de-DE",
+      {
+        day: "numeric",
+        month: "short"
+      }
+    ).format(start);
+
+  const endText =
+    new Intl.DateTimeFormat(
+      "de-DE",
+      {
+        day: "numeric",
+        month: "short"
+      }
+    ).format(end);
+
+  weekTitle.textContent =
+    `${startText} – ${endText}`;
+
+  heroYear.textContent =
+    start.getFullYear();
+
+  const weekEyebrow =
+    document.querySelector(
+      ".week-navigation .eyebrow"
+    );
+
+  if (weekEyebrow) {
+    const currentWeekStart =
+      startOfWeek(new Date());
+
+    weekEyebrow.textContent =
+      iso(start) ===
+      iso(currentWeekStart)
+        ? "DIESE WOCHE"
+        : "WOCHENPLAN";
+  }
+
+  renderWeekStrip();
+
+  selectedDateLabel.textContent =
+    formatLongDate(selected);
+
+  renderSelectedDay();
+
+  renderWeeklyInsight();
 }
 
-function calendarEscape(value) {
-  return String(
-    value ?? ""
-  )
-    .replaceAll(
-      "\\",
-      "\\\\"
-    )
-    .replaceAll(
-      ";",
-      "\\;"
-    )
-    .replaceAll(
-      ",",
-      "\\,"
-    )
-    .replaceAll(
-      "\n",
-      "\\n"
+function renderWeekStrip() {
+  weekStrip.innerHTML = "";
+
+  const start =
+    startOfWeek(selected);
+
+  const dayNames = [
+    "Mo",
+    "Di",
+    "Mi",
+    "Do",
+    "Fr",
+    "Sa",
+    "So"
+  ];
+
+  for (
+    let i = 0;
+    i < 7;
+    i++
+  ) {
+    const date =
+      addDays(start, i);
+
+    const dateString =
+      iso(date);
+
+    const daySessions =
+      sessionsForDate(
+        dateString
+      );
+
+    const button =
+      document.createElement(
+        "button"
+      );
+
+    button.className =
+      "day" +
+      (
+        dateString ===
+        iso(selected)
+          ? " active"
+          : ""
+      );
+
+    button.type =
+      "button";
+
+    const todayLabel =
+      isToday(date)
+        ? `<span class="today-label">HEUTE</span>`
+        : `<span class="today-label">&nbsp;</span>`;
+
+    button.innerHTML = `
+      ${dayNames[i]}
+
+      <strong>
+        ${date.getDate()}
+      </strong>
+
+      ${todayLabel}
+
+      ${
+        daySessions.length
+          ? `<span class="dot"></span>`
+          : `<span style="display:block;height:5px;margin-top:7px;"></span>`
+      }
+    `;
+
+    button.addEventListener(
+      "click",
+      () => {
+        selected = date;
+
+        renderPlan();
+      }
+    );
+
+    weekStrip.appendChild(
+      button
+    );
+  }
+}
+
+function renderSelectedDay() {
+  const list =
+    sessionsForDate(
+      iso(selected)
+    );
+
+  if (!list.length) {
+    sessionsEl.innerHTML = `
+      <div class="empty">
+        Für diesen Tag ist noch kein Training geplant.
+      </div>
+    `;
+
+    return;
+  }
+
+  sessionsEl.innerHTML =
+    list
+      .map(
+        renderSessionCard
+      )
+      .join("");
+
+  attachSessionEvents(
+    sessionsEl
+  );
+}
+
+/* =========================
+   SESSION CARD
+========================= */
+
+function renderSessionCard(
+  session
+) {
+  const meta =
+    sportMeta[
+      session.sport
+    ] ||
+    sportMeta.running;
+
+  const dots =
+    Array.from({
+      length: 5
+    })
+      .map(
+        (_, index) =>
+          index <
+          Number(
+            session.intensity || 0
+          )
+            ? "●"
+            : "○"
+      )
+      .join("");
+
+  const actualOptions = [
+    [0, "entspannend"],
+    [1, "sehr leicht"],
+    [2, "leicht"],
+    [3, "moderat"],
+    [4, "hart"],
+    [5, "sehr hart"]
+  ];
+
+  const actualSelect =
+    actualOptions
+      .map(
+        ([value, label]) =>
+          `
+            <option
+              value="${value}"
+              ${
+                Number(
+                  session.actualIntensity
+                ) === value
+                  ? "selected"
+                  : ""
+              }
+            >
+              ${value} · ${label}
+            </option>
+          `
+      )
+      .join("");
+
+  return `
+    <article
+      class="session ${
+        session.completed
+          ? "completed"
+          : ""
+      }"
+      data-id="${esc(session.id)}"
+    >
+
+      <div class="sport-icon">
+        ${meta.icon}
+      </div>
+
+      <div class="session-content">
+
+        <div class="session-title-row">
+
+          <h4>
+            ${esc(session.title)}
+          </h4>
+
+          ${
+            session.completed
+              ? `
+                <span class="completed-label">
+                  ERLEDIGT
+                </span>
+              `
+              : ""
+          }
+
+        </div>
+
+        <p>
+          ${meta.label}
+          · ${esc(session.duration)} min
+        </p>
+
+        <p>
+          ${dots}
+        </p>
+
+        ${
+          session.notes
+            ? `
+              <p>
+                ${esc(session.notes)}
+              </p>
+            `
+            : ""
+        }
+
+        ${
+          session.completed
+            ? `
+              <div class="actual-intensity">
+
+                <span>
+                  Gefühlt:
+                </span>
+
+                <select
+                  class="actual-intensity-select"
+                  data-action="actual-intensity"
+                >
+                  ${actualSelect}
+                </select>
+
+              </div>
+
+              <div class="post-training-notes">
+
+                <label>
+
+                  Wie war das Training?
+
+                  <textarea
+                    rows="3"
+                    data-action="post-notes"
+                    placeholder="z. B. Hat sich heute sehr gut angefühlt …"
+                  >${esc(
+                    session.postNotes || ""
+                  )}</textarea>
+
+                </label>
+
+              </div>
+            `
+            : ""
+        }
+
+      </div>
+
+      <div class="session-actions">
+
+        <button
+          type="button"
+          class="complete-btn ${
+            session.completed
+              ? "is-completed"
+              : ""
+          }"
+          data-action="complete"
+        >
+          ${
+            session.completed
+              ? "✓"
+              : "○"
+          }
+        </button>
+
+        <button
+          type="button"
+          class="edit-btn"
+          data-action="edit"
+        >
+          ✎ Bearbeiten
+        </button>
+
+        <button
+          type="button"
+          class="edit-btn"
+          data-action="delete"
+        >
+          × Löschen
+        </button>
+
+      </div>
+
+    </article>
+  `;
+}
+
+function attachSessionEvents(
+  container
+) {
+  container
+    .querySelectorAll(".session")
+    .forEach(
+      card => {
+        const id =
+          card.dataset.id;
+
+        const session =
+          sessions.find(
+            item =>
+              item.id === id
+          );
+
+        if (!session) {
+          return;
+        }
+
+        const completeButton =
+          card.querySelector(
+            '[data-action="complete"]'
+          );
+
+        const editButton =
+          card.querySelector(
+            '[data-action="edit"]'
+          );
+
+        const deleteButton =
+          card.querySelector(
+            '[data-action="delete"]'
+          );
+
+        const actualIntensity =
+          card.querySelector(
+            '[data-action="actual-intensity"]'
+          );
+
+        const postNotes =
+          card.querySelector(
+            '[data-action="post-notes"]'
+          );
+
+        completeButton.addEventListener(
+          "click",
+          () => {
+            if (
+              !session.completed &&
+              isFutureDate(
+                session.date
+              )
+            ) {
+              alert(
+                getFutureMessage(
+                  session.date
+                )
+              );
+
+              return;
+            }
+
+            session.completed =
+              !session.completed;
+
+            if (!session.completed) {
+              session.actualIntensity =
+                null;
+
+              session.postNotes =
+                "";
+            }
+
+            save();
+
+            renderAll();
+          }
+        );
+
+        editButton.addEventListener(
+          "click",
+          () => {
+            openEditDialog(
+              session
+            );
+          }
+        );
+
+        deleteButton.addEventListener(
+          "click",
+          () => {
+            const confirmed =
+              window.confirm(
+                "Möchtest du diese Einheit wirklich löschen?\n\n" +
+                session.title
+              );
+
+            if (!confirmed) {
+              return;
+            }
+
+            sessions =
+              sessions.filter(
+                item =>
+                  item.id !== id
+              );
+
+            save();
+
+            renderAll();
+          }
+        );
+
+        if (actualIntensity) {
+          actualIntensity.addEventListener(
+            "change",
+            () => {
+              session.actualIntensity =
+                Number(
+                  actualIntensity.value
+                );
+
+              save();
+            }
+          );
+        }
+
+        if (postNotes) {
+          postNotes.addEventListener(
+            "input",
+            () => {
+              session.postNotes =
+                postNotes.value;
+
+              save();
+            }
+          );
+        }
+      }
     );
 }
 
-/* EVENTS */
+/* =========================
+   WEEKLY INSIGHT
+========================= */
 
-if (addTrainingBtn) {
-  addTrainingBtn.addEventListener(
-    "click",
-    () => {
-      openSessionDialog(
-        null,
-        addDays(
-          startOfWeek(
-            new Date()
-          ),
-          [
-            "monday",
-            "tuesday",
-            "wednesday",
-            "thursday",
-            "friday",
-            "saturday",
-            "sunday"
-          ].indexOf(
-            selectedDayKey
-          )
-        )
+function renderWeeklyInsight() {
+  const weekSessions =
+    sessionsForWeek(
+      selected
+    );
+
+  const completed =
+    weekSessions.filter(
+      session =>
+        session.completed
+    ).length;
+
+  const planned =
+    weekSessions.length;
+
+  if (!planned) {
+    weeklyInsight.innerHTML = `
+      <div class="insight-icon">
+        ✦
+      </div>
+
+      <div>
+
+        <strong>
+          Deine Woche ist noch frei.
+        </strong>
+
+        <p>
+          Plane deine ersten Einheiten und baue dir
+          deine Woche Schritt für Schritt auf.
+        </p>
+
+      </div>
+    `;
+
+    return;
+  }
+
+  const remaining =
+    planned - completed;
+
+  let text =
+    `${completed} von ${planned} Einheiten erledigt.`;
+
+  if (remaining > 0) {
+    text +=
+      ` ${remaining} ${
+        remaining === 1
+          ? "Einheit ist"
+          : "Einheiten sind"
+      } noch offen.`;
+  } else {
+    text +=
+      " Stark – deine Woche ist komplett.";
+  }
+
+  weeklyInsight.innerHTML = `
+    <div class="insight-icon">
+      ✦
+    </div>
+
+    <div>
+
+      <strong>
+        Wochenstatus
+      </strong>
+
+      <p>
+        ${text}
+      </p>
+
+    </div>
+  `;
+}
+
+/* =========================
+   OVERVIEW
+========================= */
+
+function renderOverview() {
+  renderPeriodButtons();
+
+  renderPeriodNavigation();
+
+  if (
+    overviewPeriod ===
+    "week"
+  ) {
+    renderOverviewWeek();
+  }
+
+  if (
+    overviewPeriod ===
+    "month"
+  ) {
+    renderOverviewMonth();
+  }
+
+  if (
+    overviewPeriod ===
+    "year"
+  ) {
+    renderOverviewYear();
+  }
+}
+
+function renderPeriodButtons() {
+  document
+    .querySelectorAll(
+      ".period-btn"
+    )
+    .forEach(
+      button => {
+        button.classList.toggle(
+          "active",
+          button.dataset.period ===
+            overviewPeriod
+        );
+      }
+    );
+}
+
+function renderPeriodNavigation() {
+  if (
+    overviewPeriod ===
+    "week"
+  ) {
+    const start =
+      startOfWeek(
+        overviewDate
+      );
+
+    const end =
+      endOfWeek(
+        overviewDate
+      );
+
+    const startText =
+      new Intl.DateTimeFormat(
+        "de-DE",
+        {
+          day: "numeric",
+          month: "short"
+        }
+      ).format(start);
+
+    const endText =
+      new Intl.DateTimeFormat(
+        "de-DE",
+        {
+          day: "numeric",
+          month: "short"
+        }
+      ).format(end);
+
+    periodTitle.textContent =
+      `${startText} – ${endText} ${start.getFullYear()}`;
+
+    return;
+  }
+
+  if (
+    overviewPeriod ===
+    "month"
+  ) {
+    periodTitle.textContent =
+      formatMonthYear(
+        overviewDate
+      );
+
+    return;
+  }
+
+  periodTitle.textContent =
+    overviewDate.getFullYear();
+}
+
+function renderOverviewWeek() {
+  const start =
+    startOfWeek(
+      overviewDate
+    );
+
+  let html =
+    `<div class="overview-week">`;
+
+  for (
+    let i = 0;
+    i < 7;
+    i++
+  ) {
+    const date =
+      addDays(
+        start,
+        i
+      );
+
+    const dateString =
+      iso(date);
+
+    const daySessions =
+      sessionsForDate(
+        dateString
+      );
+
+    const completed =
+      daySessions.filter(
+        session =>
+          session.completed
+      ).length;
+
+    html += `
+      <section
+        class="overview-day ${
+          isToday(date)
+            ? "today"
+            : ""
+        }"
+        data-date="${dateString}"
+      >
+
+        <div class="overview-day-head">
+
+          <div class="overview-day-date">
+
+            <span class="overview-day-name">
+              ${
+                new Intl.DateTimeFormat(
+                  "de-DE",
+                  {
+                    weekday:
+                      "long"
+                  }
+                ).format(date)
+              }
+            </span>
+
+            <span class="overview-day-number">
+              ${date.getDate()}.${pad(
+                date.getMonth() + 1
+              )}.
+            </span>
+
+          </div>
+
+          <span
+            class="overview-day-status ${
+              daySessions.length &&
+              completed ===
+              daySessions.length
+                ? "done"
+                : ""
+            }"
+          >
+            ${
+              daySessions.length
+                ? `${completed}/${daySessions.length}`
+                : "frei"
+            }
+          </span>
+
+        </div>
+
+        <div class="overview-day-sessions">
+    `;
+
+    if (!daySessions.length) {
+      html += `
+        <div class="overview-empty-day">
+          Keine Einheit geplant
+        </div>
+      `;
+    } else {
+      daySessions.forEach(
+        session => {
+          const meta =
+            sportMeta[
+              session.sport
+            ] ||
+            sportMeta.running;
+
+          html += `
+            <div
+              class="overview-mini-session"
+            >
+
+              <div class="mini-icon">
+                ${meta.icon}
+              </div>
+
+              <div>
+
+                <div class="mini-title">
+                  ${esc(
+                    session.title
+                  )}
+                </div>
+
+                <div class="mini-meta">
+                  ${meta.label}
+                  · ${esc(
+                    session.duration
+                  )} min
+                </div>
+
+              </div>
+
+              <div
+                class="mini-status ${
+                  session.completed
+                    ? "completed"
+                    : ""
+                }"
+              >
+                ${
+                  session.completed
+                    ? "✓"
+                    : "○"
+                }
+              </div>
+
+            </div>
+          `;
+        }
       );
     }
-  );
+
+    html += `
+        </div>
+
+      </section>
+    `;
+  }
+
+  html += `</div>`;
+
+  overviewContent.innerHTML =
+    html;
+
+  attachOverviewDayNavigation();
 }
 
-if (closeSessionDialogBtn) {
-  closeSessionDialogBtn.addEventListener(
-    "click",
-    closeSessionDialog
-  );
+function attachOverviewDayNavigation() {
+  overviewContent
+    .querySelectorAll(
+      ".overview-day"
+    )
+    .forEach(
+      dayElement => {
+        const dateString =
+          dayElement.dataset.date;
+
+        dayElement.addEventListener(
+          "click",
+          event => {
+            event.preventDefault();
+
+            selected =
+              parseDate(
+                dateString
+              );
+
+            setView(
+              "plan"
+            );
+          }
+        );
+      }
+    );
 }
 
-if (cancelSessionBtn) {
-  cancelSessionBtn.addEventListener(
-    "click",
-    closeSessionDialog
-  );
+/* =========================
+   OVERVIEW MONTH
+========================= */
+
+function renderOverviewMonth() {
+  const year =
+    overviewDate.getFullYear();
+
+  const month =
+    overviewDate.getMonth();
+
+  const firstDay =
+    new Date(
+      year,
+      month,
+      1,
+      12
+    );
+
+  const lastDay =
+    new Date(
+      year,
+      month + 1,
+      0,
+      12
+    );
+
+  const mondayOffset =
+    firstDay.getDay() === 0
+      ? 6
+      : firstDay.getDay() - 1;
+
+  const daysInMonth =
+    lastDay.getDate();
+
+  let html = `
+    <div class="month-calendar">
+
+      <div class="month-weekdays">
+
+        <div class="month-weekday">MO</div>
+        <div class="month-weekday">DI</div>
+        <div class="month-weekday">MI</div>
+        <div class="month-weekday">DO</div>
+        <div class="month-weekday">FR</div>
+        <div class="month-weekday">SA</div>
+        <div class="month-weekday">SO</div>
+
+      </div>
+
+      <div class="month-grid">
+  `;
+
+  for (
+    let i = 0;
+    i < mondayOffset;
+    i++
+  ) {
+    const previousDate =
+      new Date(
+        year,
+        month,
+        i - mondayOffset + 1,
+        12
+      );
+
+    html +=
+      renderMonthCell(
+        previousDate,
+        true
+      );
+  }
+
+  for (
+    let day = 1;
+    day <= daysInMonth;
+    day++
+  ) {
+    const date =
+      new Date(
+        year,
+        month,
+        day,
+        12
+      );
+
+    html +=
+      renderMonthCell(
+        date,
+        false
+      );
+  }
+
+  const usedCells =
+    mondayOffset +
+    daysInMonth;
+
+  const remaining =
+    (
+      7 -
+      (
+        usedCells % 7
+      )
+    ) % 7;
+
+  for (
+    let i = 1;
+    i <= remaining;
+    i++
+  ) {
+    const nextDate =
+      new Date(
+        year,
+        month,
+        daysInMonth + i,
+        12
+      );
+
+    html +=
+      renderMonthCell(
+        nextDate,
+        true
+      );
+  }
+
+  html += `
+      </div>
+    </div>
+  `;
+
+  overviewContent.innerHTML =
+    html;
+
+  attachMonthWeekNavigation();
 }
 
-if (sessionForm) {
-  sessionForm.addEventListener(
-    "submit",
-    event => {
-      event.preventDefault();
+function renderMonthCell(
+  date,
+  otherMonth
+) {
+  const dateString =
+    iso(date);
 
-      createOrUpdateSession();
+  const daySessions =
+    sessionsForDate(
+      dateString
+    );
+
+  const completed =
+    daySessions.filter(
+      session =>
+        session.completed
+    ).length;
+
+  let dots = "";
+
+  daySessions
+    .slice(0, 5)
+    .forEach(
+      session => {
+        dots += `
+          <span
+            class="month-dot ${
+              session.completed
+                ? "completed"
+                : ""
+            }"
+          ></span>
+        `;
+      }
+    );
+
+  return `
+    <div
+      class="month-cell ${
+        otherMonth
+          ? "other-month"
+          : ""
+      } ${
+        isToday(date)
+          ? "today"
+          : ""
+      }"
+      data-date="${dateString}"
+    >
+
+      <div class="month-date">
+        ${date.getDate()}
+      </div>
+
+      ${
+        daySessions.length
+          ? `
+            <div class="month-dots">
+              ${dots}
+            </div>
+
+            <div class="month-count">
+              ${completed}/${daySessions.length}
+            </div>
+          `
+          : ""
+      }
+
+    </div>
+  `;
+}
+
+function attachMonthWeekNavigation() {
+  const grid =
+    overviewContent.querySelector(
+      ".month-grid"
+    );
+
+  if (!grid) {
+    return;
+  }
+
+  const cells =
+    Array.from(
+      grid.querySelectorAll(
+        ".month-cell"
+      )
+    );
+
+  for (
+    let i = 0;
+    i < cells.length;
+    i += 7
+  ) {
+    const weekCells =
+      cells.slice(
+        i,
+        i + 7
+      );
+
+    if (!weekCells.length) {
+      continue;
     }
+
+    const firstDate =
+      parseDate(
+        weekCells[0]
+          .dataset.date
+      );
+
+    const lastDate =
+      parseDate(
+        weekCells[
+          weekCells.length - 1
+        ].dataset.date
+      );
+
+    const weekButton =
+      document.createElement(
+        "button"
+      );
+
+    weekButton.type =
+      "button";
+
+    weekButton.className =
+      "month-week-hit-area";
+
+    weekButton.setAttribute(
+      "aria-label",
+      `Woche vom ${formatShortDate(
+        firstDate
+      )} bis ${formatShortDate(
+        lastDate
+      )} öffnen`
+    );
+
+    const firstRect =
+      weekCells[0]
+        .getBoundingClientRect();
+
+    const lastRect =
+      weekCells[
+        weekCells.length - 1
+      ].getBoundingClientRect();
+
+    const gridRect =
+      grid.getBoundingClientRect();
+
+    weekButton.style.top =
+      `${firstRect.top - gridRect.top}px`;
+
+    weekButton.style.height =
+      `${lastRect.bottom - firstRect.top}px`;
+
+    weekButton.addEventListener(
+      "click",
+      event => {
+        event.preventDefault();
+
+        overviewDate =
+          startOfWeek(
+            firstDate
+          );
+
+        overviewPeriod =
+          "week";
+
+        renderOverview();
+      }
+    );
+
+    grid.appendChild(
+      weekButton
+    );
+  }
+}
+
+/* =========================
+   OVERVIEW YEAR
+========================= */
+
+function renderOverviewYear() {
+  const year =
+    overviewDate.getFullYear();
+
+  const yearSessions =
+    sessionsForYear(year);
+
+  const completed =
+    yearSessions.filter(
+      session =>
+        session.completed
+    ).length;
+
+  const planned =
+    yearSessions.length;
+
+  const trainingDays =
+    new Set(
+      yearSessions.map(
+        session =>
+          session.date
+      )
+    ).size;
+
+  let html = `
+    <div class="year-overview">
+
+      <div class="year-summary">
+
+        <div class="year-stat">
+          <strong>${planned}</strong>
+          <span>Einheiten</span>
+        </div>
+
+        <div class="year-stat">
+          <strong>${completed}</strong>
+          <span>Erledigt</span>
+        </div>
+
+        <div class="year-stat">
+          <strong>${trainingDays}</strong>
+          <span>Trainingstage</span>
+        </div>
+
+      </div>
+
+      <div class="year-months">
+  `;
+
+  for (
+    let month = 0;
+    month < 12;
+    month++
+  ) {
+    html +=
+      renderYearMonth(
+        year,
+        month
+      );
+  }
+
+  html += `
+      </div>
+    </div>
+  `;
+
+  overviewContent.innerHTML =
+    html;
+
+  attachYearMonthNavigation();
+}
+
+function renderYearMonth(
+  year,
+  month
+) {
+  const firstDay =
+    new Date(
+      year,
+      month,
+      1,
+      12
+    );
+
+  const daysInMonth =
+    new Date(
+      year,
+      month + 1,
+      0,
+      12
+    ).getDate();
+
+  const mondayOffset =
+    firstDay.getDay() === 0
+      ? 6
+      : firstDay.getDay() - 1;
+
+  const monthSessions =
+    sessions.filter(
+      session => {
+        const date =
+          parseDate(
+            session.date
+          );
+
+        return (
+          date.getFullYear() ===
+            year &&
+          date.getMonth() ===
+            month
+        );
+      }
+    );
+
+  let html = `
+    <button
+      type="button"
+      class="year-month"
+      data-year="${year}"
+      data-month="${month}"
+    >
+
+      <div class="year-month-head">
+
+        <span class="year-month-name">
+          ${
+            new Intl.DateTimeFormat(
+              "de-DE",
+              {
+                month: "long"
+              }
+            ).format(firstDay)
+          }
+        </span>
+
+        <span class="year-month-count">
+          ${monthSessions.length}
+          ${
+            monthSessions.length === 1
+              ? "Einheit"
+              : "Einheiten"
+          }
+        </span>
+
+      </div>
+
+      <div class="year-month-grid">
+
+        <div class="year-weekday">M</div>
+        <div class="year-weekday">D</div>
+        <div class="year-weekday">M</div>
+        <div class="year-weekday">D</div>
+        <div class="year-weekday">F</div>
+        <div class="year-weekday">S</div>
+        <div class="year-weekday">S</div>
+  `;
+
+  for (
+    let i = 0;
+    i < mondayOffset;
+    i++
+  ) {
+    html += `<div></div>`;
+  }
+
+  for (
+    let day = 1;
+    day <= daysInMonth;
+    day++
+  ) {
+    const date =
+      new Date(
+        year,
+        month,
+        day,
+        12
+      );
+
+    const dateString =
+      iso(date);
+
+    const daySessions =
+      sessionsForDate(
+        dateString
+      );
+
+    const hasTraining =
+      daySessions.length > 0;
+
+    const allCompleted =
+      hasTraining &&
+      daySessions.every(
+        session =>
+          session.completed
+      );
+
+    html += `
+      <div
+        class="year-day ${
+          hasTraining
+            ? "has-training"
+            : ""
+        } ${
+          allCompleted
+            ? "completed"
+            : ""
+        } ${
+          isToday(date)
+            ? "today"
+            : ""
+        }"
+      ></div>
+    `;
+  }
+
+  html += `
+      </div>
+    </button>
+  `;
+
+  return html;
+}
+
+function attachYearMonthNavigation() {
+  overviewContent
+    .querySelectorAll(
+      ".year-month"
+    )
+    .forEach(
+      monthButton => {
+        monthButton.addEventListener(
+          "click",
+          () => {
+            const year =
+              Number(
+                monthButton.dataset.year
+              );
+
+            const month =
+              Number(
+                monthButton.dataset.month
+              );
+
+            overviewDate =
+              new Date(
+                year,
+                month,
+                1,
+                12
+              );
+
+            overviewPeriod =
+              "month";
+
+            renderOverview();
+          }
+        );
+      }
+    );
+}
+
+/* =========================
+   TODAY
+========================= */
+
+function renderToday() {
+  const today =
+    new Date();
+
+  todayTitle.textContent =
+    formatLongDate(today);
+
+  const todaySessions =
+    sessionsForDate(
+      iso(today)
+    );
+
+  if (!todaySessions.length) {
+    todayContent.innerHTML = `
+      <div class="today-empty">
+
+        <strong>
+          Heute steht nichts im Plan.
+        </strong>
+
+        <p>
+          Du kannst den Tag frei lassen
+          oder eine neue Einheit hinzufügen.
+        </p>
+
+        <button
+          class="primary"
+          id="todayAddBtn"
+          type="button"
+        >
+          + Training hinzufügen
+        </button>
+
+      </div>
+    `;
+
+    document
+      .getElementById(
+        "todayAddBtn"
+      )
+      .addEventListener(
+        "click",
+        () => openNewDialog()
+      );
+
+    return;
+  }
+
+  todayContent.innerHTML = `
+    <div class="today-session-list">
+      ${
+        todaySessions
+          .map(
+            renderSessionCard
+          )
+          .join("")
+      }
+    </div>
+  `;
+
+  attachSessionEvents(
+    todayContent
   );
 }
+
+/* =========================
+   VIEW SWITCHING
+========================= */
+
+function setView(view) {
+  currentView =
+    view;
+
+  planView.classList.toggle(
+    "hidden",
+    view !== "plan"
+  );
+
+  overviewView.classList.toggle(
+    "hidden",
+    view !== "overview"
+  );
+
+  profileView.classList.toggle(
+    "hidden",
+    view !== "profile"
+  );
+
+  todayView.classList.toggle(
+    "hidden",
+    view !== "today"
+  );
+
+  if (bottomNav) {
+    bottomNav.classList.remove(
+      "hidden"
+    );
+  }
+
+  document
+    .querySelectorAll(
+      ".nav-item"
+    )
+    .forEach(
+      button => {
+        button.classList.toggle(
+          "active",
+          button.dataset.view ===
+            view
+        );
+      }
+    );
+
+  if (view === "plan") {
+    renderPlan();
+  }
+
+  if (view === "overview") {
+    renderOverview();
+  }
+
+  if (view === "profile") {
+    renderProfile();
+  }
+
+  if (view === "today") {
+    renderToday();
+  }
+}
+
+/* =========================
+   DIALOG
+========================= */
+
+function openNewDialog() {
+  editingId = null;
+
+  dialogTitle.textContent =
+    "Training hinzufügen";
+
+  trainingForm.reset();
+
+  sportInput.value =
+    "running";
+
+  durationInput.value =
+    45;
+
+  intensityInput.value =
+    3;
+
+  updateTitlePlaceholder();
+
+  trainingDialog.showModal();
+
+  setTimeout(
+    () => {
+      titleInput.focus();
+    },
+    50
+  );
+}
+
+function openEditDialog(
+  session
+) {
+  editingId =
+    session.id;
+
+  dialogTitle.textContent =
+    "Training bearbeiten";
+
+  sportInput.value =
+    session.sport;
+
+  titleInput.value =
+    session.title;
+
+  durationInput.value =
+    session.duration;
+
+  intensityInput.value =
+    session.intensity;
+
+  notesInput.value =
+    session.notes || "";
+
+  updateTitlePlaceholder();
+
+  trainingDialog.showModal();
+
+  setTimeout(
+    () => {
+      titleInput.focus();
+    },
+    50
+  );
+}
+
+function closeDialog() {
+  trainingDialog.close();
+
+  editingId = null;
+}
+
+function updateTitlePlaceholder() {
+  const meta =
+    sportMeta[
+      sportInput.value
+    ] ||
+    sportMeta.running;
+
+  titleInput.placeholder =
+    meta.placeholder;
+}
+
+/* =========================
+   TRAINING FORM
+========================= */
+
+trainingForm.addEventListener(
+  "submit",
+  event => {
+    event.preventDefault();
+
+    const sport =
+      sportInput.value;
+
+    const title =
+      titleInput.value.trim();
+
+    const duration =
+      Number(
+        durationInput.value
+      );
+
+    const intensity =
+      Number(
+        intensityInput.value
+      );
+
+    const notes =
+      notesInput.value.trim();
+
+    if (!title) {
+      return;
+    }
+
+    if (
+      !duration ||
+      duration < 1
+    ) {
+      return;
+    }
+
+    if (editingId) {
+      const session =
+        sessions.find(
+          item =>
+            item.id ===
+            editingId
+        );
+
+      if (session) {
+        session.sport =
+          sport;
+
+        session.title =
+          title;
+
+        session.duration =
+          duration;
+
+        session.intensity =
+          intensity;
+
+        session.notes =
+          notes;
+      }
+
+    } else {
+      sessions.push({
+        id:
+          `${Date.now()}-${Math.random()
+            .toString(16)
+            .slice(2)}`,
+
+        date:
+          iso(selected),
+
+        sport,
+
+        title,
+
+        duration,
+
+        intensity,
+
+        notes,
+
+        completed:
+          false,
+
+        actualIntensity:
+          null,
+
+        postNotes:
+          "",
+
+        createdAt:
+          Date.now()
+      });
+    }
+
+    save();
+
+    closeDialog();
+
+    renderAll();
+  }
+);
+
+sportInput.addEventListener(
+  "change",
+  updateTitlePlaceholder
+);
+
+closeDialogBtn.addEventListener(
+  "click",
+  closeDialog
+);
+
+trainingDialog.addEventListener(
+  "click",
+  event => {
+    if (
+      event.target ===
+      trainingDialog
+    ) {
+      closeDialog();
+    }
+  }
+);
+
+/* =========================
+   PROFILE EVENTS
+========================= */
 
 if (editProfileBtn) {
   editProfileBtn.addEventListener(
@@ -2907,22 +4932,34 @@ if (profileForm) {
     event => {
       event.preventDefault();
 
-      saveProfile();
+      saveProfileName();
     }
   );
 }
+
+if (profileDialog) {
+  profileDialog.addEventListener(
+    "click",
+    event => {
+      if (
+        event.target ===
+        profileDialog
+      ) {
+        closeProfileDialog();
+      }
+    }
+  );
+}
+
+/* =========================
+   PROFILE WEEK EVENTS
+========================= */
 
 if (shareWeekPrevBtn) {
   shareWeekPrevBtn.addEventListener(
     "click",
     () => {
-      shareWeekStart =
-        addDays(
-          shareWeekStart,
-          -7
-        );
-
-      renderWeeklySharePreview();
+      moveShareWeek(-1);
     }
   );
 }
@@ -2931,13 +4968,7 @@ if (shareWeekNextBtn) {
   shareWeekNextBtn.addEventListener(
     "click",
     () => {
-      shareWeekStart =
-        addDays(
-          shareWeekStart,
-          7
-        );
-
-      renderWeeklySharePreview();
+      moveShareWeek(1);
     }
   );
 }
@@ -2956,17 +4987,222 @@ if (shareWeekCurrentBtn) {
   );
 }
 
-if (shareHypeProfileBtn) {
-  shareHypeProfileBtn.addEventListener(
+/* =========================
+   NAVIGATION
+========================= */
+
+document
+  .querySelectorAll(".nav-item")
+  .forEach(
+    button => {
+      button.addEventListener(
+        "click",
+        () => {
+          setView(
+            button.dataset.view
+          );
+        }
+      );
+    }
+  );
+
+/* =========================
+   WEEK NAVIGATION
+========================= */
+
+weekPrevBtn.addEventListener(
+  "click",
+  () => {
+    selected =
+      addDays(
+        selected,
+        -7
+      );
+
+    renderPlan();
+  }
+);
+
+weekNextBtn.addEventListener(
+  "click",
+  () => {
+    selected =
+      addDays(
+        selected,
+        7
+      );
+
+    renderPlan();
+  }
+);
+
+/* =========================
+   TODAY
+========================= */
+
+todayJumpBtn.addEventListener(
+  "click",
+  () => {
+    selected =
+      new Date();
+
+    selected.setHours(
+      12,
+      0,
+      0,
+      0
+    );
+
+    renderPlan();
+  }
+);
+
+/* =========================
+   OVERVIEW PERIOD
+========================= */
+
+document
+  .querySelectorAll(".period-btn")
+  .forEach(
+    button => {
+      button.addEventListener(
+        "click",
+        () => {
+          overviewPeriod =
+            button.dataset.period;
+
+          renderOverview();
+        }
+      );
+    }
+  );
+
+periodPrevBtn.addEventListener(
+  "click",
+  () => {
+    if (
+      overviewPeriod ===
+      "week"
+    ) {
+      overviewDate =
+        addDays(
+          overviewDate,
+          -7
+        );
+    }
+
+    if (
+      overviewPeriod ===
+      "month"
+    ) {
+      overviewDate =
+        addMonths(
+          overviewDate,
+          -1
+        );
+    }
+
+    if (
+      overviewPeriod ===
+      "year"
+    ) {
+      overviewDate =
+        addYears(
+          overviewDate,
+          -1
+        );
+    }
+
+    renderOverview();
+  }
+);
+
+periodNextBtn.addEventListener(
+  "click",
+  () => {
+    if (
+      overviewPeriod ===
+      "week"
+    ) {
+      overviewDate =
+        addDays(
+          overviewDate,
+          7
+        );
+    }
+
+    if (
+      overviewPeriod ===
+      "month"
+    ) {
+      overviewDate =
+        addMonths(
+          overviewDate,
+          1
+        );
+    }
+
+    if (
+      overviewPeriod ===
+      "year"
+    ) {
+      overviewDate =
+        addYears(
+          overviewDate,
+          1
+        );
+    }
+
+    renderOverview();
+  }
+);
+
+periodTodayBtn.addEventListener(
+  "click",
+  () => {
+    overviewDate =
+      new Date();
+
+    overviewDate.setHours(
+      12,
+      0,
+      0,
+      0
+    );
+
+    renderOverview();
+  }
+);
+
+/* =========================
+   ACTION BUTTONS
+========================= */
+
+addTrainingBtn.addEventListener(
+  "click",
+  () => {
+    openNewDialog();
+  }
+);
+
+if (calendarExportBtn) {
+  calendarExportBtn.addEventListener(
     "click",
-    shareHypeProfile
+    createCalendarFile
   );
 }
 
 if (shareWeekBtn) {
   shareWeekBtn.addEventListener(
     "click",
-    shareHypeProfile
+    shareLastWeek
+  );
+}
+
+if (shareHypeProfileBtn) {
+  shareHypeProfileBtn.addEventListener(
+    "click",
+    shareHype
   );
 }
 
@@ -2984,93 +5220,12 @@ if (logoutBtn) {
   );
 }
 
-navButtons.forEach(
-  button => {
-    button.addEventListener(
-      "click",
-      () => {
-        setView(
-          button.dataset.view
-        );
-      }
-    );
-  }
-);
-
-overviewPeriodButtons.forEach(
-  button => {
-    button.addEventListener(
-      "click",
-      () => {
-        currentOverviewPeriod =
-          button.dataset.overviewPeriod;
-
-        renderOverview();
-      }
-    );
-  }
-);
-
-/* VIEW */
-
-function setView(view) {
-  currentView =
-    view;
-
-  planView?.classList.toggle(
-    "hidden",
-    view !== "plan"
-  );
-
-  overviewView?.classList.toggle(
-    "hidden",
-    view !== "overview"
-  );
-
-  profileView?.classList.toggle(
-    "hidden",
-    view !== "profile"
-  );
-
-  navButtons.forEach(
-    button => {
-      button.classList.toggle(
-        "active",
-        button.dataset.view ===
-          view
-      );
-    }
-  );
-
-  if (
-    view ===
-    "plan"
-  ) {
-    renderPlan();
-  }
-
-  if (
-    view ===
-    "overview"
-  ) {
-    renderOverview();
-  }
-
-  if (
-    view ===
-    "profile"
-  ) {
-    renderProfile();
-  }
-}
+/* =========================
+   GLOBAL RENDER
+========================= */
 
 function renderAll() {
-  if (
-    currentView ===
-    "plan"
-  ) {
-    renderPlan();
-  }
+  renderPlan();
 
   if (
     currentView ===
@@ -3085,102 +5240,49 @@ function renderAll() {
   ) {
     renderProfile();
   }
+
+  if (
+    currentView ===
+    "today"
+  ) {
+    renderToday();
+  }
 }
 
-/* WEEK BUTTONS */
+/* =========================
+   AUTH STATE
+========================= */
 
-const weekPrevBtn =
-  document.getElementById(
-    "weekPrevBtn"
-  );
-
-const weekNextBtn =
-  document.getElementById(
-    "weekNextBtn"
-  );
-
-const todayBtn =
-  document.getElementById(
-    "todayBtn"
-  );
-
-if (weekPrevBtn) {
-  weekPrevBtn.addEventListener(
-    "click",
-    () => {
-      moveWeek(-1);
-    }
-  );
+if (
+  typeof supabaseClient !==
+  "undefined"
+) {
+  supabaseClient.auth
+    .onAuthStateChange(
+      (
+        event,
+        session
+      ) => {
+        if (session) {
+          if (bottomNav) {
+            bottomNav.classList.remove(
+              "hidden"
+            );
+          }
+        } else {
+          if (bottomNav) {
+            bottomNav.classList.add(
+              "hidden"
+            );
+          }
+        }
+      }
+    );
 }
 
-if (weekNextBtn) {
-  weekNextBtn.addEventListener(
-    "click",
-    () => {
-      moveWeek(1);
-    }
-  );
-}
-
-if (todayBtn) {
-  todayBtn.addEventListener(
-    "click",
-    goToCurrentWeek
-  );
-}
-
-/* OVERVIEW NAV */
-
-const overviewPrevBtn =
-  document.getElementById(
-    "overviewPrevBtn"
-  );
-
-const overviewNextBtn =
-  document.getElementById(
-    "overviewNextBtn"
-  );
-
-const overviewTodayBtn =
-  document.getElementById(
-    "overviewTodayBtn"
-  );
-
-if (overviewPrevBtn) {
-  overviewPrevBtn.addEventListener(
-    "click",
-    () => {
-      moveOverviewPeriod(
-        -1
-      );
-    }
-  );
-}
-
-if (overviewNextBtn) {
-  overviewNextBtn.addEventListener(
-    "click",
-    () => {
-      moveOverviewPeriod(
-        1
-      );
-    }
-  );
-}
-
-if (overviewTodayBtn) {
-  overviewTodayBtn.addEventListener(
-    "click",
-    () => {
-      currentOverviewDate =
-        new Date();
-
-      renderOverview();
-    }
-  );
-}
-
-/* SERVICE WORKER */
+/* =========================
+   PWA
+========================= */
 
 if (
   "serviceWorker" in
@@ -3190,13 +5292,11 @@ if (
     "load",
     () => {
       navigator.serviceWorker
-        .register(
-          "sw.js"
-        )
+        .register("sw.js")
         .catch(
           error => {
-            console.warn(
-              "HYPE service worker registration failed:",
+            console.error(
+              "Service worker registration failed:",
               error
             );
           }
@@ -3205,16 +5305,21 @@ if (
   );
 }
 
-/* INITIAL */
+/* =========================
+   INITIAL RENDER
+========================= */
 
-ensureProfileAvatarStyles();
+ensureProfileShareStyles();
+
+ensureShareWeekNavigation();
 
 cleanupProfileHeadings();
 
-applyFinalFourChanges();
+shareWeekStart =
+  startOfWeek(
+    new Date()
+  );
 
 renderPlan();
 
-setView(
-  currentView
-);
+setView("plan");
