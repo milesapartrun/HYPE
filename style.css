@@ -153,28 +153,51 @@ h2 {
 
 .week-navigation {
   display: grid;
-  grid-template-columns: 42px 1fr 42px;
+  grid-template-columns: 42px minmax(0, 1fr) 42px;
+
   align-items: center;
   gap: 8px;
 
   margin-top: 10px;
+
+  width: 100%;
 }
 
-.week-nav-btn {
+
+/* LEFT + RIGHT ARROWS */
+
+.week-nav-btn,
+#weekPrevBtn,
+#weekNextBtn {
+  appearance: none;
+  -webkit-appearance: none;
+
   width: 42px;
   height: 42px;
+
+  min-width: 42px;
+  min-height: 42px;
+
+  padding: 0;
+  margin: 0;
 
   border: 1px solid var(--line);
   border-radius: 13px;
 
   background: var(--panel);
+  background-color: var(--panel);
+
   color: var(--text);
 
   display: grid;
   place-items: center;
 
   font-size: 22px;
+  font-weight: 400;
   line-height: 1;
+
+  box-shadow: none;
+  outline: none;
 
   transition:
     border-color .15s ease,
@@ -182,40 +205,178 @@ h2 {
     transform .15s ease;
 }
 
-.week-nav-btn:hover {
+.week-nav-btn:hover,
+#weekPrevBtn:hover,
+#weekNextBtn:hover {
   border-color: #414750;
   background: var(--panel2);
+  background-color: var(--panel2);
 }
 
-.week-nav-btn:active {
+.week-nav-btn:active,
+#weekPrevBtn:active,
+#weekNextBtn:active {
   transform: scale(.95);
 }
 
-.week-today-btn {
+.week-nav-btn:focus,
+#weekPrevBtn:focus,
+#weekNextBtn:focus {
+  outline: none;
+}
+
+
+/* =========================
+   CURRENT WEEK
+========================= */
+
+/*
+ * Der mittlere Button war die Ursache
+ * für das helle/weiße Feld.
+ *
+ * Wir setzen hier absichtlich ALLE
+ * Browser-Button-Eigenschaften zurück.
+ */
+
+.week-today-btn,
+#weekTodayBtn,
+.week-navigation > button:nth-child(2) {
+  appearance: none;
+  -webkit-appearance: none;
+
   justify-self: center;
 
-  border: 0;
-  background: transparent;
+  width: auto;
+  min-width: 0;
+  max-width: 100%;
 
-  color: var(--muted);
-
-  font-size: 11px;
-  font-weight: 800;
-
-  letter-spacing: .08em;
-  text-transform: uppercase;
+  height: auto;
+  min-height: 0;
 
   padding: 8px 12px;
+  margin: 0;
+
+  border: 0;
+  border-width: 0;
+
+  background: transparent !important;
+  background-color: transparent !important;
+
+  color: var(--text);
+
   border-radius: 10px;
+
+  box-shadow: none !important;
+  outline: none !important;
+
+  text-align: center;
+
+  font-family: inherit;
+  font-weight: inherit;
+
+  overflow: visible;
+
+  white-space: nowrap;
 
   transition:
     background .15s ease,
     color .15s ease;
 }
 
-.week-today-btn:hover {
-  background: rgba(215,255,63,.08);
-  color: var(--accent);
+
+/* Kein Safari-Button-Hintergrund */
+
+.week-today-btn::-webkit-focus-inner,
+#weekTodayBtn::-webkit-focus-inner,
+.week-navigation > button:nth-child(2)::-webkit-focus-inner {
+  border: 0;
+  padding: 0;
+}
+
+
+/* Hover */
+
+.week-today-btn:hover,
+#weekTodayBtn:hover,
+.week-navigation > button:nth-child(2):hover {
+  background: rgba(215,255,63,.06) !important;
+  background-color: rgba(215,255,63,.06) !important;
+
+  color: var(--text);
+}
+
+
+/* Active */
+
+.week-today-btn:active,
+#weekTodayBtn:active,
+.week-navigation > button:nth-child(2):active {
+  background: rgba(215,255,63,.08) !important;
+  background-color: rgba(215,255,63,.08) !important;
+
+  color: var(--text);
+
+  transform: none;
+}
+
+
+/* Focus */
+
+.week-today-btn:focus,
+#weekTodayBtn:focus,
+.week-navigation > button:nth-child(2):focus,
+.week-today-btn:focus-visible,
+#weekTodayBtn:focus-visible,
+.week-navigation > button:nth-child(2):focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+
+/* =========================
+   WEEK TITLE
+========================= */
+
+.week-today-btn h2,
+#weekTodayBtn h2,
+.week-navigation > button:nth-child(2) h2 {
+  margin: 5px 0 0;
+
+  color: var(--text);
+
+  font-size: 30px;
+  font-weight: 800;
+
+  line-height: 1.05;
+  letter-spacing: -.04em;
+
+  white-space: nowrap;
+}
+
+.week-today-btn .eyebrow,
+#weekTodayBtn .eyebrow,
+.week-navigation > button:nth-child(2) .eyebrow {
+  color: var(--muted);
+}
+
+
+/* Falls die Jahreszahl innerhalb
+   des mittleren Buttons sitzt */
+
+.week-today-btn .hero-year,
+#weekTodayBtn .hero-year,
+.week-navigation > button:nth-child(2) .hero-year {
+  position: static;
+
+  top: auto;
+  right: auto;
+
+  color: var(--muted);
+
+  font-size: 11px;
+  font-weight: 800;
+
+  letter-spacing: .1em;
 }
 
 
@@ -1371,15 +1532,38 @@ textarea:focus {
     font-size: 18px;
   }
 
+
+  /* =========================
+     MOBILE WEEK NAVIGATION
+  ========================= */
+
   .week-navigation {
-    grid-template-columns: 38px 1fr 38px;
+    grid-template-columns: 38px minmax(0, 1fr) 38px;
     gap: 6px;
   }
 
-  .week-nav-btn {
+  .week-nav-btn,
+  #weekPrevBtn,
+  #weekNextBtn {
     width: 38px;
     height: 38px;
+
+    min-width: 38px;
+    min-height: 38px;
+
     font-size: 20px;
+  }
+
+  .week-today-btn,
+  #weekTodayBtn,
+  .week-navigation > button:nth-child(2) {
+    padding: 6px 4px;
+  }
+
+  .week-today-btn h2,
+  #weekTodayBtn h2,
+  .week-navigation > button:nth-child(2) h2 {
+    font-size: 25px;
   }
 
 }
