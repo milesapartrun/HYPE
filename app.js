@@ -175,42 +175,62 @@ const notesInput =
   document.getElementById("notesInput");
 
 /* =========================
-   NEUE TRAININGS-FELDER
+   TRAININGS-FELDER
 ========================= */
 
 const customSportField =
-  document.getElementById("customSportField");
+  document.getElementById(
+    "customSportField"
+  );
 
 const customSportInput =
-  document.getElementById("customSportInput");
+  document.getElementById(
+    "customSportInput"
+  );
 
 const runningMetricInput =
-  document.getElementById("runningMetricInput");
+  document.getElementById(
+    "runningMetricInput"
+  );
 
 const metricValueLabel =
-  document.getElementById("metricValueLabel");
+  document.getElementById(
+    "metricValueLabel"
+  );
 
 /* =========================
    PROFILE DOM
 ========================= */
 
 const profileGreeting =
-  document.getElementById("profileGreeting");
+  document.getElementById(
+    "profileGreeting"
+  );
 
 const profileName =
-  document.getElementById("profileName");
+  document.getElementById(
+    "profileName"
+  );
 
 const profileEmail =
-  document.getElementById("profileEmail");
+  document.getElementById(
+    "profileEmail"
+  );
 
 const editProfileBtn =
-  document.getElementById("editProfileBtn");
+  document.getElementById(
+    "editProfileBtn"
+  );
 
 const profileDialog =
-  document.getElementById("profileDialog");
+  document.getElementById(
+    "profileDialog"
+  );
 
 const profileForm =
-  document.getElementById("profileForm");
+  document.getElementById(
+    "profileForm"
+  );
 
 const profileFirstNameInput =
   document.getElementById(
@@ -228,19 +248,29 @@ const closeProfileDialogBtn =
   );
 
 const weeklyShareName =
-  document.getElementById("weeklyShareName");
+  document.getElementById(
+    "weeklyShareName"
+  );
 
 const weeklyShareRange =
-  document.getElementById("weeklyShareRange");
+  document.getElementById(
+    "weeklyShareRange"
+  );
 
 const weeklyShareDays =
-  document.getElementById("weeklyShareDays");
+  document.getElementById(
+    "weeklyShareDays"
+  );
 
 const weeklyShareSummary =
-  document.getElementById("weeklyShareSummary");
+  document.getElementById(
+    "weeklyShareSummary"
+  );
 
 const weeklyShareCard =
-  document.getElementById("weeklyShareCard");
+  document.getElementById(
+    "weeklyShareCard"
+  );
 
 const weeklyShareFooter =
   document.getElementById(
@@ -268,7 +298,9 @@ const shareWeekCurrentBtn =
   );
 
 const shareWeekBtn =
-  document.getElementById("shareWeekBtn");
+  document.getElementById(
+    "shareWeekBtn"
+  );
 
 const shareHypeProfileBtn =
   document.getElementById(
@@ -276,7 +308,9 @@ const shareHypeProfileBtn =
   );
 
 const logoutBtn =
-  document.getElementById("logoutBtn");
+  document.getElementById(
+    "logoutBtn"
+  );
 
 /* =========================
    PROFILE CLEANUP
@@ -292,57 +326,54 @@ function cleanupProfileHeadings() {
       "h1, h2, h3, h4, .eyebrow, .section-label, .section-title"
     );
 
-  elements.forEach(element => {
-    const text =
-      element.textContent
-        .replace(/\s+/g, " ")
-        .trim()
-        .toUpperCase();
+  elements.forEach(
+    element => {
+      const text =
+        element.textContent
+          .replace(/\s+/g, " ")
+          .trim()
+          .toUpperCase();
 
-    /* DEIN HYPE entfernen */
-    if (text === "DEIN HYPE") {
-      element.remove();
-      return;
+      if (text === "DEIN HYPE") {
+        element.remove();
+        return;
+      }
+
+      if (
+        weeklyShareCard &&
+        weeklyShareCard.contains(
+          element
+        ) &&
+        text === "HYPE" &&
+        !element.closest("button") &&
+        !element.closest("a")
+      ) {
+        element.remove();
+      }
     }
-
-    /* HYPE unter "Woche teilen" entfernen */
-    if (
-      weeklyShareCard &&
-      weeklyShareCard.contains(element) &&
-      text === "HYPE" &&
-      !element.closest("button") &&
-      !element.closest("a")
-    ) {
-      element.remove();
-    }
-  });
-
-  /*
-    Falls "HYPE" nicht als Überschrift,
-    sondern als normales Textelement
-    im Share-Bereich vorhanden ist,
-    ebenfalls entfernen.
-  */
+  );
 
   if (weeklyShareCard) {
     weeklyShareCard
       .querySelectorAll("*")
-      .forEach(element => {
-        const text =
-          element.textContent
-            .replace(/\s+/g, " ")
-            .trim()
-            .toUpperCase();
+      .forEach(
+        element => {
+          const text =
+            element.textContent
+              .replace(/\s+/g, " ")
+              .trim()
+              .toUpperCase();
 
-        if (
-          text === "HYPE" &&
-          element.children.length === 0 &&
-          !element.closest("button") &&
-          !element.closest("a")
-        ) {
-          element.remove();
+          if (
+            text === "HYPE" &&
+            element.children.length === 0 &&
+            !element.closest("button") &&
+            !element.closest("a")
+          ) {
+            element.remove();
+          }
         }
-      });
+      );
   }
 }
 
@@ -401,10 +432,6 @@ function ensureProfileShareStyles() {
     #profileView #weeklyShareCard {
       overflow: hidden;
     }
-
-    /* =========================
-       WOCHEN-NAVIGATION
-    ========================= */
 
     #profileView .hype-share-week-navigation {
       display: grid;
@@ -511,11 +538,6 @@ function ensureProfileShareStyles() {
       display: none !important;
     }
 
-    /* =========================
-       3. TANOS WOCHE + DATUM
-       KOMPLETT AUSBLENDEN
-    ========================= */
-
     #profileView #weeklyShareName,
     #profileView #weeklyShareRange {
       display: none !important;
@@ -525,10 +547,6 @@ function ensureProfileShareStyles() {
       padding: 0 !important;
       overflow: hidden !important;
     }
-
-    /* =========================
-       TAGE
-    ========================= */
 
     #profileView #weeklyShareDays {
       display: grid;
@@ -540,20 +558,27 @@ function ensureProfileShareStyles() {
 
     #profileView .weekly-share-day {
       min-width: 0;
-      min-height: 132px;
-      padding: 12px 8px 10px;
-      border: 1px solid rgba(255,255,255,.08);
-      border-radius: 14px;
-      background: #12151a;
-      overflow: hidden;
-    }
-
-    #profileView .weekly-share-day.completed {
-      border-color: rgba(215,255,63,.35);
+      min-height: 172px;
+      padding: 12px 7px 11px;
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: 15px;
       background:
         linear-gradient(
           180deg,
-          rgba(215,255,63,.08),
+          rgba(255,255,255,.018),
+          rgba(255,255,255,.005)
+        ),
+        #12151a;
+      overflow: hidden;
+      box-sizing: border-box;
+    }
+
+    #profileView .weekly-share-day.completed {
+      border-color: rgba(215,255,63,.45);
+      background:
+        linear-gradient(
+          180deg,
+          rgba(215,255,63,.09),
           rgba(215,255,63,.025)
         ),
         #12151a;
@@ -562,22 +587,22 @@ function ensureProfileShareStyles() {
     #profileView .weekly-share-day-top {
       display: flex;
       flex-direction: column;
-      gap: 3px;
-      margin-bottom: 11px;
+      gap: 4px;
+      margin-bottom: 13px;
     }
 
     #profileView .weekly-share-day-top span {
-      color: #8d949e;
-      font-size: 9px;
+      color: #858c96;
+      font-size: 8px;
       line-height: 1;
-      font-weight: 800;
+      font-weight: 850;
+      letter-spacing: .07em;
       text-transform: uppercase;
-      letter-spacing: .05em;
     }
 
     #profileView .weekly-share-day-top strong {
       color: #f5f6f7;
-      font-size: 19px;
+      font-size: 21px;
       line-height: 1;
       font-weight: 900;
     }
@@ -585,41 +610,77 @@ function ensureProfileShareStyles() {
     #profileView .weekly-share-day-training {
       display: flex;
       flex-direction: column;
+      gap: 9px;
+      min-width: 0;
+    }
+
+    #profileView .weekly-share-day-training-item {
+      min-width: 0;
+      padding-top: 1px;
+    }
+
+    #profileView .weekly-share-day-training-main {
+      display: flex;
+      align-items: flex-start;
       gap: 5px;
       min-width: 0;
     }
 
-    #profileView .weekly-share-day-training span {
-      display: block;
+    #profileView .weekly-share-day-training-icon {
+      flex: 0 0 auto;
+      font-size: 12px;
+      line-height: 1.2;
+    }
+
+    #profileView .weekly-share-day-training-title {
       min-width: 0;
-      color: #d7dbe0;
+      color: #f0f2f4;
       font-size: 9px;
-      line-height: 1.3;
+      line-height: 1.25;
+      font-weight: 800;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+      overflow: hidden;
+      word-break: break-word;
+    }
+
+    #profileView
+    .weekly-share-day-training-item.completed-training-item
+    .weekly-share-day-training-title {
+      color: #d7ff3f;
+    }
+
+    #profileView .weekly-share-day-training-meta {
+      display: block;
+      margin-top: 3px;
+      padding-left: 17px;
+      color: #737b86;
+      font-size: 7px;
+      line-height: 1.25;
       font-weight: 700;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
     }
 
-    #profileView .weekly-share-day-training .completed-training {
-      color: #d7ff3f;
-    }
-
     #profileView .weekly-share-day-training .empty-day {
-      color: #565d67;
-      font-size: 13px;
-      font-weight: 600;
+      display: block;
+      margin-top: 5px;
+      color: #505761;
+      font-size: 12px;
+      line-height: 1.2;
+      font-weight: 650;
     }
 
     #profileView .weekly-share-day-training .more-training {
+      display: block;
+      margin-top: 1px;
       color: #737b86;
-      font-size: 8px;
-      font-weight: 700;
+      font-size: 7px;
+      line-height: 1.2;
+      font-weight: 750;
     }
-
-    /* =========================
-       SUMMARY
-    ========================= */
 
     #profileView #weeklyShareSummary {
       margin-top: 16px;
@@ -685,10 +746,6 @@ function ensureProfileShareStyles() {
       line-height: 1.45;
     }
 
-    /* =========================
-       FOOTER
-    ========================= */
-
     #profileView #weeklyShareFooter {
       display: none !important;
     }
@@ -705,10 +762,6 @@ function ensureProfileShareStyles() {
       min-height: 48px;
       border-radius: 13px;
     }
-
-    /* =========================
-       SHARE IMAGE PREVIEW
-    ========================= */
 
     #profileView .weekly-share-image-preview {
       margin-top: 18px;
@@ -776,7 +829,7 @@ function ensureProfileShareStyles() {
       }
 
       #profileView .weekly-share-day {
-        min-height: 128px;
+        min-height: 166px;
         padding: 11px 6px 9px;
         border-radius: 12px;
       }
@@ -789,8 +842,12 @@ function ensureProfileShareStyles() {
         font-size: 18px;
       }
 
-      #profileView .weekly-share-day-training span {
+      #profileView .weekly-share-day-training-title {
         font-size: 8px;
+      }
+
+      #profileView .weekly-share-day-training-meta {
+        font-size: 6.5px;
       }
 
       #profileView .weekly-share-stats {
@@ -801,9 +858,345 @@ function ensureProfileShareStyles() {
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
     }
+
+    /* =========================
+       ACCOUNT BEREICH
+    ========================= */
+
+    #profileView .hype-account-details {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: end;
+      gap: 18px 24px;
+      margin-top: 18px;
+      padding: 20px;
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 18px;
+      background:
+        linear-gradient(
+          180deg,
+          rgba(255,255,255,.025),
+          rgba(255,255,255,.012)
+        ),
+        #12151a;
+    }
+
+    #profileView .hype-account-details #profileName {
+      margin: 0 0 6px;
+      color: #f5f6f7;
+      font-size: clamp(25px, 6vw, 34px);
+      line-height: 1.05;
+      font-weight: 900;
+      letter-spacing: -.035em;
+    }
+
+    #profileView .hype-account-details #profileEmail {
+      margin: 0;
+      color: #9aa1aa;
+      font-size: 14px;
+      line-height: 1.45;
+      overflow-wrap: anywhere;
+    }
+
+    #profileView .hype-account-details #editProfileBtn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      margin: 0;
+      padding: 0 18px;
+      border: 1px solid rgba(215,255,63,.42);
+      border-radius: 12px;
+      background: rgba(215,255,63,.055);
+      color: #d7ff3f;
+      box-shadow: none;
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 850;
+      line-height: 1;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+
+    #profileView .hype-account-details #editProfileBtn:hover {
+      background: rgba(215,255,63,.10);
+      border-color: rgba(215,255,63,.65);
+    }
+
+    #profileView .hype-profile-image-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 42px;
+      margin-top: 10px;
+      padding: 0 17px;
+      border: 1px solid rgba(215,255,63,.35);
+      border-radius: 12px;
+      background: rgba(215,255,63,.045);
+      color: #d7ff3f;
+      box-shadow: none;
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 850;
+      line-height: 1;
+    }
+
+    #profileView .hype-profile-file {
+      display: block;
+      width: 100%;
+      max-width: 100%;
+      min-height: 44px;
+      margin-top: 10px;
+      padding: 5px;
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 12px;
+      background: #12151a;
+      color: #8d949e;
+      font-family: inherit;
+      font-size: 11px;
+      line-height: 32px;
+      box-sizing: border-box;
+    }
+
+    #profileView .hype-profile-file::file-selector-button {
+      margin-right: 10px;
+      padding: 8px 13px;
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 9px;
+      background: #1b1f25;
+      color: #f5f6f7;
+      font-family: inherit;
+      font-size: 11px;
+      font-weight: 750;
+      cursor: pointer;
+    }
+
+    #profileView .hype-profile-avatar-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 64px;
+      height: 64px;
+      min-height: 64px;
+      padding: 0;
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 18px;
+      background: #181b20;
+      color: #f5f6f7;
+      box-shadow: none;
+      font-size: 22px;
+      line-height: 1;
+    }
+
+    #profileView .hype-account-label {
+      display: block;
+      margin-top: 22px;
+      margin-bottom: 0;
+      color: #8d949e;
+      font-size: 11px;
+      line-height: 1;
+      font-weight: 850;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+    }
+
+    /* =========================
+       EMPFEHLEN – EINZEILIG
+    ========================= */
+
+    #profileView .hype-referral-title {
+      display: block;
+      width: 100%;
+      max-width: 100%;
+      margin-bottom: 22px;
+      color: #f5f6f7;
+      font-size: clamp(16px, 4.5vw, 36px);
+      line-height: 1.05;
+      font-weight: 900;
+      letter-spacing: -.035em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: clip;
+    }
+
+    @media (max-width: 620px) {
+      #profileView .hype-account-details {
+        grid-template-columns: 1fr;
+        gap: 14px;
+        padding: 17px;
+      }
+
+      #profileView .hype-account-details #editProfileBtn {
+        width: 100%;
+      }
+
+      #profileView .hype-referral-title {
+        font-size: clamp(15px, 4.5vw, 30px);
+      }
+    }
+
+    @media (max-width: 390px) {
+      #profileView #weeklyShareDays {
+        gap: 4px;
+      }
+
+      #profileView .weekly-share-day {
+        padding-left: 5px;
+        padding-right: 5px;
+      }
+
+      #profileView .weekly-share-day-training-icon {
+        font-size: 10px;
+      }
+
+      #profileView .weekly-share-day-training-title {
+        font-size: 7px;
+      }
+
+      #profileView .weekly-share-day-training-meta {
+        padding-left: 15px;
+        font-size: 6px;
+      }
+    }
   `;
 
   document.head.appendChild(style);
+}
+
+/* =========================
+   PROFILE POLISH
+========================= */
+
+function polishProfileLayout() {
+  if (!profileView) {
+    return;
+  }
+
+  /* =========================
+     ACCOUNT BLOCK
+  ========================= */
+
+  if (
+    profileName &&
+    profileEmail &&
+    editProfileBtn
+  ) {
+    const parent =
+      profileName.parentElement;
+
+    if (
+      parent &&
+      profileEmail.parentElement === parent &&
+      editProfileBtn.parentElement === parent &&
+      !parent.querySelector(
+        ".hype-account-details"
+      )
+    ) {
+      const details =
+        document.createElement("div");
+
+      details.className =
+        "hype-account-details";
+
+      parent.insertBefore(
+        details,
+        profileName
+      );
+
+      details.appendChild(
+        profileName
+      );
+
+      details.appendChild(
+        profileEmail
+      );
+
+      details.appendChild(
+        editProfileBtn
+      );
+    }
+  }
+
+  /* =========================
+     ACCOUNT LABEL
+  ========================= */
+
+  profileView
+    .querySelectorAll(
+      "h1, h2, h3, h4, p, span, div"
+    )
+    .forEach(
+      element => {
+        const text =
+          element.textContent
+            .replace(/\s+/g, " ")
+            .trim()
+            .toUpperCase();
+
+        if (
+          text === "ACCOUNT"
+        ) {
+          element.classList.add(
+            "hype-account-label"
+          );
+        }
+
+        if (
+          text ===
+          "TRAINIERT JEMAND GENAU SO GERNE WIE DU?"
+        ) {
+          element.classList.add(
+            "hype-referral-title"
+          );
+        }
+      }
+    );
+
+  /* =========================
+     PROFILBILD / DATEI
+  ========================= */
+
+  const fileInput =
+    profileView.querySelector(
+      'input[type="file"]'
+    );
+
+  if (fileInput) {
+    fileInput.classList.add(
+      "hype-profile-file"
+    );
+  }
+
+  profileView
+    .querySelectorAll("button")
+    .forEach(
+      button => {
+        const text =
+          button.textContent
+            .replace(/\s+/g, " ")
+            .trim();
+
+        if (
+          text.includes(
+            "Profilbild ändern"
+          )
+        ) {
+          button.classList.add(
+            "hype-profile-image-button"
+          );
+        }
+
+        if (
+          /^\?\s*\+$/.test(
+            text
+          )
+        ) {
+          button.classList.add(
+            "hype-profile-avatar-button"
+          );
+        }
+      }
+    );
 }
 
 /* =========================
@@ -1006,7 +1399,7 @@ function updateTitlePlaceholder() {
 }
 
 /* =========================
-   NEUE SHARE-WOCHEN-NAVIGATION
+   SHARE WOCHEN-NAVIGATION
 ========================= */
 
 function ensureShareWeekNavigation() {
@@ -1027,15 +1420,17 @@ function ensureShareWeekNavigation() {
     shareWeekNextBtn,
     shareWeekCurrentBtn,
     shareWeekTitle
-  ].forEach(element => {
-    if (!element) {
-      return;
-    }
+  ].forEach(
+    element => {
+      if (!element) {
+        return;
+      }
 
-    element.classList.add(
-      "hype-share-legacy-control"
-    );
-  });
+      element.classList.add(
+        "hype-share-legacy-control"
+      );
+    }
+  );
 
   const navigation =
     document.createElement("div");
@@ -1198,7 +1593,10 @@ function ensureShareWeekNavigation() {
 ========================= */
 
 function pad(value) {
-  return String(value).padStart(2, "0");
+  return String(value).padStart(
+    2,
+    "0"
+  );
 }
 
 function iso(date) {
@@ -1214,7 +1612,9 @@ function parseDate(value) {
     year,
     month,
     day
-  ] = value.split("-").map(Number);
+  ] = value.split("-").map(
+    Number
+  );
 
   return new Date(
     year,
@@ -1228,32 +1628,48 @@ function parseDate(value) {
 }
 
 function startOfWeek(date) {
-  const d = new Date(date);
+  const d =
+    new Date(date);
 
-  d.setHours(12, 0, 0, 0);
+  d.setHours(
+    12,
+    0,
+    0,
+    0
+  );
 
-  const day = d.getDay();
+  const day =
+    d.getDay();
 
   const diff =
     day === 0
       ? -6
       : 1 - day;
 
-  d.setDate(d.getDate() + diff);
+  d.setDate(
+    d.getDate() + diff
+  );
 
   return d;
 }
 
 function endOfWeek(date) {
-  const d = startOfWeek(date);
+  const d =
+    startOfWeek(date);
 
-  d.setDate(d.getDate() + 6);
+  d.setDate(
+    d.getDate() + 6
+  );
 
   return d;
 }
 
-function addDays(date, amount) {
-  const d = new Date(date);
+function addDays(
+  date,
+  amount
+) {
+  const d =
+    new Date(date);
 
   d.setDate(
     d.getDate() + amount
@@ -1262,8 +1678,12 @@ function addDays(date, amount) {
   return d;
 }
 
-function addMonths(date, amount) {
-  const d = new Date(date);
+function addMonths(
+  date,
+  amount
+) {
+  const d =
+    new Date(date);
 
   d.setDate(1);
 
@@ -1274,8 +1694,12 @@ function addMonths(date, amount) {
   return d;
 }
 
-function addYears(date, amount) {
-  const d = new Date(date);
+function addYears(
+  date,
+  amount
+) {
+  const d =
+    new Date(date);
 
   d.setDate(1);
   d.setMonth(0);
@@ -1289,11 +1713,26 @@ function addYears(date, amount) {
 
 function esc(value) {
   return String(value ?? "")
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
+    .replace(
+      /&/g,
+      "&amp;"
+    )
+    .replace(
+      /</g,
+      "&lt;"
+    )
+    .replace(
+      />/g,
+      "&gt;"
+    )
+    .replace(
+      /"/g,
+      "&quot;"
+    )
+    .replace(
+      /'/g,
+      "&#039;"
+    );
 }
 
 function formatLongDate(date) {
@@ -1362,8 +1801,11 @@ function isToday(date) {
   );
 }
 
-function isFutureDate(dateString) {
-  const today = new Date();
+function isFutureDate(
+  dateString
+) {
+  const today =
+    new Date();
 
   today.setHours(
     0,
@@ -1385,7 +1827,9 @@ function isFutureDate(dateString) {
   return target > today;
 }
 
-function getFutureMessage(dateString) {
+function getFutureMessage(
+  dateString
+) {
   const date =
     parseDate(dateString);
 
@@ -1400,7 +1844,9 @@ function getFutureMessage(dateString) {
     return "Diese Einheit kommt erst morgen. Du kannst sie noch nicht abhaken.";
   }
 
-  return `Diese Einheit kommt erst am ${formatLongDate(date)}. Du kannst sie noch nicht abhaken.`;
+  return `Diese Einheit kommt erst am ${formatLongDate(
+    date
+  )}. Du kannst sie noch nicht abhaken.`;
 }
 
 /* =========================
@@ -1451,7 +1897,9 @@ async function getUserFirstName() {
     user?.user_metadata?.first_name;
 
   return firstName
-    ? String(firstName).trim()
+    ? String(
+        firstName
+      ).trim()
     : "";
 }
 
@@ -1474,6 +1922,8 @@ async function renderProfile() {
 
   cleanupProfileHeadings();
 
+  ensureProfileShareStyles();
+
   const firstName =
     user?.user_metadata?.first_name
       ? String(
@@ -1482,7 +1932,8 @@ async function renderProfile() {
       : "";
 
   const displayName =
-    firstName || "Deine";
+    firstName ||
+    "Deine";
 
   profileDisplayName =
     displayName;
@@ -1517,20 +1968,22 @@ async function renderProfile() {
       firstName;
   }
 
-  if (!firstName) {
-    setTimeout(
-      () => {
-        openProfileDialog(true);
-      },
-      150
-    );
-  }
-
   renderWeeklySharePreview(
     displayName
   );
 
-  applyFinalThreeChanges();
+  polishProfileLayout();
+
+  if (!firstName) {
+    setTimeout(
+      () => {
+        openProfileDialog(
+          true
+        );
+      },
+      150
+    );
+  }
 }
 
 /* =========================
@@ -1691,7 +2144,9 @@ async function saveProfileName() {
 function loadSessions() {
   try {
     const raw =
-      localStorage.getItem(KEY);
+      localStorage.getItem(
+        KEY
+      );
 
     if (!raw) {
       return [];
@@ -1706,7 +2161,7 @@ function loadSessions() {
 
     return data.map(
       session => {
-        const normalized = {
+        return {
           ...session,
 
           completed:
@@ -1728,25 +2183,37 @@ function loadSessions() {
 
           distance:
             session.distance ===
-            undefined ||
-            session.distance === null
+              undefined ||
+            session.distance ===
+              null
               ? null
               : Number(
                   session.distance
                 ),
 
+          duration:
+            session.duration ===
+              undefined ||
+            session.duration ===
+              null
+              ? null
+              : Number(
+                  session.duration
+                ),
+
           runMetric:
             session.runMetric ||
             (
-              session.sport === "running" &&
-              session.distance !== undefined &&
-              session.distance !== null
+              session.sport ===
+                "running" &&
+              session.distance !==
+                undefined &&
+              session.distance !==
+                null
                 ? "distance"
                 : "duration"
             )
         };
-
-        return normalized;
       }
     );
 
@@ -1763,7 +2230,9 @@ function loadSessions() {
 function save() {
   localStorage.setItem(
     KEY,
-    JSON.stringify(sessions)
+    JSON.stringify(
+      sessions
+    )
   );
 }
 
@@ -1771,11 +2240,14 @@ function save() {
    SESSION QUERIES
 ========================= */
 
-function sessionsForDate(dateString) {
+function sessionsForDate(
+  dateString
+) {
   return sessions
     .filter(
       session =>
-        session.date === dateString
+        session.date ===
+        dateString
     )
     .sort(
       (a, b) =>
@@ -1788,7 +2260,9 @@ function sessionsForDate(dateString) {
     );
 }
 
-function sessionsForWeek(date) {
+function sessionsForWeek(
+  date
+) {
   const start =
     startOfWeek(date);
 
@@ -1803,12 +2277,16 @@ function sessionsForWeek(date) {
 
   return sessions.filter(
     session =>
-      session.date >= startIso &&
-      session.date <= endIso
+      session.date >=
+        startIso &&
+      session.date <=
+        endIso
   );
 }
 
-function sessionsForMonth(date) {
+function sessionsForMonth(
+  date
+) {
   const year =
     date.getFullYear();
 
@@ -1818,22 +2296,29 @@ function sessionsForMonth(date) {
   return sessions.filter(
     session => {
       const d =
-        parseDate(session.date);
+        parseDate(
+          session.date
+        );
 
       return (
-        d.getFullYear() === year &&
-        d.getMonth() === month
+        d.getFullYear() ===
+          year &&
+        d.getMonth() ===
+          month
       );
     }
   );
 }
 
-function sessionsForYear(year) {
+function sessionsForYear(
+  year
+) {
   return sessions.filter(
     session =>
       parseDate(
         session.date
-      ).getFullYear() === year
+      ).getFullYear() ===
+      year
   );
 }
 
@@ -1892,7 +2377,10 @@ function renderWeeklySharePreview(
 
   const totalMinutes =
     completed.reduce(
-      (sum, session) =>
+      (
+        sum,
+        session
+      ) =>
         sum +
         getSessionDurationMinutes(
           session
@@ -1902,7 +2390,10 @@ function renderWeeklySharePreview(
 
   const totalDistance =
     completed.reduce(
-      (sum, session) =>
+      (
+        sum,
+        session
+      ) =>
         sum +
         getSessionRunningDistance(
           session
@@ -1968,7 +2459,9 @@ function renderWeeklySharePreview(
       "none";
   }
 
-  /* Tanos Woche + Datum komplett entfernen */
+  /* =========================
+     ALTE NAMEN / DATUM
+  ========================= */
 
   if (weeklyShareName) {
     weeklyShareName.textContent =
@@ -2010,6 +2503,10 @@ function renderWeeklySharePreview(
       "0";
   }
 
+  /* =========================
+     7 TAGE
+  ========================= */
+
   if (weeklyShareDays) {
     const days = [];
 
@@ -2039,36 +2536,60 @@ function renderWeeklySharePreview(
         new Intl.DateTimeFormat(
           "de-DE",
           {
-            weekday: "short"
+            weekday:
+              "short"
           }
         )
           .format(date)
-          .replace(".", "");
-
-      const trainingTitles =
-        daySessions
-          .map(
-            session => ({
-              title:
-                session.title,
-              completed:
-                Boolean(
-                  session.completed
-                )
-            })
+          .replace(
+            ".",
+            ""
           );
 
+      const trainingItems =
+        daySessions.map(
+          session => ({
+            title:
+              session.title ||
+              "Training",
+
+            icon:
+              getSportIcon(
+                session
+              ),
+
+            sport:
+              getSportLabel(
+                session
+              ),
+
+            metric:
+              getSessionMetricText(
+                session
+              ),
+
+            completed:
+              Boolean(
+                session.completed
+              )
+          })
+        );
+
       days.push(`
-        <div class="weekly-share-day ${
-          completedDay.length
-            ? "completed"
-            : ""
-        }">
+        <div
+          class="weekly-share-day ${
+            completedDay.length
+              ? "completed"
+              : ""
+          }"
+        >
 
           <div class="weekly-share-day-top">
 
             <span>
-              ${esc(weekday)}
+              ${esc(
+                weekday
+              )}
             </span>
 
             <strong>
@@ -2080,38 +2601,71 @@ function renderWeeklySharePreview(
           <div class="weekly-share-day-training">
 
             ${
-              trainingTitles.length
-                ? trainingTitles
+              trainingItems.length
+                ? trainingItems
                     .slice(0, 2)
                     .map(
                       training =>
                         `
-                          <span class="${
-                            training.completed
-                              ? "completed-training"
-                              : ""
-                          }">
-                            ${esc(
-                              training.title
-                            )}
-                          </span>
+                          <div
+                            class="
+                              weekly-share-day-training-item
+                              ${
+                                training.completed
+                                  ? "completed-training-item"
+                                  : ""
+                              }
+                            "
+                          >
+
+                            <div class="weekly-share-day-training-main">
+
+                              <span class="weekly-share-day-training-icon">
+                                ${esc(
+                                  training.icon
+                                )}
+                              </span>
+
+                              <span class="weekly-share-day-training-title">
+                                ${esc(
+                                  training.title
+                                )}
+                              </span>
+
+                            </div>
+
+                            <span class="weekly-share-day-training-meta">
+                              ${esc(
+                                training.sport
+                              )}
+                              ·
+                              ${esc(
+                                training.metric
+                              )}
+                            </span>
+
+                          </div>
                         `
                     )
                     .join("")
                 : `
-                  <span class="empty-day">
-                    —
-                  </span>
-                `
+                    <span class="empty-day">
+                      Frei
+                    </span>
+                  `
             }
 
             ${
-              trainingTitles.length > 2
+              trainingItems.length >
+              2
                 ? `
-                  <span class="more-training">
-                    +${trainingTitles.length - 2} weitere
-                  </span>
-                `
+                    <span class="more-training">
+                      +${
+                        trainingItems.length -
+                        2
+                      } weitere
+                    </span>
+                  `
                 : ""
             }
 
@@ -2124,6 +2678,10 @@ function renderWeeklySharePreview(
     weeklyShareDays.innerHTML =
       days.join("");
   }
+
+  /* =========================
+     SUMMARY
+  ========================= */
 
   if (weeklyShareSummary) {
     if (!weekSessions.length) {
@@ -2140,6 +2698,7 @@ function renderWeeklySharePreview(
 
         </div>
       `;
+
     } else {
       weeklyShareSummary.innerHTML = `
         <div class="weekly-share-stats ${
@@ -2156,7 +2715,8 @@ function renderWeeklySharePreview(
 
             <span>
               ${
-                completed.length === 1
+                completed.length ===
+                1
                   ? "Training erledigt"
                   : "Trainings erledigt"
               }
@@ -2211,125 +2771,7 @@ function renderWeeklySharePreview(
       "none";
   }
 
-  applyFinalThreeChanges();
-}
-
-function firstNameForPossessive(
-  name
-) {
-  const clean =
-    String(name || "").trim();
-
-  if (!clean) {
-    return "Deine Woche";
-  }
-
-  if (
-    clean.endsWith("s") ||
-    clean.endsWith("x") ||
-    clean.endsWith("z")
-  ) {
-    return `${clean}’ Woche`;
-  }
-
-  return `${clean}s Woche`;
-}
-
-/* =========================
-   DIE DREI ÄNDERUNGEN
-========================= */
-
-function applyFinalThreeChanges() {
-  if (!profileView) {
-    return;
-  }
-
-  /*
-    1. HYPE unter "Woche teilen"
-       komplett entfernen
-  */
-
-  if (weeklyShareCard) {
-    weeklyShareCard
-      .querySelectorAll("*")
-      .forEach(element => {
-        const text =
-          element.textContent
-            .replace(/\s+/g, " ")
-            .trim()
-            .toUpperCase();
-
-        if (
-          text === "HYPE" &&
-          element.children.length === 0 &&
-          !element.closest("button") &&
-          !element.closest("a")
-        ) {
-          element.remove();
-        }
-      });
-  }
-
-  /*
-    2. Tanos Woche entfernen
-  */
-
-  if (weeklyShareName) {
-    weeklyShareName.textContent =
-      "";
-
-    weeklyShareName.style.display =
-      "none";
-
-    weeklyShareName.style.visibility =
-      "hidden";
-
-    weeklyShareName.style.height =
-      "0";
-
-    weeklyShareName.style.margin =
-      "0";
-
-    weeklyShareName.style.padding =
-      "0";
-  }
-
-  /*
-    3. Datum unter Tanos Woche entfernen
-  */
-
-  if (weeklyShareRange) {
-    weeklyShareRange.textContent =
-      "";
-
-    weeklyShareRange.style.display =
-      "none";
-
-    weeklyShareRange.style.visibility =
-      "hidden";
-
-    weeklyShareRange.style.height =
-      "0";
-
-    weeklyShareRange.style.margin =
-      "0";
-
-    weeklyShareRange.style.padding =
-      "0";
-  }
-
-  /*
-    Zusätzlich den alten Share-Titel
-    ausblenden, falls er noch vorhanden ist.
-  */
-
-  if (shareWeekTitle) {
-    shareWeekTitle.textContent =
-      "";
-
-    shareWeekTitle.style.display =
-      "none";
-  }
+  polishProfileLayout();
 }
 
 /* =========================
@@ -2435,7 +2877,10 @@ async function createWeeklyShareImage() {
 
   const totalMinutes =
     completed.reduce(
-      (sum, session) =>
+      (
+        sum,
+        session
+      ) =>
         sum +
         getSessionDurationMinutes(
           session
@@ -2445,7 +2890,10 @@ async function createWeeklyShareImage() {
 
   const totalDistance =
     completed.reduce(
-      (sum, session) =>
+      (
+        sum,
+        session
+      ) =>
         sum +
         getSessionRunningDistance(
           session
@@ -2462,7 +2910,9 @@ async function createWeeklyShareImage() {
   canvas.height = 1920;
 
   const ctx =
-    canvas.getContext("2d");
+    canvas.getContext(
+      "2d"
+    );
 
   if (!ctx) {
     throw new Error(
@@ -2695,11 +3145,15 @@ async function createWeeklyShareImage() {
       new Intl.DateTimeFormat(
         "de-DE",
         {
-          weekday: "short"
+          weekday:
+            "short"
         }
       )
         .format(date)
-        .replace(".", "")
+        .replace(
+          ".",
+          ""
+        )
         .toUpperCase();
 
     ctx.fillText(
@@ -2758,7 +3212,9 @@ async function createWeeklyShareImage() {
           "28px Arial";
 
         ctx.fillText(
-          getSportIcon(session),
+          getSportIcon(
+            session
+          ),
           270,
           lineY
         );
@@ -2810,7 +3266,8 @@ async function createWeeklyShareImage() {
     );
 
     if (
-      daySessions.length > 2
+      daySessions.length >
+      2
     ) {
       ctx.fillStyle =
         "#737b86";
@@ -2819,7 +3276,10 @@ async function createWeeklyShareImage() {
         "600 14px Arial";
 
       ctx.fillText(
-        `+${daySessions.length - 2} weitere`,
+        `+${
+          daySessions.length -
+          2
+        } weitere`,
         315,
         y + 101
       );
@@ -2839,7 +3299,10 @@ async function createWeeklyShareImage() {
   );
 
   return new Promise(
-    (resolve, reject) => {
+    (
+      resolve,
+      reject
+    ) => {
       canvas.toBlob(
         blob => {
           if (!blob) {
@@ -2870,8 +3333,9 @@ function fitCanvasText(
     String(text || "");
 
   if (
-    ctx.measureText(clean)
-      .width <= maxWidth
+    ctx.measureText(
+      clean
+    ).width <= maxWidth
   ) {
     return clean;
   }
@@ -2958,7 +3422,9 @@ function roundRect(
   );
 
   ctx.lineTo(
-    x + width - radius,
+    x +
+      width -
+      radius,
     y
   );
 
@@ -2971,13 +3437,17 @@ function roundRect(
 
   ctx.lineTo(
     x + width,
-    y + height - radius
+    y +
+      height -
+      radius
   );
 
   ctx.quadraticCurveTo(
     x + width,
     y + height,
-    x + width - radius,
+    x +
+      width -
+      radius,
     y + height
   );
 
@@ -2990,7 +3460,9 @@ function roundRect(
     x,
     y + height,
     x,
-    y + height - radius
+    y +
+      height -
+      radius
   );
 
   ctx.lineTo(
@@ -3034,7 +3506,8 @@ async function shareLastWeek() {
         [blob],
         "HYPE-meine-Woche.png",
         {
-          type: "image/png"
+          type:
+            "image/png"
         }
       );
 
@@ -3042,7 +3515,9 @@ async function shareLastWeek() {
       navigator.share &&
       navigator.canShare &&
       navigator.canShare({
-        files: [file]
+        files: [
+          file
+        ]
       })
     ) {
       await navigator.share({
@@ -3052,17 +3527,23 @@ async function shareLastWeek() {
         text:
           "Meine Trainingswoche mit HYPE.",
 
-        files: [file]
+        files: [
+          file
+        ]
       });
 
       return;
     }
 
     const url =
-      URL.createObjectURL(blob);
+      URL.createObjectURL(
+        blob
+      );
 
     const link =
-      document.createElement("a");
+      document.createElement(
+        "a"
+      );
 
     link.href =
       url;
@@ -3168,6 +3649,7 @@ function showShareImagePreview(
     <div class="weekly-share-image-preview-head">
 
       <div>
+
         <div class="eyebrow">
           DEINE SHARE-KARTE
         </div>
@@ -3175,6 +3657,7 @@ function showShareImagePreview(
         <strong>
           Bereit zum Teilen
         </strong>
+
       </div>
 
       <button
@@ -3228,36 +3711,66 @@ function showShareImagePreview(
 
 function calendarEscape(value) {
   return String(value ?? "")
-    .replace(/\\/g, "\\\\")
-    .replace(/\r?\n/g, "\\n")
-    .replace(/;/g, "\\;")
-    .replace(/,/g, "\\,");
+    .replace(
+      /\\/g,
+      "\\\\"
+    )
+    .replace(
+      /\r?\n/g,
+      "\\n"
+    )
+    .replace(
+      /;/g,
+      "\\;"
+    )
+    .replace(
+      /,/g,
+      "\\,"
+    );
 }
 
 function calendarDate(date) {
   return [
     date.getFullYear(),
-    pad(date.getMonth() + 1),
-    pad(date.getDate())
+    pad(
+      date.getMonth() + 1
+    ),
+    pad(
+      date.getDate()
+    )
   ].join("");
 }
 
-function calendarDateTimeUTC(date) {
+function calendarDateTimeUTC(
+  date
+) {
   return (
     date.getUTCFullYear() +
-    pad(date.getUTCMonth() + 1) +
-    pad(date.getUTCDate()) +
+    pad(
+      date.getUTCMonth() + 1
+    ) +
+    pad(
+      date.getUTCDate()
+    ) +
     "T" +
-    pad(date.getUTCHours()) +
-    pad(date.getUTCMinutes()) +
-    pad(date.getUTCSeconds()) +
+    pad(
+      date.getUTCHours()
+    ) +
+    pad(
+      date.getUTCMinutes()
+    ) +
+    pad(
+      date.getUTCSeconds()
+    ) +
     "Z"
   );
 }
 
 function createCalendarFile() {
   const weekStart =
-    startOfWeek(selected);
+    startOfWeek(
+      selected
+    );
 
   const weekEndExclusive =
     addDays(
@@ -3317,8 +3830,13 @@ function createCalendarFile() {
             `Umfang: ${getSessionMetricText(
               session
             )}`,
-            `Intensität: ${session.intensity || 0}/5`
-          ].join("\n");
+            `Intensität: ${
+              session.intensity ||
+              0
+            }/5`
+          ].join(
+            "\n"
+          );
 
         if (session.notes) {
           description +=
@@ -3341,14 +3859,26 @@ function createCalendarFile() {
 
         return [
           "BEGIN:VEVENT",
-          `UID:${calendarEscape(uid)}`,
+          `UID:${calendarEscape(
+            uid
+          )}`,
           `DTSTAMP:${dtStamp}`,
-          `DTSTART;VALUE=DATE:${calendarDate(start)}`,
-          `DTEND;VALUE=DATE:${calendarDate(end)}`,
-          `SUMMARY:${calendarEscape(title)}`,
-          `DESCRIPTION:${calendarEscape(description)}`,
+          `DTSTART;VALUE=DATE:${calendarDate(
+            start
+          )}`,
+          `DTEND;VALUE=DATE:${calendarDate(
+            end
+          )}`,
+          `SUMMARY:${calendarEscape(
+            title
+          )}`,
+          `DESCRIPTION:${calendarEscape(
+            description
+          )}`,
           "END:VEVENT"
-        ].join("\r\n");
+        ].join(
+          "\r\n"
+        );
       }
     );
 
@@ -3361,7 +3891,9 @@ function createCalendarFile() {
       "METHOD:PUBLISH",
       ...events,
       "END:VCALENDAR"
-    ].join("\r\n");
+    ].join(
+      "\r\n"
+    );
 
   const blob =
     new Blob(
@@ -3378,7 +3910,9 @@ function createCalendarFile() {
     );
 
   const link =
-    document.createElement("a");
+    document.createElement(
+      "a"
+    );
 
   link.href =
     url;
@@ -3412,28 +3946,40 @@ function createCalendarFile() {
 
 function renderPlan() {
   const start =
-    startOfWeek(selected);
+    startOfWeek(
+      selected
+    );
 
   const end =
-    endOfWeek(selected);
+    endOfWeek(
+      selected
+    );
 
   const startText =
     new Intl.DateTimeFormat(
       "de-DE",
       {
-        day: "numeric",
-        month: "short"
+        day:
+          "numeric",
+        month:
+          "short"
       }
-    ).format(start);
+    ).format(
+      start
+    );
 
   const endText =
     new Intl.DateTimeFormat(
       "de-DE",
       {
-        day: "numeric",
-        month: "short"
+        day:
+          "numeric",
+        month:
+          "short"
       }
-    ).format(end);
+    ).format(
+      end
+    );
 
   weekTitle.textContent =
     `${startText} – ${endText}`;
@@ -3448,7 +3994,9 @@ function renderPlan() {
 
   if (weekEyebrow) {
     const currentWeekStart =
-      startOfWeek(new Date());
+      startOfWeek(
+        new Date()
+      );
 
     weekEyebrow.textContent =
       iso(start) ===
@@ -3460,7 +4008,9 @@ function renderPlan() {
   renderWeekStrip();
 
   selectedDateLabel.textContent =
-    formatLongDate(selected);
+    formatLongDate(
+      selected
+    );
 
   renderSelectedDay();
 
@@ -3468,10 +4018,13 @@ function renderPlan() {
 }
 
 function renderWeekStrip() {
-  weekStrip.innerHTML = "";
+  weekStrip.innerHTML =
+    "";
 
   const start =
-    startOfWeek(selected);
+    startOfWeek(
+      selected
+    );
 
   const dayNames = [
     "Mo",
@@ -3489,7 +4042,10 @@ function renderWeekStrip() {
     i++
   ) {
     const date =
-      addDays(start, i);
+      addDays(
+        start,
+        i
+      );
 
     const dateString =
       iso(date);
@@ -3540,7 +4096,8 @@ function renderWeekStrip() {
     button.addEventListener(
       "click",
       () => {
-        selected = date;
+        selected =
+          date;
 
         renderPlan();
       }
@@ -3587,21 +4144,19 @@ function renderSelectedDay() {
 function renderSessionCard(
   session
 ) {
-  const meta =
-    sportMeta[
-      session.sport
-    ] ||
-    sportMeta.running;
-
   const dots =
     Array.from({
       length: 5
     })
       .map(
-        (_, index) =>
+        (
+          _,
+          index
+        ) =>
           index <
           Number(
-            session.intensity || 0
+            session.intensity ||
+              0
           )
             ? "●"
             : "○"
@@ -3620,14 +4175,20 @@ function renderSessionCard(
   const actualSelect =
     actualOptions
       .map(
-        ([value, label]) =>
+        (
+          [
+            value,
+            label
+          ]
+        ) =>
           `
             <option
               value="${value}"
               ${
                 Number(
                   session.actualIntensity
-                ) === value
+                ) ===
+                value
                   ? "selected"
                   : ""
               }
@@ -3645,11 +4206,15 @@ function renderSessionCard(
           ? "completed"
           : ""
       }"
-      data-id="${esc(session.id)}"
+      data-id="${esc(
+        session.id
+      )}"
     >
 
       <div class="sport-icon">
-        ${getSportIcon(session)}
+        ${getSportIcon(
+          session
+        )}
       </div>
 
       <div class="session-content">
@@ -3657,7 +4222,9 @@ function renderSessionCard(
         <div class="session-title-row">
 
           <h4>
-            ${esc(session.title)}
+            ${esc(
+              session.title
+            )}
           </h4>
 
           ${
@@ -3674,10 +4241,15 @@ function renderSessionCard(
 
         <p>
           ${esc(
-            getSportLabel(session)
+            getSportLabel(
+              session
+            )
           )}
-          · ${esc(
-            getSessionMetricText(session)
+          ·
+          ${esc(
+            getSessionMetricText(
+              session
+            )
           )}
         </p>
 
@@ -3689,7 +4261,9 @@ function renderSessionCard(
           session.notes
             ? `
               <p>
-                ${esc(session.notes)}
+                ${esc(
+                  session.notes
+                )}
               </p>
             `
             : ""
@@ -3724,7 +4298,8 @@ function renderSessionCard(
                     data-action="post-notes"
                     placeholder="z. B. Hat sich heute sehr gut angefühlt …"
                   >${esc(
-                    session.postNotes || ""
+                    session.postNotes ||
+                    ""
                   )}</textarea>
 
                 </label>
@@ -3780,7 +4355,9 @@ function attachSessionEvents(
   container
 ) {
   container
-    .querySelectorAll(".session")
+    .querySelectorAll(
+      ".session"
+    )
     .forEach(
       card => {
         const id =
@@ -3789,7 +4366,8 @@ function attachSessionEvents(
         const session =
           sessions.find(
             item =>
-              item.id === id
+              item.id ===
+              id
           );
 
         if (!session) {
@@ -3842,7 +4420,9 @@ function attachSessionEvents(
             session.completed =
               !session.completed;
 
-            if (!session.completed) {
+            if (
+              !session.completed
+            ) {
               session.actualIntensity =
                 null;
 
@@ -3881,7 +4461,8 @@ function attachSessionEvents(
             sessions =
               sessions.filter(
                 item =>
-                  item.id !== id
+                  item.id !==
+                  id
               );
 
             save();
@@ -3962,12 +4543,15 @@ function renderWeeklyInsight() {
   }
 
   const remaining =
-    planned - completed;
+    planned -
+    completed;
 
   let text =
     `${completed} von ${planned} Einheiten erledigt.`;
 
-  if (remaining > 0) {
+  if (
+    remaining > 0
+  ) {
     text +=
       ` ${remaining} ${
         remaining === 1
@@ -4064,19 +4648,27 @@ function renderPeriodNavigation() {
       new Intl.DateTimeFormat(
         "de-DE",
         {
-          day: "numeric",
-          month: "short"
+          day:
+            "numeric",
+          month:
+            "short"
         }
-      ).format(start);
+      ).format(
+        start
+      );
 
     const endText =
       new Intl.DateTimeFormat(
         "de-DE",
         {
-          day: "numeric",
-          month: "short"
+          day:
+            "numeric",
+          month:
+            "short"
         }
-      ).format(end);
+      ).format(
+        end
+      );
 
     periodTitle.textContent =
       `${startText} – ${endText} ${start.getFullYear()}`;
@@ -4156,14 +4748,21 @@ function renderOverviewWeek() {
                     weekday:
                       "long"
                   }
-                ).format(date)
+                ).format(
+                  date
+                )
               }
             </span>
 
             <span class="overview-day-number">
-              ${date.getDate()}.${pad(
-                date.getMonth() + 1
-              )}.
+              ${
+                date.getDate()
+              }.${
+                pad(
+                  date.getMonth() +
+                    1
+                )
+              }.
             </span>
 
           </div>
@@ -4172,7 +4771,7 @@ function renderOverviewWeek() {
             class="overview-day-status ${
               daySessions.length &&
               completed ===
-              daySessions.length
+                daySessions.length
                 ? "done"
                 : ""
             }"
@@ -4189,7 +4788,9 @@ function renderOverviewWeek() {
         <div class="overview-day-sessions">
     `;
 
-    if (!daySessions.length) {
+    if (
+      !daySessions.length
+    ) {
       html += `
         <div class="overview-empty-day">
           Keine Einheit geplant
@@ -4204,7 +4805,9 @@ function renderOverviewWeek() {
             >
 
               <div class="mini-icon">
-                ${getSportIcon(session)}
+                ${getSportIcon(
+                  session
+                )}
               </div>
 
               <div>
@@ -4217,9 +4820,12 @@ function renderOverviewWeek() {
 
                 <div class="mini-meta">
                   ${esc(
-                    getSportLabel(session)
+                    getSportLabel(
+                      session
+                    )
                   )}
-                  · ${esc(
+                  ·
+                  ${esc(
                     getSessionMetricText(
                       session
                     )
@@ -4255,7 +4861,8 @@ function renderOverviewWeek() {
     `;
   }
 
-  html += `</div>`;
+  html +=
+    `</div>`;
 
   overviewContent.innerHTML =
     html;
@@ -4320,9 +4927,11 @@ function renderOverviewMonth() {
     );
 
   const mondayOffset =
-    firstDay.getDay() === 0
+    firstDay.getDay() ===
+    0
       ? 6
-      : firstDay.getDay() - 1;
+      : firstDay.getDay() -
+        1;
 
   const daysInMonth =
     lastDay.getDate();
@@ -4354,7 +4963,9 @@ function renderOverviewMonth() {
       new Date(
         year,
         month,
-        i - mondayOffset + 1,
+        i -
+          mondayOffset +
+          1,
         12
       );
 
@@ -4367,7 +4978,8 @@ function renderOverviewMonth() {
 
   for (
     let day = 1;
-    day <= daysInMonth;
+    day <=
+    daysInMonth;
     day++
   ) {
     const date =
@@ -4393,9 +5005,11 @@ function renderOverviewMonth() {
     (
       7 -
       (
-        usedCells % 7
+        usedCells %
+        7
       )
-    ) % 7;
+    ) %
+    7;
 
   for (
     let i = 1;
@@ -4406,7 +5020,8 @@ function renderOverviewMonth() {
       new Date(
         year,
         month,
-        daysInMonth + i,
+        daysInMonth +
+          i,
         12
       );
 
@@ -4446,10 +5061,14 @@ function renderMonthCell(
         session.completed
     ).length;
 
-  let dots = "";
+  let dots =
+    "";
 
   daySessions
-    .slice(0, 5)
+    .slice(
+      0,
+      5
+    )
     .forEach(
       session => {
         dots += `
@@ -4535,14 +5154,17 @@ function attachMonthWeekNavigation() {
     const firstDate =
       parseDate(
         weekCells[0]
-          .dataset.date
+          .dataset
+          .date
       );
 
     const lastDate =
       parseDate(
         weekCells[
-          weekCells.length - 1
-        ].dataset.date
+          weekCells.length -
+            1
+        ].dataset
+          .date
       );
 
     const weekButton =
@@ -4571,17 +5193,24 @@ function attachMonthWeekNavigation() {
 
     const lastRect =
       weekCells[
-        weekCells.length - 1
+        weekCells.length -
+          1
       ].getBoundingClientRect();
 
     const gridRect =
       grid.getBoundingClientRect();
 
     weekButton.style.top =
-      `${firstRect.top - gridRect.top}px`;
+      `${
+        firstRect.top -
+        gridRect.top
+      }px`;
 
     weekButton.style.height =
-      `${lastRect.bottom - firstRect.top}px`;
+      `${
+        lastRect.bottom -
+        firstRect.top
+      }px`;
 
     weekButton.addEventListener(
       "click",
@@ -4615,7 +5244,9 @@ function renderOverviewYear() {
     overviewDate.getFullYear();
 
   const yearSessions =
-    sessionsForYear(year);
+    sessionsForYear(
+      year
+    );
 
   const completed =
     yearSessions.filter(
@@ -4703,9 +5334,11 @@ function renderYearMonth(
     ).getDate();
 
   const mondayOffset =
-    firstDay.getDay() === 0
+    firstDay.getDay() ===
+    0
       ? 6
-      : firstDay.getDay() - 1;
+      : firstDay.getDay() -
+        1;
 
   const monthSessions =
     sessions.filter(
@@ -4739,16 +5372,20 @@ function renderYearMonth(
             new Intl.DateTimeFormat(
               "de-DE",
               {
-                month: "long"
+                month:
+                  "long"
               }
-            ).format(firstDay)
+            ).format(
+              firstDay
+            )
           }
         </span>
 
         <span class="year-month-count">
           ${monthSessions.length}
           ${
-            monthSessions.length === 1
+            monthSessions.length ===
+            1
               ? "Einheit"
               : "Einheiten"
           }
@@ -4772,12 +5409,14 @@ function renderYearMonth(
     i < mondayOffset;
     i++
   ) {
-    html += `<div></div>`;
+    html +=
+      `<div></div>`;
   }
 
   for (
     let day = 1;
-    day <= daysInMonth;
+    day <=
+    daysInMonth;
     day++
   ) {
     const date =
@@ -4797,7 +5436,8 @@ function renderYearMonth(
       );
 
     const hasTraining =
-      daySessions.length > 0;
+      daySessions.length >
+      0;
 
     const allCompleted =
       hasTraining &&
@@ -4845,12 +5485,14 @@ function attachYearMonthNavigation() {
           () => {
             const year =
               Number(
-                monthButton.dataset.year
+                monthButton.dataset
+                  .year
               );
 
             const month =
               Number(
-                monthButton.dataset.month
+                monthButton.dataset
+                  .month
               );
 
             overviewDate =
@@ -4880,7 +5522,9 @@ function renderToday() {
     new Date();
 
   todayTitle.textContent =
-    formatLongDate(today);
+    formatLongDate(
+      today
+    );
 
   const todaySessions =
     sessionsForDate(
@@ -4917,7 +5561,8 @@ function renderToday() {
       )
       .addEventListener(
         "click",
-        () => openNewDialog()
+        () =>
+          openNewDialog()
       );
 
     return;
@@ -4944,7 +5589,9 @@ function renderToday() {
    VIEW SWITCHING
 ========================= */
 
-function setView(view) {
+function setView(
+  view
+) {
   currentView =
     view;
 
@@ -4982,35 +5629,49 @@ function setView(view) {
       button => {
         button.classList.toggle(
           "active",
-          button.dataset.view ===
+          button.dataset
+            .view ===
             view
         );
       }
     );
 
-  if (view === "plan") {
+  if (
+    view ===
+    "plan"
+  ) {
     renderPlan();
   }
 
-  if (view === "overview") {
+  if (
+    view ===
+    "overview"
+  ) {
     renderOverview();
   }
 
-  if (view === "profile") {
+  if (
+    view ===
+    "profile"
+  ) {
     renderProfile();
   }
 
-  if (view === "today") {
+  if (
+    view ===
+    "today"
+  ) {
     renderToday();
   }
 }
 
 /* =========================
-   DIALOG
+   TRAINING DIALOG
 ========================= */
 
 function openNewDialog() {
-  editingId = null;
+  editingId =
+    null;
 
   dialogTitle.textContent =
     "Training hinzufügen";
@@ -5020,7 +5681,9 @@ function openNewDialog() {
   sportInput.value =
     "running";
 
-  if (runningMetricInput) {
+  if (
+    runningMetricInput
+  ) {
     runningMetricInput.value =
       "duration";
   }
@@ -5031,7 +5694,9 @@ function openNewDialog() {
   intensityInput.value =
     3;
 
-  if (customSportInput) {
+  if (
+    customSportInput
+  ) {
     customSportInput.value =
       "";
   }
@@ -5069,16 +5734,23 @@ function openEditDialog(
     session.intensity;
 
   notesInput.value =
-    session.notes || "";
+    session.notes ||
+    "";
 
-  if (customSportInput) {
+  if (
+    customSportInput
+  ) {
     customSportInput.value =
-      session.customSport || "";
+      session.customSport ||
+      "";
   }
 
-  if (runningMetricInput) {
+  if (
+    runningMetricInput
+  ) {
     runningMetricInput.value =
-      session.sport === "running"
+      session.sport ===
+      "running"
         ? (
             session.runMetric ||
             "duration"
@@ -5087,17 +5759,18 @@ function openEditDialog(
   }
 
   if (
-    session.sport === "running" &&
-    (
-      session.runMetric ===
+    session.sport ===
+      "running" &&
+    session.runMetric ===
       "distance"
-    )
   ) {
     durationInput.value =
-      session.distance ?? "";
+      session.distance ??
+      "";
   } else {
     durationInput.value =
-      session.duration ?? "";
+      session.duration ??
+      "";
   }
 
   updateTitlePlaceholder();
@@ -5117,7 +5790,8 @@ function openEditDialog(
 function closeDialog() {
   trainingDialog.close();
 
-  editingId = null;
+  editingId =
+    null;
 }
 
 function validateTrainingForm() {
@@ -5143,7 +5817,8 @@ function validateTrainingForm() {
   }
 
   if (
-    sport === "other"
+    sport ===
+    "other"
   ) {
     const customSport =
       customSportInput
@@ -5160,7 +5835,10 @@ function validateTrainingForm() {
       return null;
     }
 
-    if (customSport.length > 50) {
+    if (
+      customSport.length >
+      50
+    ) {
       alert(
         "Der Name der Sportart darf maximal 50 Zeichen haben."
       );
@@ -5176,9 +5854,14 @@ function validateTrainingForm() {
       durationInput.value
     );
 
-  if (!Number.isFinite(value)) {
+  if (
+    !Number.isFinite(
+      value
+    )
+  ) {
     alert(
-      sport === "running" &&
+      sport ===
+        "running" &&
       runningMetricInput?.value ===
         "distance"
         ? "Bitte gib die Kilometer ein."
@@ -5194,7 +5877,8 @@ function validateTrainingForm() {
     value <= 0
   ) {
     alert(
-      sport === "running" &&
+      sport ===
+        "running" &&
       runningMetricInput?.value ===
         "distance"
         ? "Die Kilometer müssen größer als 0 sein."
@@ -5207,10 +5891,13 @@ function validateTrainingForm() {
   }
 
   if (
-    sport === "running" &&
+    sport ===
+      "running" &&
     runningMetricInput?.value ===
       "duration" &&
-    !Number.isInteger(value)
+    !Number.isInteger(
+      value
+    )
   ) {
     alert(
       "Die Dauer bitte in ganzen Minuten eingeben."
@@ -5222,7 +5909,8 @@ function validateTrainingForm() {
   }
 
   if (
-    sport === "running" &&
+    sport ===
+      "running" &&
     runningMetricInput?.value ===
       "distance" &&
     value > 1000
@@ -5237,24 +5925,34 @@ function validateTrainingForm() {
   }
 
   if (
-    !Number.isFinite(intensity)
+    !Number.isFinite(
+      intensity
+    )
   ) {
     return null;
   }
 
   return {
     sport,
+
     title,
+
     intensity,
+
     notes:
       notesInput.value.trim(),
+
     value,
+
     customSport:
-      sport === "other"
+      sport ===
+      "other"
         ? customSportInput.value.trim()
         : "",
+
     runMetric:
-      sport === "running"
+      sport ===
+      "running"
         ? (
             runningMetricInput?.value ||
             "duration"
@@ -5279,7 +5977,9 @@ trainingForm.addEventListener(
       return;
     }
 
-    if (editingId) {
+    if (
+      editingId
+    ) {
       const session =
         sessions.find(
           item =>
@@ -5413,38 +6113,40 @@ sportInput.addEventListener(
   }
 );
 
-if (runningMetricInput) {
+if (
+  runningMetricInput
+) {
   runningMetricInput.addEventListener(
     "change",
     () => {
       const metric =
         runningMetricInput.value;
 
-      if (metricValueLabel) {
+      if (
+        metricValueLabel
+      ) {
         metricValueLabel.textContent =
-          metric === "distance"
+          metric ===
+          "distance"
             ? "Kilometer"
             : "Dauer";
       }
 
       durationInput.min =
-        metric === "distance"
+        metric ===
+        "distance"
           ? "0.1"
           : "1";
 
       durationInput.step =
-        metric === "distance"
+        metric ===
+        "distance"
           ? "0.1"
           : "1";
 
-      /*
-        Beim Wechsel der Einheit
-        wird der alte Wert nicht
-        fälschlich übernommen.
-      */
-
       if (
-        metric === "distance"
+        metric ===
+        "distance"
       ) {
         durationInput.value =
           "";
@@ -5458,7 +6160,9 @@ if (runningMetricInput) {
   );
 }
 
-if (customSportInput) {
+if (
+  customSportInput
+) {
   customSportInput.addEventListener(
     "input",
     () => {
@@ -5488,7 +6192,9 @@ trainingDialog.addEventListener(
    PROFILE EVENTS
 ========================= */
 
-if (editProfileBtn) {
+if (
+  editProfileBtn
+) {
   editProfileBtn.addEventListener(
     "click",
     () => {
@@ -5499,14 +6205,18 @@ if (editProfileBtn) {
   );
 }
 
-if (closeProfileDialogBtn) {
+if (
+  closeProfileDialogBtn
+) {
   closeProfileDialogBtn.addEventListener(
     "click",
     closeProfileDialog
   );
 }
 
-if (profileForm) {
+if (
+  profileForm
+) {
   profileForm.addEventListener(
     "submit",
     event => {
@@ -5517,7 +6227,9 @@ if (profileForm) {
   );
 }
 
-if (profileDialog) {
+if (
+  profileDialog
+) {
   profileDialog.addEventListener(
     "click",
     event => {
@@ -5535,25 +6247,35 @@ if (profileDialog) {
    PROFILE WEEK EVENTS
 ========================= */
 
-if (shareWeekPrevBtn) {
+if (
+  shareWeekPrevBtn
+) {
   shareWeekPrevBtn.addEventListener(
     "click",
     () => {
-      moveShareWeek(-1);
+      moveShareWeek(
+        -1
+      );
     }
   );
 }
 
-if (shareWeekNextBtn) {
+if (
+  shareWeekNextBtn
+) {
   shareWeekNextBtn.addEventListener(
     "click",
     () => {
-      moveShareWeek(1);
+      moveShareWeek(
+        1
+      );
     }
   );
 }
 
-if (shareWeekCurrentBtn) {
+if (
+  shareWeekCurrentBtn
+) {
   shareWeekCurrentBtn.addEventListener(
     "click",
     () => {
@@ -5572,14 +6294,17 @@ if (shareWeekCurrentBtn) {
 ========================= */
 
 document
-  .querySelectorAll(".nav-item")
+  .querySelectorAll(
+    ".nav-item"
+  )
   .forEach(
     button => {
       button.addEventListener(
         "click",
         () => {
           setView(
-            button.dataset.view
+            button.dataset
+              .view
           );
         }
       );
@@ -5642,14 +6367,17 @@ todayJumpBtn.addEventListener(
 ========================= */
 
 document
-  .querySelectorAll(".period-btn")
+  .querySelectorAll(
+    ".period-btn"
+  )
   .forEach(
     button => {
       button.addEventListener(
         "click",
         () => {
           overviewPeriod =
-            button.dataset.period;
+            button.dataset
+              .period;
 
           renderOverview();
         }
@@ -5765,28 +6493,36 @@ addTrainingBtn.addEventListener(
   }
 );
 
-if (calendarExportBtn) {
+if (
+  calendarExportBtn
+) {
   calendarExportBtn.addEventListener(
     "click",
     createCalendarFile
   );
 }
 
-if (shareWeekBtn) {
+if (
+  shareWeekBtn
+) {
   shareWeekBtn.addEventListener(
     "click",
     shareLastWeek
   );
 }
 
-if (shareHypeProfileBtn) {
+if (
+  shareHypeProfileBtn
+) {
   shareHypeProfileBtn.addEventListener(
     "click",
     shareHype
   );
 }
 
-if (logoutBtn) {
+if (
+  logoutBtn
+) {
   logoutBtn.addEventListener(
     "click",
     async () => {
@@ -5872,7 +6608,9 @@ if (
     "load",
     () => {
       navigator.serviceWorker
-        .register("sw.js")
+        .register(
+          "sw.js"
+        )
         .catch(
           error => {
             console.error(
@@ -5904,4 +6642,6 @@ updateTrainingInputVisibility();
 
 renderPlan();
 
-setView("plan");
+setView(
+  "plan"
+);
