@@ -65,10 +65,10 @@ overviewDate.setHours(12, 0, 0, 0);
 
 /*
   Separate Woche für die Profil-Share-Karte.
-  Standardmäßig: letzte vollständig abgeschlossene Woche.
+  Standardmäßig: aktuelle Woche.
 */
 let shareWeekStart = startOfWeek(
-  addDays(new Date(), -7)
+  new Date()
 );
 
 let profileDisplayName = "";
@@ -425,11 +425,6 @@ function ensureProfileShareStyles() {
       border-color: rgba(215,255,63,.35);
     }
 
-    /*
-      Alte statische Controls werden ausgeblendet,
-      damit nur die neue saubere Navigation sichtbar ist.
-    */
-
     #profileView .hype-share-legacy-control {
       display: none !important;
     }
@@ -765,9 +760,6 @@ function ensureShareWeekNavigation() {
     return;
   }
 
-  /*
-    Falls bereits erzeugt, nichts doppelt anlegen.
-  */
   if (
     document.getElementById(
       "hypeShareWeekNavigation"
@@ -775,12 +767,6 @@ function ensureShareWeekNavigation() {
   ) {
     return;
   }
-
-  /*
-    Alte Controls unsichtbar machen.
-    Die Funktionalität der alten Buttons
-    bleibt trotzdem erhalten.
-  */
 
   [
     shareWeekPrevBtn,
@@ -798,10 +784,6 @@ function ensureShareWeekNavigation() {
       );
     }
   );
-
-  /*
-    Navigation
-  */
 
   const navigation =
     document.createElement("div");
@@ -899,10 +881,6 @@ function ensureShareWeekNavigation() {
     nextButton
   );
 
-  /*
-    Aktuelle Woche Button
-  */
-
   const currentWeekRow =
     document.createElement("div");
 
@@ -941,11 +919,6 @@ function ensureShareWeekNavigation() {
   currentWeekRow.appendChild(
     currentWeekButton
   );
-
-  /*
-    Navigation vor den eigentlichen
-    Wochen-Namen setzen.
-  */
 
   if (weeklyShareName) {
     weeklyShareName.parentNode.insertBefore(
@@ -1636,11 +1609,6 @@ function moveShareWeek(
 function renderWeeklySharePreview(
   displayName
 ) {
-  /*
-    Sicherheitshalber immer sicherstellen,
-    dass die neue Navigation existiert.
-  */
-
   ensureProfileShareStyles();
   ensureShareWeekNavigation();
 
@@ -1683,10 +1651,6 @@ function renderWeeklySharePreview(
   profileDisplayName =
     cleanName;
 
-  /*
-    Neue Wochen-Navigation aktualisieren.
-  */
-
   const newWeekValue =
     document.getElementById(
       "hypeShareWeekValue"
@@ -1698,11 +1662,6 @@ function renderWeeklySharePreview(
         weekStart
       );
   }
-
-  /*
-    Alte Controls bleiben intern erhalten,
-    werden aber nicht mehr angezeigt.
-  */
 
   if (shareWeekPrevBtn) {
     shareWeekPrevBtn.textContent =
@@ -1741,10 +1700,6 @@ function renderWeeklySharePreview(
       );
   }
 
-  /*
-    Name
-  */
-
   if (weeklyShareName) {
     weeklyShareName.textContent =
       firstNameForPossessive(
@@ -1752,20 +1707,12 @@ function renderWeeklySharePreview(
       );
   }
 
-  /*
-    Zeitraum
-  */
-
   if (weeklyShareRange) {
     weeklyShareRange.textContent =
       formatShareWeek(
         weekStart
       );
   }
-
-  /*
-    Tage
-  */
 
   if (weeklyShareDays) {
     const days = [];
@@ -1882,10 +1829,6 @@ function renderWeeklySharePreview(
       days.join("");
   }
 
-  /*
-    Zusammenfassung
-  */
-
   if (weeklyShareSummary) {
     if (!weekSessions.length) {
       weeklyShareSummary.innerHTML = `
@@ -1939,20 +1882,13 @@ function renderWeeklySharePreview(
   }
 
   /*
-    Neuer, natürlicher CTA-Text.
-    Kein "Trainiert jemand genauso gerne wie du?" mehr.
+    Kein zusätzlicher CTA mehr.
+    Die Share-Karte endet bei den eigentlichen
+    Wocheninformationen bzw. dem Share-Button.
   */
 
   if (weeklyShareFooter) {
-    weeklyShareFooter.innerHTML = `
-      <strong>
-        Teile deine Trainingswoche mit deinem Trainingspartner.
-      </strong>
-
-      <span>
-        Zeig, was diese Woche bei dir auf dem Plan steht.
-      </span>
-    `;
+    weeklyShareFooter.innerHTML = "";
   }
 }
 
@@ -2456,6 +2392,11 @@ async function createWeeklyShareImage() {
     }
   }
 
+  /*
+    Abschluss der Instagram-Story.
+    Keine zusätzliche Trainingspartner-Werbung mehr.
+  */
+
   ctx.fillStyle =
     "#d7ff3f";
 
@@ -2466,30 +2407,6 @@ async function createWeeklyShareImage() {
     "TRAIN SMART. STAY HYPE.",
     80,
     1770
-  );
-
-  ctx.fillStyle =
-    "#f5f6f7";
-
-  ctx.font =
-    "800 26px Arial";
-
-  ctx.fillText(
-    "Teile deine Trainingswoche",
-    80,
-    1825
-  );
-
-  ctx.fillStyle =
-    "#8d949e";
-
-  ctx.font =
-    "600 20px Arial";
-
-  ctx.fillText(
-    "mit deinem Trainingspartner.",
-    80,
-    1862
   );
 
   return new Promise(
