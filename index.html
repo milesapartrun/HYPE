@@ -53,12 +53,38 @@
     <section id="planView" class="view">
 
       <div class="hero">
-        <div>
-          <div class="eyebrow">DIESE WOCHE</div>
-          <h2 id="weekTitle">Diese Woche</h2>
+
+        <div class="week-navigation">
+
+          <button
+            id="weekPrevBtn"
+            class="week-nav-arrow"
+            aria-label="Vorherige Woche"
+          >
+            ‹
+          </button>
+
+          <button
+            id="weekTodayBtn"
+            class="week-title-button"
+            aria-label="Zur aktuellen Woche"
+          >
+            <div class="eyebrow">DIESE WOCHE</div>
+            <h2 id="weekTitle">Diese Woche</h2>
+          </button>
+
+          <button
+            id="weekNextBtn"
+            class="week-nav-arrow"
+            aria-label="Nächste Woche"
+          >
+            ›
+          </button>
+
         </div>
 
         <div id="heroYear" class="hero-year">2026</div>
+
       </div>
 
 
