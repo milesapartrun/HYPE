@@ -71,11 +71,6 @@ let shareWeekStart = startOfWeek(
   addDays(new Date(), -7)
 );
 
-/*
-  Name für die Profil-Share-Karte zwischenspeichern,
-  damit beim Wechseln der Woche derselbe Name
-  sauber erhalten bleibt.
-*/
 let profileDisplayName = "";
 
 
@@ -271,8 +266,6 @@ const logoutBtn =
 
 /* =========================
    PROFILE / SHARE STYLES
-   Nur für die von uns
-   überarbeitete Profilansicht.
 ========================= */
 
 function ensureProfileShareStyles() {
@@ -327,103 +320,140 @@ function ensureProfileShareStyles() {
       overflow: hidden;
     }
 
-    #profileView .weekly-share-top {
-      display: flex;
-      flex-direction: column;
-      gap: 18px;
-      margin-bottom: 24px;
-    }
+    /* =========================
+       NEUE WOCHEN-NAVIGATION
+    ========================= */
 
-    #profileView .weekly-share-eyebrow {
-      margin: 0;
-      font-size: 11px;
-      line-height: 1;
-      letter-spacing: .18em;
-      font-weight: 800;
-      text-transform: uppercase;
-      opacity: .72;
-    }
-
-    #profileView .weekly-share-navigation {
+    #profileView .hype-share-week-navigation {
       display: grid;
-      grid-template-columns: 42px minmax(0, 1fr) 42px;
+      grid-template-columns: 44px minmax(0, 1fr) 44px;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
       width: 100%;
+      margin-top: 18px;
+      margin-bottom: 14px;
     }
 
-    #profileView #shareWeekPrevBtn,
-    #profileView #shareWeekNextBtn,
-    #profileView #shareWeekCurrentBtn {
+    #profileView .hype-share-week-arrow {
       appearance: none;
       -webkit-appearance: none;
-      border: 1px solid rgba(255,255,255,.10);
-      box-shadow: none;
-      background: #171a1f;
-      color: #f5f6f7;
-      border-radius: 12px;
-      min-height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
       padding: 0;
-      font: inherit;
-    }
-
-    #profileView #shareWeekPrevBtn,
-    #profileView #shareWeekNextBtn {
-      width: 42px;
-      font-size: 24px;
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: 13px;
+      background: #15181d;
+      color: #f5f6f7;
+      box-shadow: none;
+      font-family: inherit;
+      font-size: 26px;
+      font-weight: 500;
       line-height: 1;
+      cursor: pointer;
+      transition:
+        background .15s ease,
+        border-color .15s ease,
+        color .15s ease,
+        transform .15s ease;
     }
 
-    #profileView #shareWeekPrevBtn:hover,
-    #profileView #shareWeekNextBtn:hover {
-      background: #20242a;
+    #profileView .hype-share-week-arrow:hover {
+      background: #1d2127;
       border-color: rgba(215,255,63,.35);
       color: #d7ff3f;
     }
 
-    #profileView #shareWeekCurrentBtn {
-      justify-self: center;
-      width: 100%;
-      max-width: 320px;
-      padding: 0 16px;
-      font-size: 11px;
-      letter-spacing: .08em;
-      font-weight: 800;
-      text-transform: uppercase;
-      color: #d7ff3f;
-      background: #111419;
+    #profileView .hype-share-week-arrow:active {
+      transform: scale(.96);
     }
 
-    #profileView .weekly-share-selected-week {
-      text-align: center;
+    #profileView .hype-share-week-center {
       min-width: 0;
+      text-align: center;
     }
 
-    #profileView #shareWeekTitle {
+    #profileView .hype-share-week-label {
       display: block;
-      margin: 0;
-      color: #f5f6f7;
-      font-size: 13px;
-      line-height: 1.3;
-      font-weight: 800;
-      white-space: normal;
+      margin-bottom: 7px;
+      color: #6f7680;
+      font-size: 9px;
+      line-height: 1;
+      font-weight: 850;
+      letter-spacing: .16em;
+      text-transform: uppercase;
     }
+
+    #profileView .hype-share-week-value {
+      display: block;
+      color: #f5f6f7;
+      font-size: clamp(14px, 4vw, 17px);
+      line-height: 1.25;
+      font-weight: 850;
+      letter-spacing: -.015em;
+    }
+
+    #profileView .hype-share-current-week {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 30px;
+    }
+
+    #profileView .hype-share-current-week button {
+      appearance: none;
+      -webkit-appearance: none;
+      min-height: 34px;
+      padding: 0 14px;
+      border: 1px solid rgba(215,255,63,.18);
+      border-radius: 999px;
+      background: rgba(215,255,63,.055);
+      color: #d7ff3f;
+      box-shadow: none;
+      font-family: inherit;
+      font-size: 9px;
+      line-height: 1;
+      font-weight: 850;
+      letter-spacing: .11em;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+
+    #profileView .hype-share-current-week button:hover {
+      background: rgba(215,255,63,.10);
+      border-color: rgba(215,255,63,.35);
+    }
+
+    /*
+      Alte statische Controls werden ausgeblendet,
+      damit nur die neue saubere Navigation sichtbar ist.
+    */
+
+    #profileView .hype-share-legacy-control {
+      display: none !important;
+    }
+
+    /* =========================
+       IDENTITÄT / WOCHEN-TITEL
+    ========================= */
 
     #profileView .weekly-share-identity {
       display: flex;
       flex-direction: column;
-      gap: 5px;
-      margin-top: 2px;
+      gap: 8px;
+      margin-top: 0;
+      margin-bottom: 24px;
     }
 
     #profileView #weeklyShareName {
       display: block;
       margin: 0;
       color: #f5f6f7;
-      font-size: clamp(24px, 6vw, 34px);
-      line-height: 1.08;
+      font-size: clamp(27px, 7vw, 38px);
+      line-height: 1.04;
       font-weight: 900;
-      letter-spacing: -.035em;
+      letter-spacing: -.045em;
     }
 
     #profileView #weeklyShareRange {
@@ -434,6 +464,10 @@ function ensureProfileShareStyles() {
       line-height: 1.4;
       font-weight: 600;
     }
+
+    /* =========================
+       TAGE
+    ========================= */
 
     #profileView #weeklyShareDays {
       display: grid;
@@ -522,6 +556,10 @@ function ensureProfileShareStyles() {
       font-weight: 700;
     }
 
+    /* =========================
+       SUMMARY
+    ========================= */
+
     #profileView #weeklyShareSummary {
       margin-top: 16px;
     }
@@ -582,6 +620,10 @@ function ensureProfileShareStyles() {
       line-height: 1.45;
     }
 
+    /* =========================
+       FOOTER / CTA
+    ========================= */
+
     #profileView #weeklyShareFooter {
       display: flex;
       flex-direction: column;
@@ -616,6 +658,10 @@ function ensureProfileShareStyles() {
       min-height: 48px;
       border-radius: 13px;
     }
+
+    /* =========================
+       SHARE IMAGE PREVIEW
+    ========================= */
 
     #profileView .weekly-share-image-preview {
       margin-top: 18px;
@@ -667,6 +713,17 @@ function ensureProfileShareStyles() {
     }
 
     @media (max-width: 520px) {
+      #profileView .hype-share-week-navigation {
+        grid-template-columns: 40px minmax(0, 1fr) 40px;
+        gap: 9px;
+      }
+
+      #profileView .hype-share-week-arrow {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+      }
+
       #profileView #weeklyShareDays {
         gap: 4px;
       }
@@ -696,6 +753,219 @@ function ensureProfileShareStyles() {
   `;
 
   document.head.appendChild(style);
+}
+
+
+/* =========================
+   NEUE SHARE-WOCHEN-NAVIGATION
+========================= */
+
+function ensureShareWeekNavigation() {
+  if (!weeklyShareCard) {
+    return;
+  }
+
+  /*
+    Falls bereits erzeugt, nichts doppelt anlegen.
+  */
+  if (
+    document.getElementById(
+      "hypeShareWeekNavigation"
+    )
+  ) {
+    return;
+  }
+
+  /*
+    Alte Controls unsichtbar machen.
+    Die Funktionalität der alten Buttons
+    bleibt trotzdem erhalten.
+  */
+
+  [
+    shareWeekPrevBtn,
+    shareWeekNextBtn,
+    shareWeekCurrentBtn,
+    shareWeekTitle
+  ].forEach(
+    element => {
+      if (!element) {
+        return;
+      }
+
+      element.classList.add(
+        "hype-share-legacy-control"
+      );
+    }
+  );
+
+  /*
+    Navigation
+  */
+
+  const navigation =
+    document.createElement("div");
+
+  navigation.id =
+    "hypeShareWeekNavigation";
+
+  navigation.className =
+    "hype-share-week-navigation";
+
+  const previousButton =
+    document.createElement("button");
+
+  previousButton.type =
+    "button";
+
+  previousButton.className =
+    "hype-share-week-arrow";
+
+  previousButton.textContent =
+    "‹";
+
+  previousButton.setAttribute(
+    "aria-label",
+    "Vorherige Woche"
+  );
+
+  previousButton.addEventListener(
+    "click",
+    () => {
+      moveShareWeek(-1);
+    }
+  );
+
+  const center =
+    document.createElement("div");
+
+  center.className =
+    "hype-share-week-center";
+
+  const label =
+    document.createElement("span");
+
+  label.className =
+    "hype-share-week-label";
+
+  label.textContent =
+    "AUSGEWÄHLTE WOCHE";
+
+  const value =
+    document.createElement("strong");
+
+  value.id =
+    "hypeShareWeekValue";
+
+  value.className =
+    "hype-share-week-value";
+
+  center.appendChild(label);
+  center.appendChild(value);
+
+  const nextButton =
+    document.createElement("button");
+
+  nextButton.type =
+    "button";
+
+  nextButton.className =
+    "hype-share-week-arrow";
+
+  nextButton.textContent =
+    "›";
+
+  nextButton.setAttribute(
+    "aria-label",
+    "Nächste Woche"
+  );
+
+  nextButton.addEventListener(
+    "click",
+    () => {
+      moveShareWeek(1);
+    }
+  );
+
+  navigation.appendChild(
+    previousButton
+  );
+
+  navigation.appendChild(
+    center
+  );
+
+  navigation.appendChild(
+    nextButton
+  );
+
+  /*
+    Aktuelle Woche Button
+  */
+
+  const currentWeekRow =
+    document.createElement("div");
+
+  currentWeekRow.id =
+    "hypeShareCurrentWeek";
+
+  currentWeekRow.className =
+    "hype-share-current-week";
+
+  const currentWeekButton =
+    document.createElement("button");
+
+  currentWeekButton.type =
+    "button";
+
+  currentWeekButton.textContent =
+    "Aktuelle Woche";
+
+  currentWeekButton.setAttribute(
+    "aria-label",
+    "Aktuelle Woche auswählen"
+  );
+
+  currentWeekButton.addEventListener(
+    "click",
+    () => {
+      shareWeekStart =
+        startOfWeek(
+          new Date()
+        );
+
+      renderWeeklySharePreview();
+    }
+  );
+
+  currentWeekRow.appendChild(
+    currentWeekButton
+  );
+
+  /*
+    Navigation vor den eigentlichen
+    Wochen-Namen setzen.
+  */
+
+  if (weeklyShareName) {
+    weeklyShareName.parentNode.insertBefore(
+      navigation,
+      weeklyShareName
+    );
+
+    weeklyShareName.parentNode.insertBefore(
+      currentWeekRow,
+      weeklyShareName
+    );
+  } else {
+    weeklyShareCard.appendChild(
+      navigation
+    );
+
+    weeklyShareCard.appendChild(
+      currentWeekRow
+    );
+  }
 }
 
 
@@ -1366,6 +1636,14 @@ function moveShareWeek(
 function renderWeeklySharePreview(
   displayName
 ) {
+  /*
+    Sicherheitshalber immer sicherstellen,
+    dass die neue Navigation existiert.
+  */
+
+  ensureProfileShareStyles();
+  ensureShareWeekNavigation();
+
   const weekStart =
     startOfWeek(
       shareWeekStart
@@ -1405,6 +1683,27 @@ function renderWeeklySharePreview(
   profileDisplayName =
     cleanName;
 
+  /*
+    Neue Wochen-Navigation aktualisieren.
+  */
+
+  const newWeekValue =
+    document.getElementById(
+      "hypeShareWeekValue"
+    );
+
+  if (newWeekValue) {
+    newWeekValue.textContent =
+      formatShareWeek(
+        weekStart
+      );
+  }
+
+  /*
+    Alte Controls bleiben intern erhalten,
+    werden aber nicht mehr angezeigt.
+  */
+
   if (shareWeekPrevBtn) {
     shareWeekPrevBtn.textContent =
       "‹";
@@ -1442,6 +1741,10 @@ function renderWeeklySharePreview(
       );
   }
 
+  /*
+    Name
+  */
+
   if (weeklyShareName) {
     weeklyShareName.textContent =
       firstNameForPossessive(
@@ -1449,12 +1752,20 @@ function renderWeeklySharePreview(
       );
   }
 
+  /*
+    Zeitraum
+  */
+
   if (weeklyShareRange) {
     weeklyShareRange.textContent =
       formatShareWeek(
         weekStart
       );
   }
+
+  /*
+    Tage
+  */
 
   if (weeklyShareDays) {
     const days = [];
@@ -1512,6 +1823,7 @@ function renderWeeklySharePreview(
         }">
 
           <div class="weekly-share-day-top">
+
             <span>
               ${esc(weekday)}
             </span>
@@ -1519,6 +1831,7 @@ function renderWeeklySharePreview(
             <strong>
               ${date.getDate()}
             </strong>
+
           </div>
 
           <div class="weekly-share-day-training">
@@ -1542,7 +1855,11 @@ function renderWeeklySharePreview(
                         `
                     )
                     .join("")
-                : `<span class="empty-day">—</span>`
+                : `
+                  <span class="empty-day">
+                    —
+                  </span>
+                `
             }
 
             ${
@@ -1565,10 +1882,15 @@ function renderWeeklySharePreview(
       days.join("");
   }
 
+  /*
+    Zusammenfassung
+  */
+
   if (weeklyShareSummary) {
     if (!weekSessions.length) {
       weeklyShareSummary.innerHTML = `
         <div class="weekly-share-empty">
+
           <strong>
             Noch kein Training in dieser Woche
           </strong>
@@ -1576,6 +1898,7 @@ function renderWeeklySharePreview(
           <span>
             Für diese Woche sind noch keine Einheiten geplant.
           </span>
+
         </div>
       `;
     } else {
@@ -1583,18 +1906,23 @@ function renderWeeklySharePreview(
         <div class="weekly-share-stats">
 
           <div class="weekly-share-stat">
+
             <strong>
               ${completed.length}
             </strong>
 
             <span>
-              ${completed.length === 1
-                ? "Training erledigt"
-                : "Trainings erledigt"}
+              ${
+                completed.length === 1
+                  ? "Training erledigt"
+                  : "Trainings erledigt"
+              }
             </span>
+
           </div>
 
           <div class="weekly-share-stat">
+
             <strong>
               ${totalMinutes}
             </strong>
@@ -1602,12 +1930,18 @@ function renderWeeklySharePreview(
             <span>
               Minuten erledigt
             </span>
+
           </div>
 
         </div>
       `;
     }
   }
+
+  /*
+    Neuer, natürlicher CTA-Text.
+    Kein "Trainiert jemand genauso gerne wie du?" mehr.
+  */
 
   if (weeklyShareFooter) {
     weeklyShareFooter.innerHTML = `
@@ -1616,7 +1950,7 @@ function renderWeeklySharePreview(
       </strong>
 
       <span>
-        Zeig, was diese Woche bei dir auf dem Plan stand.
+        Zeig, was diese Woche bei dir auf dem Plan steht.
       </span>
     `;
   }
@@ -1775,10 +2109,6 @@ async function createWeeklyShareImage() {
     );
   }
 
-  /*
-    Hintergrund
-  */
-
   ctx.fillStyle =
     "#0b0d10";
 
@@ -1824,10 +2154,6 @@ async function createWeeklyShareImage() {
     1920
   );
 
-  /*
-    Dezente obere Linie
-  */
-
   ctx.fillStyle =
     "#d7ff3f";
 
@@ -1837,10 +2163,6 @@ async function createWeeklyShareImage() {
     120,
     6
   );
-
-  /*
-    Brand
-  */
 
   ctx.fillStyle =
     "#f5f6f7";
@@ -1865,10 +2187,6 @@ async function createWeeklyShareImage() {
     83,
     190
   );
-
-  /*
-    Woche
-  */
 
   ctx.fillStyle =
     "#d7ff3f";
@@ -1913,10 +2231,6 @@ async function createWeeklyShareImage() {
     395
   );
 
-  /*
-    Stats
-  */
-
   drawShareStat(
     ctx,
     80,
@@ -1936,10 +2250,6 @@ async function createWeeklyShareImage() {
     ),
     "MINUTEN"
   );
-
-  /*
-    Wochenzeilen
-  */
 
   const dayStartY =
     690;
@@ -2001,10 +2311,6 @@ async function createWeeklyShareImage() {
       );
     }
 
-    /*
-      Tag
-    */
-
     ctx.fillStyle =
       "#8d949e";
 
@@ -2041,10 +2347,6 @@ async function createWeeklyShareImage() {
       106,
       y + 78
     );
-
-    /*
-      Trainings
-    */
 
     if (!daySessions.length) {
       ctx.fillStyle =
@@ -2153,10 +2455,6 @@ async function createWeeklyShareImage() {
       );
     }
   }
-
-  /*
-    Footer
-  */
 
   ctx.fillStyle =
     "#d7ff3f";
@@ -5037,6 +5335,8 @@ if (
 ========================= */
 
 ensureProfileShareStyles();
+
+ensureShareWeekNavigation();
 
 renderPlan();
 
