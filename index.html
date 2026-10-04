@@ -171,22 +171,57 @@
       display: none !important;
     }
 
-    .logout-button {
-      margin-top: 5px;
+    /* =========================
+       HEUTE BUTTON
+    ========================== */
+
+    .week-jump-today {
+      position: absolute;
+      top: 43px;
+      right: 20px;
+
+      appearance: none;
+      -webkit-appearance: none;
 
       border: 0;
       background: transparent;
 
-      color: #8d949e;
+      padding: 4px 7px;
 
-      font-size: 10px;
-      font-weight: 700;
+      color: var(--accent);
+
+      font-size: 9px;
+      font-weight: 900;
+      letter-spacing: .12em;
+
+      border-radius: 7px;
 
       cursor: pointer;
+
+      transition:
+        background .15s ease,
+        transform .15s ease;
     }
 
-    .logout-button:hover {
-      color: #f5f6f7;
+    .week-jump-today:hover {
+      background: rgba(215,255,63,.08);
+    }
+
+    .week-jump-today:active {
+      transform: scale(.95);
+      background: rgba(215,255,63,.12);
+    }
+
+    .week-jump-today:focus {
+      outline: none;
+    }
+
+    @media (max-width: 430px) {
+      .week-jump-today {
+        top: 42px;
+        right: 15px;
+        font-size: 8px;
+      }
     }
   </style>
 </head>
@@ -223,8 +258,9 @@
         id="authSubtitle"
         class="auth-subtitle"
       >
-        Deine Trainingsplanung.
-        Dein Account. Dein HYPE.
+        Deine Trainingsplanung.<br>
+        Dein Account.<br>
+        Dein HYPE.
       </p>
 
 
@@ -276,7 +312,7 @@
         type="button"
         class="auth-switch"
       >
-        Noch keinen Account? Registrieren
+        Noch keinen Account?
       </button>
 
 
@@ -339,7 +375,9 @@
       </header>
 
 
-      <!-- PLAN VIEW -->
+      <!-- =========================
+           PLAN VIEW
+      ========================== -->
 
       <section
         id="planView"
@@ -354,6 +392,7 @@
               id="weekPrevBtn"
               class="week-nav-arrow"
               aria-label="Vorherige Woche"
+              type="button"
             >
               ‹
             </button>
@@ -363,6 +402,7 @@
               id="weekTodayBtn"
               class="week-title-button"
               aria-label="Zur aktuellen Woche"
+              type="button"
             >
 
               <div class="eyebrow">
@@ -380,6 +420,7 @@
               id="weekNextBtn"
               class="week-nav-arrow"
               aria-label="Nächste Woche"
+              type="button"
             >
               ›
             </button>
@@ -393,6 +434,18 @@
           >
             2026
           </div>
+
+
+          <!-- DIREKT ZU HEUTE -->
+
+          <button
+            id="weekJumpTodayBtn"
+            class="week-jump-today"
+            type="button"
+            aria-label="Zum heutigen Tag springen"
+          >
+            HEUTE
+          </button>
 
         </div>
 
@@ -428,6 +481,7 @@
             <button
               id="addTrainingBtn"
               class="primary"
+              type="button"
             >
               + Training
             </button>
@@ -453,7 +507,9 @@
       </section>
 
 
-      <!-- OVERVIEW VIEW -->
+      <!-- =========================
+           OVERVIEW VIEW
+      ========================== -->
 
       <section
         id="overviewView"
@@ -477,13 +533,12 @@
         </div>
 
 
-        <!-- PERIOD SWITCH -->
-
         <div class="period-switch">
 
           <button
             class="period-btn active"
             data-period="week"
+            type="button"
           >
             Woche
           </button>
@@ -492,6 +547,7 @@
           <button
             class="period-btn"
             data-period="month"
+            type="button"
           >
             Monat
           </button>
@@ -500,6 +556,7 @@
           <button
             class="period-btn"
             data-period="year"
+            type="button"
           >
             Jahr
           </button>
@@ -507,14 +564,13 @@
         </div>
 
 
-        <!-- PERIOD NAVIGATION -->
-
         <div class="period-navigation">
 
           <button
             id="periodPrevBtn"
             class="period-arrow"
             aria-label="Vorheriger Zeitraum"
+            type="button"
           >
             ‹
           </button>
@@ -523,6 +579,7 @@
           <button
             id="periodTodayBtn"
             class="period-title-button"
+            type="button"
           >
             <span id="periodTitle">
               Diese Woche
@@ -534,6 +591,7 @@
             id="periodNextBtn"
             class="period-arrow"
             aria-label="Nächster Zeitraum"
+            type="button"
           >
             ›
           </button>
@@ -546,7 +604,9 @@
       </section>
 
 
-      <!-- TODAY VIEW -->
+      <!-- =========================
+           TODAY VIEW
+      ========================== -->
 
       <section
         id="todayView"
@@ -582,13 +642,16 @@
     </main>
 
 
-    <!-- BOTTOM NAV -->
+    <!-- =========================
+         BOTTOM NAV
+    ========================== -->
 
     <nav class="bottom-nav">
 
       <button
         class="nav-item active"
         data-view="plan"
+        type="button"
       >
 
         <span class="nav-icon">
@@ -605,6 +668,7 @@
       <button
         class="nav-item"
         data-view="overview"
+        type="button"
       >
 
         <span class="nav-icon">
@@ -620,7 +684,9 @@
     </nav>
 
 
-    <!-- TRAINING DIALOG -->
+    <!-- =========================
+         TRAINING DIALOG
+    ========================== -->
 
     <dialog id="trainingDialog">
 
