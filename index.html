@@ -35,7 +35,10 @@
 
   <main class="app">
 
-    <!-- HEADER -->
+    <!-- =========================
+         HEADER
+    ========================== -->
+
     <header class="topbar">
 
       <div>
@@ -94,12 +97,12 @@
           </button>
 
 
-          <div class="week-title-area">
+          <div
+            id="weekTitleArea"
+            class="week-title-area"
+          >
 
-            <div
-              id="weekEyebrow"
-              class="eyebrow"
-            >
+            <div class="eyebrow">
               DIESE WOCHE
             </div>
 
@@ -129,17 +132,6 @@
           2026
         </div>
 
-
-        <!-- EIGENER HEUTE BUTTON -->
-        <button
-          id="weekTodayBtn"
-          class="week-today-action"
-          type="button"
-          aria-label="Zum heutigen Tag"
-        >
-          HEUTE
-        </button>
-
       </div>
 
 
@@ -149,6 +141,21 @@
         id="weekStrip"
         class="week-strip"
       ></div>
+
+
+      <!-- TODAY BUTTON -->
+
+      <div class="today-jump-wrap">
+
+        <button
+          id="todayJumpBtn"
+          class="today-jump-btn"
+          type="button"
+        >
+          HEUTE
+        </button>
+
+      </div>
 
 
       <!-- TRAINING PLAN -->
@@ -270,6 +277,7 @@
           ‹
         </button>
 
+
         <button
           id="periodTodayBtn"
           class="period-title-button"
@@ -279,6 +287,7 @@
             Diese Woche
           </span>
         </button>
+
 
         <button
           id="periodNextBtn"
@@ -292,7 +301,11 @@
       </div>
 
 
-      <div id="overviewContent"></div>
+      <!-- OVERVIEW CONTENT -->
+
+      <div
+        id="overviewContent"
+      ></div>
 
     </section>
 
@@ -327,7 +340,9 @@
       </div>
 
 
-      <div id="todayContent"></div>
+      <div
+        id="todayContent"
+      ></div>
 
     </section>
 
