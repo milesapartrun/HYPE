@@ -1,3 +1,152 @@
+:root {
+  --bg: #0b0d10;
+  --panel: #14171c;
+  --panel2: #1a1e24;
+  --text: #f5f6f7;
+  --muted: #8d949e;
+  --line: #292e36;
+  --accent: #d7ff3f;
+  --danger: #ff6b6b;
+
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "SF Pro Display",
+    "Inter",
+    sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.app {
+  width: min(760px, 100%);
+  margin: auto;
+  padding: 20px 18px 100px;
+}
+
+
+/* =========================
+   HEADER
+========================= */
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.brand-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sport-markers {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 2px;
+  font-size: 17px;
+  opacity: .72;
+  filter: saturate(.8);
+}
+
+.sport-markers span {
+  display: block;
+  line-height: 1;
+}
+
+.eyebrow,
+.muted {
+  font-size: 11px;
+  letter-spacing: .12em;
+  color: var(--muted);
+  font-weight: 700;
+}
+
+h1 {
+  font-size: 28px;
+  letter-spacing: -.04em;
+  margin: 2px 0 0;
+}
+
+.hype-logo {
+  width: 21px;
+  height: 21px;
+  object-fit: contain;
+  display: block;
+  margin-top: 2px;
+}
+
+
+/* =========================
+   HERO
+========================= */
+
+.hero {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  margin: 34px 0 22px;
+  padding: 20px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #171b20,
+      #101318
+    );
+
+  border: 1px solid var(--line);
+  border-radius: 22px;
+}
+
+h2 {
+  font-size: 30px;
+  letter-spacing: -.04em;
+  margin: 5px 0 0;
+}
+
+.hero-year {
+  position: absolute;
+  top: 17px;
+  right: 20px;
+
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .1em;
+  opacity: .75;
+}
+
+
 /* =========================
    WEEK NAVIGATION
 ========================= */
@@ -67,4 +216,1170 @@
 .week-today-btn:hover {
   background: rgba(215,255,63,.08);
   color: var(--accent);
+}
+
+
+/* =========================
+   WEEK STRIP
+========================= */
+
+.week-strip {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 7px;
+  margin-bottom: 30px;
+}
+
+.day {
+  border: 1px solid var(--line);
+  background: var(--panel);
+  border-radius: 15px;
+
+  padding: 11px 3px;
+
+  text-align: center;
+  color: var(--muted);
+
+  transition:
+    transform .15s ease,
+    border-color .15s ease,
+    background .15s ease;
+}
+
+.day:hover {
+  border-color: #414750;
+}
+
+.day strong {
+  display: block;
+  color: var(--text);
+  font-size: 16px;
+  margin-top: 4px;
+}
+
+.today-label {
+  display: block;
+
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: .08em;
+
+  margin-top: 5px;
+
+  color: var(--accent);
+}
+
+.day.active {
+  background: var(--accent);
+  color: #111;
+  border-color: var(--accent);
+}
+
+.day.active strong {
+  color: #111;
+}
+
+.day.active .today-label {
+  color: #111;
+}
+
+.dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+
+  background: var(--accent);
+
+  display: block;
+
+  margin: 7px auto 0;
+}
+
+
+/* =========================
+   SECTION HEAD
+========================= */
+
+.section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  margin-bottom: 14px;
+}
+
+.selected-date {
+  color: #d7ff3f !important;
+  opacity: 1 !important;
+  font-size: 13px;
+  font-weight: 700;
+  margin-top: 4px;
+}
+
+
+/* =========================
+   BUTTONS
+========================= */
+
+.primary {
+  border: 0;
+  background: #d7ff3f;
+  color: #111;
+
+  font-weight: 800;
+
+  padding: 11px 15px;
+  border-radius: 13px;
+}
+
+.primary:hover {
+  filter: brightness(1.05);
+}
+
+.full {
+  width: 100%;
+  margin-top: 8px;
+}
+
+
+/* =========================
+   SESSION CARDS
+========================= */
+
+.sessions {
+  display: grid;
+  gap: 10px;
+}
+
+.session {
+  display: grid;
+  grid-template-columns: 48px 1fr auto;
+  gap: 12px;
+  align-items: start;
+
+  padding: 15px;
+
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+
+  transition:
+    border-color .2s ease,
+    background .2s ease;
+}
+
+.session.completed {
+  border-color: rgba(215,255,63,.55);
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(215,255,63,.07),
+      var(--panel)
+    );
+}
+
+.session.completed h4 {
+  color: var(--accent);
+}
+
+.sport-icon {
+  width: 48px;
+  height: 48px;
+
+  border-radius: 14px;
+
+  background: var(--panel2);
+
+  display: grid;
+  place-items: center;
+
+  font-size: 22px;
+}
+
+.session-content {
+  min-width: 0;
+}
+
+.session-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.session h4 {
+  margin: 0 0 4px;
+  font-size: 16px;
+}
+
+.session p {
+  margin: 0 0 3px;
+
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.completed-label {
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: .08em;
+
+  color: var(--accent);
+
+  border: 1px solid rgba(215,255,63,.35);
+
+  padding: 3px 6px;
+  border-radius: 6px;
+}
+
+.session-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+}
+
+.complete-btn {
+  width: 32px;
+  height: 32px;
+
+  border: 1px solid var(--line);
+  border-radius: 10px;
+
+  background: var(--panel2);
+  color: var(--muted);
+
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.complete-btn.is-completed {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #111;
+}
+
+.edit-btn {
+  border: 0;
+  background: transparent;
+
+  color: var(--muted);
+
+  font-size: 11px;
+  padding: 3px 0;
+}
+
+.edit-btn:hover {
+  color: var(--text);
+}
+
+
+/* =========================
+   ACTUAL INTENSITY
+========================= */
+
+.actual-intensity {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  margin-top: 10px;
+}
+
+.actual-intensity span {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.actual-intensity-select {
+  width: auto;
+  min-width: 145px;
+
+  margin: 0;
+  padding: 7px 9px;
+
+  border-radius: 9px;
+  font-size: 11px;
+}
+
+
+/* =========================
+   POST TRAINING NOTES
+========================= */
+
+.post-training-notes {
+  margin-top: 12px;
+}
+
+.post-training-notes label {
+  margin: 0;
+}
+
+.post-training-notes textarea {
+  min-height: 70px;
+  resize: vertical;
+
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+
+/* =========================
+   INSIGHT
+========================= */
+
+.insight {
+  display: flex;
+  gap: 12px;
+
+  margin-top: 18px;
+  padding: 16px;
+
+  border: 1px solid var(--line);
+  background: var(--panel);
+
+  border-radius: 18px;
+}
+
+.insight-icon {
+  font-size: 20px;
+  color: #d7ff3f;
+}
+
+.insight p {
+  color: var(--muted);
+
+  margin: 5px 0 0;
+
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+
+/* =========================
+   OVERVIEW
+========================= */
+
+.overview-header {
+  margin: 34px 0 20px;
+}
+
+.overview-header h2 {
+  margin-top: 4px;
+}
+
+
+/* =========================
+   PERIOD SWITCH
+========================= */
+
+.period-switch {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+
+  padding: 4px;
+
+  background: var(--panel);
+
+  border: 1px solid var(--line);
+  border-radius: 15px;
+
+  margin-bottom: 14px;
+}
+
+.period-btn {
+  border: 0;
+  background: transparent;
+
+  color: var(--muted);
+
+  padding: 9px 6px;
+
+  border-radius: 11px;
+
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.period-btn.active {
+  background: var(--panel2);
+  color: var(--text);
+}
+
+
+/* =========================
+   PERIOD NAVIGATION
+========================= */
+
+.period-navigation {
+  display: grid;
+  grid-template-columns: 42px 1fr 42px;
+
+  align-items: center;
+  gap: 8px;
+
+  margin-bottom: 14px;
+}
+
+.period-arrow {
+  width: 42px;
+  height: 42px;
+
+  border: 1px solid var(--line);
+
+  border-radius: 13px;
+
+  background: var(--panel);
+  color: var(--text);
+
+  font-size: 25px;
+  line-height: 1;
+}
+
+.period-arrow:hover {
+  border-color: #414750;
+}
+
+.period-title-button {
+  min-width: 0;
+
+  border: 0;
+  background: transparent;
+
+  color: var(--text);
+
+  font-size: 14px;
+  font-weight: 800;
+
+  padding: 8px;
+}
+
+
+/* =========================
+   OVERVIEW WEEK
+========================= */
+
+.overview-week {
+  display: grid;
+  gap: 8px;
+}
+
+.overview-day {
+  background: var(--panel);
+
+  border: 1px solid var(--line);
+
+  border-radius: 18px;
+
+  overflow: hidden;
+}
+
+.overview-day.today {
+  border-color: rgba(215,255,63,.45);
+}
+
+.overview-day-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 13px 15px;
+
+  border-bottom: 1px solid var(--line);
+}
+
+.overview-day-date {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+}
+
+.overview-day-name {
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.overview-day-number {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.overview-day-status {
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.overview-day-status.done {
+  color: var(--accent);
+}
+
+.overview-day-sessions {
+  padding: 4px 10px 10px;
+}
+
+.overview-mini-session {
+  display: grid;
+  grid-template-columns: 30px 1fr auto;
+
+  gap: 9px;
+
+  align-items: center;
+
+  padding: 9px 5px;
+
+  border-bottom: 1px solid rgba(41,46,54,.55);
+}
+
+.overview-mini-session:last-child {
+  border-bottom: 0;
+}
+
+.mini-icon {
+  width: 30px;
+  height: 30px;
+
+  border-radius: 9px;
+
+  background: var(--panel2);
+
+  display: grid;
+  place-items: center;
+
+  font-size: 15px;
+}
+
+.mini-title {
+  min-width: 0;
+
+  color: var(--text);
+
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.mini-meta {
+  color: var(--muted);
+
+  font-size: 10px;
+
+  margin-top: 2px;
+}
+
+.mini-status {
+  width: 22px;
+  height: 22px;
+
+  border-radius: 7px;
+
+  display: grid;
+  place-items: center;
+
+  border: 1px solid var(--line);
+
+  color: var(--muted);
+
+  font-size: 12px;
+}
+
+.mini-status.completed {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #111;
+}
+
+.overview-empty-day {
+  padding: 13px 15px;
+
+  color: #626973;
+
+  font-size: 11px;
+}
+
+
+/* =========================
+   OVERVIEW MONTH
+========================= */
+
+.month-calendar {
+  background: var(--panel);
+
+  border: 1px solid var(--line);
+
+  border-radius: 20px;
+
+  padding: 12px;
+
+  position: relative;
+}
+
+.month-weekdays,
+.month-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+}
+
+.month-weekdays {
+  margin-bottom: 7px;
+}
+
+.month-weekday {
+  text-align: center;
+
+  color: var(--muted);
+
+  font-size: 9px;
+  font-weight: 800;
+
+  padding: 5px 0;
+}
+
+.month-grid {
+  position: relative;
+}
+
+.month-cell {
+  min-height: 58px;
+
+  background: #111419;
+
+  border: 1px solid transparent;
+
+  border-radius: 10px;
+
+  padding: 6px;
+
+  position: relative;
+
+  overflow: hidden;
+
+  z-index: 2;
+
+  pointer-events: none;
+}
+
+.month-cell.other-month {
+  opacity: .28;
+}
+
+.month-cell.today {
+  border-color: rgba(215,255,63,.65);
+}
+
+.month-date {
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--muted);
+
+  position: relative;
+  z-index: 3;
+}
+
+.month-cell.today .month-date {
+  color: var(--accent);
+}
+
+.month-dots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+
+  margin-top: 7px;
+
+  position: relative;
+  z-index: 3;
+}
+
+.month-dot {
+  width: 6px;
+  height: 6px;
+
+  border-radius: 50%;
+
+  background: #6d747d;
+}
+
+.month-dot.completed {
+  background: var(--accent);
+}
+
+.month-count {
+  position: absolute;
+
+  right: 5px;
+  bottom: 4px;
+
+  color: #68707a;
+
+  font-size: 8px;
+  font-weight: 800;
+
+  z-index: 3;
+}
+
+
+/*
+ * Klickbare Fläche über der kompletten Woche.
+ * Dadurch reicht ein Klick irgendwo in der
+ * Kalenderwoche.
+ */
+.month-week-hit-area {
+  position: absolute;
+
+  left: 0;
+  right: 0;
+
+  border: 0;
+
+  background: transparent;
+
+  padding: 0;
+
+  cursor: pointer;
+
+  z-index: 5;
+
+  border-radius: 10px;
+
+  transition:
+    background .15s ease;
+}
+
+.month-week-hit-area:hover {
+  background: rgba(215,255,63,.035);
+}
+
+.month-week-hit-area:active {
+  background: rgba(215,255,63,.07);
+}
+
+
+/* =========================
+   OVERVIEW YEAR
+========================= */
+
+.year-overview {
+  display: grid;
+  gap: 12px;
+}
+
+.year-summary {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.year-stat {
+  background: var(--panel);
+
+  border: 1px solid var(--line);
+
+  border-radius: 15px;
+
+  padding: 13px 10px;
+}
+
+.year-stat strong {
+  display: block;
+
+  font-size: 21px;
+  letter-spacing: -.03em;
+}
+
+.year-stat span {
+  display: block;
+
+  margin-top: 3px;
+
+  color: var(--muted);
+
+  font-size: 9px;
+  font-weight: 700;
+
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+
+.year-months {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 9px;
+}
+
+
+/*
+ * Monatskarten sind jetzt echte Buttons,
+ * damit der komplette Monat anklickbar ist.
+ */
+.year-month {
+  appearance: none;
+  -webkit-appearance: none;
+
+  width: 100%;
+
+  background: var(--panel);
+
+  border: 1px solid var(--line);
+
+  border-radius: 17px;
+
+  padding: 12px;
+
+  color: var(--text);
+
+  text-align: left;
+
+  cursor: pointer;
+
+  transition:
+    border-color .15s ease,
+    background .15s ease,
+    transform .15s ease;
+}
+
+.year-month:hover {
+  border-color: #414750;
+  background: var(--panel2);
+}
+
+.year-month:active {
+  transform: scale(.985);
+}
+
+.year-month-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  margin-bottom: 9px;
+}
+
+.year-month-name {
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.year-month-count {
+  color: var(--muted);
+  font-size: 9px;
+}
+
+.year-month-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 3px;
+}
+
+.year-weekday {
+  color: #555c65;
+
+  text-align: center;
+
+  font-size: 7px;
+
+  padding-bottom: 2px;
+}
+
+.year-day {
+  aspect-ratio: 1;
+
+  border-radius: 3px;
+
+  background: #1c2026;
+}
+
+.year-day.has-training {
+  background: #66703b;
+}
+
+.year-day.completed {
+  background: var(--accent);
+}
+
+.year-day.today {
+  outline: 1px solid rgba(255,255,255,.7);
+  outline-offset: 1px;
+}
+
+
+/* =========================
+   TODAY VIEW
+========================= */
+
+.today-hero {
+  margin-bottom: 18px;
+}
+
+.today-symbol {
+  color: var(--accent);
+  font-size: 28px;
+}
+
+.today-empty {
+  padding: 28px 18px;
+
+  border: 1px dashed var(--line);
+
+  border-radius: 18px;
+
+  text-align: center;
+
+  color: var(--muted);
+}
+
+.today-session-list {
+  display: grid;
+  gap: 10px;
+}
+
+
+/* =========================
+   BOTTOM NAV
+========================= */
+
+.bottom-nav {
+  position: fixed;
+
+  bottom: 12px;
+  left: 50%;
+
+  transform: translateX(-50%);
+
+  width: min(460px, calc(100% - 28px));
+
+  display: grid;
+
+  grid-template-columns: repeat(2, 1fr);
+
+  padding: 7px;
+
+  background: rgba(20,23,28,.92);
+
+  backdrop-filter: blur(18px);
+
+  border: 1px solid var(--line);
+
+  border-radius: 20px;
+
+  z-index: 20;
+}
+
+.nav-item {
+  border: 0;
+  background: transparent;
+
+  color: var(--muted);
+
+  padding: 9px 8px;
+
+  border-radius: 14px;
+
+  transition:
+    background .15s ease,
+    color .15s ease;
+}
+
+.nav-item.active {
+  background: rgba(215,255,63,.10);
+
+  color: var(--accent);
+
+  box-shadow:
+    inset 0 0 0 1px rgba(215,255,63,.18);
+}
+
+.nav-item.active .nav-icon {
+  color: var(--accent);
+  opacity: 1;
+}
+
+.nav-item:not(.active):hover {
+  background: var(--panel2);
+  color: var(--text);
+}
+
+.nav-item span {
+  display: block;
+
+  font-size: 10px;
+
+  margin-top: 2px;
+}
+
+.nav-icon {
+  font-size: 15px !important;
+  margin-bottom: 2px;
+  opacity: .8;
+}
+
+
+/* =========================
+   DIALOG
+========================= */
+
+dialog {
+  border: 1px solid var(--line);
+
+  background: #111419;
+
+  color: var(--text);
+
+  border-radius: 24px;
+
+  width: min(500px, calc(100% - 28px));
+
+  padding: 0;
+
+  box-shadow: 0 30px 100px #000;
+}
+
+dialog::backdrop {
+  background: rgba(0,0,0,.7);
+}
+
+form {
+  padding: 20px;
+}
+
+.dialog-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+h3 {
+  margin: 5px 0 0;
+
+  font-size: 22px;
+
+  letter-spacing: -.03em;
+}
+
+label {
+  display: block;
+
+  color: #c8cbd0;
+
+  font-size: 13px;
+  font-weight: 650;
+
+  margin: 15px 0;
+}
+
+input,
+select,
+textarea {
+  display: block;
+
+  width: 100%;
+
+  margin-top: 7px;
+
+  padding: 12px;
+
+  border-radius: 12px;
+
+  border: 1px solid var(--line);
+
+  background: var(--panel);
+
+  color: var(--text);
+
+  outline: none;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--accent);
+}
+
+.two {
+  display: grid;
+
+  grid-template-columns: 1fr 1fr;
+
+  gap: 12px;
+}
+
+.close {
+  font-size: 25px;
+
+  background: transparent;
+
+  border: 0;
+
+  color: var(--text);
+}
+
+
+/* =========================
+   EMPTY
+========================= */
+
+.empty {
+  padding: 30px 15px;
+
+  text-align: center;
+
+  color: var(--muted);
+
+  border: 1px dashed var(--line);
+
+  border-radius: 18px;
+}
+
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (min-width: 700px) {
+
+  .app {
+    padding-top: 32px;
+  }
+
+  .week-strip {
+    gap: 10px;
+  }
+
+  .day {
+    padding: 13px 5px;
+  }
+
+  .year-months {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+}
+
+
+@media (max-width: 430px) {
+
+  .month-cell {
+    min-height: 50px;
+  }
+
+  .year-months {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .year-stat strong {
+    font-size: 18px;
+  }
+
+  .week-navigation {
+    grid-template-columns: 38px 1fr 38px;
+    gap: 6px;
+  }
+
+  .week-nav-btn {
+    width: 38px;
+    height: 38px;
+    font-size: 20px;
+  }
+
 }
