@@ -3,853 +3,1236 @@
 <head>
   <meta charset="UTF-8">
 
-<meta
-name=“viewport”
-content=“width=device-width, initial-scale=1, viewport-fit=cover”
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, viewport-fit=cover"
+  >
 
-<meta
-name=“theme-color”
-content=”#0b0d10”
+  <meta
+    name="theme-color"
+    content="#0b0d10"
+  >
 
-<meta
-name=“description”
-content=“HYPE – HYbrid Plan & Execution”
+  <meta
+    name="description"
+    content="HYPE – HYbrid Plan & Execution"
+  >
 
   <link
     rel="manifest"
     href="manifest.json"
   >
+
   <title>HYPE</title>
+
   <link
     rel="stylesheet"
     href="style.css"
   >
 </head>
+
 <body>
+
   <!-- =========================
        AUTH SCREEN
   ========================== -->
+
   <section
     id="authScreen"
     class="auth-screen"
   >
-<div class="auth-container">
-  <div class="auth-card">
-    <div class="auth-brand">
-      <div class="eyebrow">
-        ATHLETE PLANNER
-      </div>
-      <div class="brand-row auth-brand-row">
-        <h1>
-          HYPE
-        </h1>
-        <img
-          src="hype-symbol.png"
-          class="hype-logo"
-          alt=""
-          aria-hidden="true"
+
+    <div class="auth-container">
+
+      <div class="auth-card">
+
+        <div class="auth-brand">
+
+          <div class="eyebrow">
+            ATHLETE PLANNER
+          </div>
+
+          <div class="brand-row auth-brand-row">
+
+            <h1>
+              HYPE
+            </h1>
+
+            <img
+              src="hype-symbol.png"
+              class="hype-logo"
+              alt=""
+              aria-hidden="true"
+            >
+
+          </div>
+
+          <div
+            id="authSubtitle"
+            class="auth-subtitle"
+          >
+            Deine Trainingsplanung.<br>
+            Dein Account.<br>
+            Dein HYPE.
+          </div>
+
+        </div>
+
+
+        <form
+          id="authForm"
+          class="auth-form"
         >
+
+          <div
+            id="authMessage"
+            class="auth-message"
+            aria-live="polite"
+          ></div>
+
+
+          <!-- VORNAME -->
+
+          <label
+            id="authFirstNameField"
+            class="auth-first-name-field hidden"
+          >
+            Vorname
+
+            <input
+              id="authFirstName"
+              type="text"
+              autocomplete="given-name"
+              placeholder="z. B. Tano"
+              maxlength="40"
+            >
+
+          </label>
+
+
+          <!-- E-MAIL -->
+
+          <label>
+            E-Mail
+
+            <input
+              id="authEmail"
+              type="email"
+              autocomplete="email"
+              placeholder="deine@email.de"
+              required
+            >
+
+          </label>
+
+
+          <!-- PASSWORT -->
+
+          <label>
+            Passwort
+
+            <input
+              id="authPassword"
+              type="password"
+              autocomplete="current-password"
+              placeholder="••••••••"
+              minlength="6"
+              required
+            >
+
+          </label>
+
+
+          <button
+            id="authSubmit"
+            class="primary auth-submit"
+            type="submit"
+          >
+            Einloggen
+          </button>
+
+
+          <button
+            id="authSwitch"
+            class="auth-switch"
+            type="button"
+          >
+            <span>
+              Noch keinen Account?
+            </span>
+
+            <span>
+              → Jetzt registrieren
+            </span>
+          </button>
+
+        </form>
+
       </div>
-      <div
-        id="authSubtitle"
-        class="auth-subtitle"
-      >
-        Deine Trainingsplanung.<br>
-        Dein Account.<br>
-        Dein HYPE.
-      </div>
+
     </div>
-    <form
-      id="authForm"
-      class="auth-form"
-    >
-      <div
-        id="authMessage"
-        class="auth-message"
-        aria-live="polite"
-      ></div>
-      <!-- VORNAME -->
-      <label
-        id="authFirstNameField"
-        class="auth-first-name-field hidden"
-      >
-        Vorname
-        <input
-          id="authFirstName"
-          type="text"
-          autocomplete="given-name"
-          placeholder="z. B. Tano"
-          maxlength="40"
-        >
-      </label>
-      <!-- E-MAIL -->
-      <label>
-        E-Mail
-        <input
-          id="authEmail"
-          type="email"
-          autocomplete="email"
-          placeholder="deine@email.de"
-          required
-        >
-      </label>
-      <!-- PASSWORT -->
-      <label>
-        Passwort
-        <input
-          id="authPassword"
-          type="password"
-          autocomplete="current-password"
-          placeholder="••••••••"
-          minlength="6"
-          required
-        >
-      </label>
-      <button
-        id="authSubmit"
-        class="primary auth-submit"
-        type="submit"
-      >
-        Einloggen
-      </button>
-      <button
-        id="authSwitch"
-        class="auth-switch"
-        type="button"
-      >
-        <span>
-          Noch keinen Account?
-        </span>
-        <span>
-          → Jetzt registrieren
-        </span>
-      </button>
-    </form>
-  </div>
-</div>
+
   </section>
+
+
+
   <!-- =========================
        APP
   ========================== -->
+
   <main
     id="appContent"
     class="app hidden"
   >
-<!-- =========================
-     HEADER
-========================== -->
-<header class="topbar">
-  <div>
-    <div class="eyebrow">
-      ATHLETE PLANNER
-    </div>
-    <div class="brand-row">
-      <h1>
-        HYPE
-      </h1>
-      <img
-        src="hype-symbol.png"
-        class="hype-logo"
-        alt=""
+
+
+    <!-- =========================
+         HEADER
+    ========================== -->
+
+    <header class="topbar">
+
+      <div>
+
+        <div class="eyebrow">
+          ATHLETE PLANNER
+        </div>
+
+        <div class="brand-row">
+
+          <h1>
+            HYPE
+          </h1>
+
+          <img
+            src="hype-symbol.png"
+            class="hype-logo"
+            alt=""
+            aria-hidden="true"
+          >
+
+        </div>
+
+      </div>
+
+
+      <div
+        class="sport-markers"
         aria-hidden="true"
       >
-    </div>
-  </div>
-  <div
-    class="sport-markers"
-    aria-hidden="true"
-  >
-    <span>🏃</span>
-    <span>⚡</span>
-    <span>🏋️</span>
-  </div>
-</header>
-<!-- =========================
-     PLAN VIEW
-========================== -->
-<section
-  id="planView"
-  class="view"
->
-  <div class="hero">
-    <div class="week-navigation">
-      <button
-        id="weekPrevBtn"
-        class="week-nav-arrow"
-        type="button"
-        aria-label="Vorherige Woche"
-      >
-        ‹
-      </button>
-      <div
-        id="weekTitleArea"
-        class="week-title-area"
-      >
-        <div class="eyebrow">
-          DIESE WOCHE
-        </div>
-        <h2 id="weekTitle">
-          Diese Woche
-        </h2>
+
+        <span>🏃</span>
+        <span>⚡</span>
+        <span>🏋️</span>
+
       </div>
-      <button
-        id="weekNextBtn"
-        class="week-nav-arrow"
-        type="button"
-        aria-label="Nächste Woche"
-      >
-        ›
-      </button>
-    </div>
-    <div
-      id="heroYear"
-      class="hero-year"
+
+    </header>
+
+
+
+    <!-- =========================
+         PLAN VIEW
+    ========================== -->
+
+    <section
+      id="planView"
+      class="view"
     >
-      2026
-    </div>
-  </div>
-  <!-- WEEK STRIP -->
-  <div
-    id="weekStrip"
-    class="week-strip"
-  ></div>
-  <!-- TODAY BUTTON -->
-  <div class="today-jump-wrap">
-    <button
-      id="todayJumpBtn"
-      class="today-jump-btn"
-      type="button"
-    >
-      HEUTE
-    </button>
-  </div>
-  <!-- TRAINING PLAN -->
-  <section>
-    <div class="section-head">
-      <div>
-        <div class="eyebrow">
-          TRAININGSPLAN
+
+      <div class="hero">
+
+        <div class="week-navigation">
+
+          <button
+            id="weekPrevBtn"
+            class="week-nav-arrow"
+            type="button"
+            aria-label="Vorherige Woche"
+          >
+            ‹
+          </button>
+
+
+          <div
+            id="weekTitleArea"
+            class="week-title-area"
+          >
+
+            <div class="eyebrow">
+              DIESE WOCHE
+            </div>
+
+            <h2 id="weekTitle">
+              Diese Woche
+            </h2>
+
+          </div>
+
+
+          <button
+            id="weekNextBtn"
+            class="week-nav-arrow"
+            type="button"
+            aria-label="Nächste Woche"
+          >
+            ›
+          </button>
+
         </div>
+
+
         <div
-          id="selectedDateLabel"
-          class="selected-date"
+          id="heroYear"
+          class="hero-year"
+        >
+          2026
+        </div>
+
+      </div>
+
+
+      <!-- WEEK STRIP -->
+
+      <div
+        id="weekStrip"
+        class="week-strip"
+      ></div>
+
+
+      <!-- TODAY BUTTON -->
+
+      <div class="today-jump-wrap">
+
+        <button
+          id="todayJumpBtn"
+          class="today-jump-btn"
+          type="button"
+        >
+          HEUTE
+        </button>
+
+      </div>
+
+
+      <!-- TRAINING PLAN -->
+
+      <section>
+
+        <div class="section-head">
+
+          <div>
+
+            <div class="eyebrow">
+              TRAININGSPLAN
+            </div>
+
+            <div
+              id="selectedDateLabel"
+              class="selected-date"
+            ></div>
+
+          </div>
+
+
+          <div class="training-actions">
+
+            <button
+              id="calendarExportBtn"
+              class="calendar-export-btn"
+              type="button"
+            >
+              🗓 Kalender
+            </button>
+
+
+            <button
+              id="addTrainingBtn"
+              class="primary"
+              type="button"
+            >
+              + Training
+            </button>
+
+          </div>
+
+        </div>
+
+
+        <div
+          id="sessions"
+          class="sessions"
         ></div>
+
+      </section>
+
+
+      <!-- WEEKLY INSIGHT -->
+
+      <div
+        id="weeklyInsight"
+        class="insight"
+      ></div>
+
+    </section>
+
+
+
+    <!-- =========================
+         OVERVIEW VIEW
+    ========================== -->
+
+    <section
+      id="overviewView"
+      class="view hidden"
+    >
+
+      <div class="overview-header">
+
+        <div>
+
+          <div class="eyebrow">
+            TRAININGSÜBERSICHT
+          </div>
+
+          <h2>
+            Übersicht
+          </h2>
+
+        </div>
+
       </div>
-      <div class="training-actions">
+
+
+      <!-- PERIOD SWITCH -->
+
+      <div class="period-switch">
+
         <button
-          id="calendarExportBtn"
-          class="calendar-export-btn"
+          class="period-btn active"
+          data-period="week"
           type="button"
         >
-          🗓 Kalender
+          Woche
         </button>
+
         <button
-          id="addTrainingBtn"
-          class="primary"
+          class="period-btn"
+          data-period="month"
           type="button"
         >
-          + Training
+          Monat
         </button>
-      </div>
-    </div>
-    <div
-      id="sessions"
-      class="sessions"
-    ></div>
-  </section>
-  <!-- WEEKLY INSIGHT -->
-  <div
-    id="weeklyInsight"
-    class="insight"
-  ></div>
-</section>
-<!-- =========================
-     OVERVIEW VIEW
-========================== -->
-<section
-  id="overviewView"
-  class="view hidden"
->
-  <div class="overview-header">
-    <div>
-      <div class="eyebrow">
-        TRAININGSÜBERSICHT
-      </div>
-      <h2>
-        Übersicht
-      </h2>
-    </div>
-  </div>
-  <!-- PERIOD SWITCH -->
-  <div class="period-switch">
-    <button
-      class="period-btn active"
-      data-period="week"
-      type="button"
-    >
-      Woche
-    </button>
-    <button
-      class="period-btn"
-      data-period="month"
-      type="button"
-    >
-      Monat
-    </button>
-    <button
-      class="period-btn"
-      data-period="year"
-      type="button"
-    >
-      Jahr
-    </button>
-  </div>
-  <!-- PERIOD NAVIGATION -->
-  <div class="period-navigation">
-    <button
-      id="periodPrevBtn"
-      class="period-arrow"
-      type="button"
-      aria-label="Vorheriger Zeitraum"
-    >
-      ‹
-    </button>
-    <button
-      id="periodTodayBtn"
-      class="period-title-button"
-      type="button"
-    >
-      <span id="periodTitle">
-        Diese Woche
-      </span>
-    </button>
-    <button
-      id="periodNextBtn"
-      class="period-arrow"
-      type="button"
-      aria-label="Nächster Zeitraum"
-    >
-      ›
-    </button>
-  </div>
-  <!-- OVERVIEW CONTENT -->
-  <div
-    id="overviewContent"
-  ></div>
-</section>
-<!-- =========================
-     PROFILE VIEW
-========================== -->
-<section
-  id="profileView"
-  class="view hidden profile-view"
->
-  <!-- =========================
-       PROFILE HEADER
-  ========================== -->
-  <div class="profile-header">
-    <div class="eyebrow">
-      DEIN HYPE
-    </div>
-    <h2 id="profileGreeting">
-      Hallo 👋
-    </h2>
-    <p class="profile-intro">
-      Deine Woche. Dein Fortschritt.
-      Dein HYPE.
-    </p>
-  </div>
-  <!-- =========================
-       ACCOUNT
-  ========================== -->
-  <section class="profile-card profile-account-card">
-    <!-- PROFILE AVATAR -->
-    <div class="profile-avatar-area">
-      <button
-        id="profileAvatarButton"
-        class="profile-avatar-button"
-        type="button"
-        aria-label="Profilbild ändern"
-      >
-        <img
-          id="profileAvatar"
-          class="profile-avatar"
-          src=""
-          alt=""
+
+        <button
+          class="period-btn"
+          data-period="year"
+          type="button"
         >
-        <span
-          id="profileAvatarFallback"
-          class="profile-avatar-fallback"
-          aria-hidden="true"
+          Jahr
+        </button>
+
+      </div>
+
+
+      <!-- PERIOD NAVIGATION -->
+
+      <div class="period-navigation">
+
+        <button
+          id="periodPrevBtn"
+          class="period-arrow"
+          type="button"
+          aria-label="Vorheriger Zeitraum"
         >
-          ?
-        </span>
-        <span class="profile-avatar-edit">
-          +
-        </span>
-      </button>
-      <input
-        id="profileAvatarInput"
-        type="file"
-        accept="image/jpeg,image/png,image/webp"
-        hidden
-      >
-      <button
-        id="profileAvatarUploadBtn"
-        class="profile-avatar-upload"
-        type="button"
-      >
-        Profilbild ändern
-      </button>
-      <div
-        id="profileAvatarMessage"
-        class="profile-avatar-message"
-        aria-live="polite"
-      ></div>
-    </div>
-    <div class="profile-card-head">
-      <div class="profile-card-title">
-        <div class="eyebrow">
-          ACCOUNT
-        </div>
-        <h3 id="profileName">
-          —
-        </h3>
-      </div>
-    </div>
-    <div
-      id="profileEmail"
-      class="profile-email"
-    ></div>
-    <button
-      id="editProfileBtn"
-      class="secondary-action profile-edit-btn"
-      type="button"
-    >
-      Profil bearbeiten
-    </button>
-  </section>
-  <!-- =========================
-       WEEK SHARE
-  ========================== -->
-  <section class="profile-card weekly-share-section">
-    <div class="profile-card-head">
-      <div class="profile-card-title">
-        <div class="eyebrow">
-          DEINE WOCHE
-        </div>
-        <h3>
-          Woche teilen
-        </h3>
-      </div>
-    </div>
-    <!-- WEEK SELECTOR -->
-    <div class="weekly-share-selector">
-      <button
-        id="shareWeekPrevBtn"
-        class="weekly-share-arrow"
-        type="button"
-        aria-label="Vorherige Woche"
-      >
-        ‹
-      </button>
-      <button
-        id="shareWeekCurrentBtn"
-        class="weekly-share-current"
-        type="button"
-      >
-        <span class="weekly-share-current-label">
-          AUSGEWÄHLTE WOCHE
-        </span>
-        <span
-          id="shareWeekTitle"
-          class="weekly-share-current-title"
+          ‹
+        </button>
+
+
+        <button
+          id="periodTodayBtn"
+          class="period-title-button"
+          type="button"
         >
-          Diese Woche
-        </span>
-      </button>
-      <button
-        id="shareWeekNextBtn"
-        class="weekly-share-arrow"
-        type="button"
-        aria-label="Nächste Woche"
-      >
-        ›
-      </button>
-    </div>
-    <!-- SHARE PREVIEW -->
-    <div
-      id="weeklyShareCard"
-      class="weekly-share-card"
+
+          <span id="periodTitle">
+            Diese Woche
+          </span>
+
+        </button>
+
+
+        <button
+          id="periodNextBtn"
+          class="period-arrow"
+          type="button"
+          aria-label="Nächster Zeitraum"
+        >
+          ›
+        </button>
+
+      </div>
+
+
+      <!-- OVERVIEW CONTENT -->
+
+      <div
+        id="overviewContent"
+      ></div>
+
+    </section>
+
+
+
+    <!-- =========================
+         PROFILE VIEW
+    ========================== -->
+
+    <section
+      id="profileView"
+      class="view hidden profile-view"
     >
-      <div class="weekly-share-brand">
-        HYPE
-      </div>
-      <div
-        id="weeklyShareName"
-        class="weekly-share-name"
-      >
-        Deine Woche
-      </div>
-      <div
-        id="weeklyShareRange"
-        class="weekly-share-range"
-      ></div>
-      <div
-        id="weeklyShareDays"
-        class="weekly-share-days"
-      ></div>
-      <div
-        id="weeklyShareSummary"
-        class="weekly-share-summary"
-      ></div>
-      <div
-        id="weeklyShareFooter"
-        class="weekly-share-footer"
-      >
-        Trainiert jemand genauso gerne wie du?<br>
-        Dann schicke HYPE an einen Freund oder einen Trainingspartner.
-      </div>
-    </div>
-    <button
-      id="shareWeekBtn"
-      class="primary full profile-share-btn"
-      type="button"
-    >
-      📸 Auf Instagram teilen
-    </button>
-  </section>
-  <!-- =========================
-       RECOMMEND HYPE
-  ========================== -->
-  <section class="profile-card recommend-section">
-    <div class="profile-card-head">
-      <div class="profile-card-title">
+
+
+      <!-- PROFILE HEADER -->
+
+      <div class="profile-header">
+
         <div class="eyebrow">
-          HYPE WEITEREMPFEHLEN
+          DEIN HYPE
         </div>
-        <h3>
-          Trainiert jemand
-          genauso gerne wie du?
-        </h3>
+
+        <h2 id="profileGreeting">
+          Hallo 👋
+        </h2>
+
+        <p class="profile-intro">
+          Deine Woche. Dein Fortschritt.
+          Dein HYPE.
+        </p>
+
       </div>
-    </div>
-    <p class="profile-description">
-      Dann schicke HYPE an einen Freund
-      oder einen Trainingspartner.
-    </p>
-    <button
-      id="shareHypeProfileBtn"
-      class="secondary-action profile-share-hype"
-      type="button"
+
+
+      <!-- ACCOUNT -->
+
+      <section class="profile-card profile-account-card">
+
+        <!-- PROFILE AVATAR -->
+
+        <div class="profile-avatar-area">
+
+          <button
+            id="profileAvatarButton"
+            class="profile-avatar-button"
+            type="button"
+            aria-label="Profilbild ändern"
+          >
+
+            <img
+              id="profileAvatar"
+              class="profile-avatar"
+              src=""
+              alt=""
+            >
+
+            <span
+              id="profileAvatarFallback"
+              class="profile-avatar-fallback"
+              aria-hidden="true"
+            >
+              ?
+            </span>
+
+            <span class="profile-avatar-edit">
+              +
+            </span>
+
+          </button>
+
+
+          <input
+            id="profileAvatarInput"
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            hidden
+          >
+
+
+          <button
+            id="profileAvatarUploadBtn"
+            class="profile-avatar-upload"
+            type="button"
+          >
+            Profilbild ändern
+          </button>
+
+
+          <div
+            id="profileAvatarMessage"
+            class="profile-avatar-message"
+            aria-live="polite"
+          ></div>
+
+        </div>
+
+
+        <div class="profile-card-head">
+
+          <div class="profile-card-title">
+
+            <div class="eyebrow">
+              ACCOUNT
+            </div>
+
+            <h3 id="profileName">
+              —
+            </h3>
+
+          </div>
+
+        </div>
+
+
+        <div
+          id="profileEmail"
+          class="profile-email"
+        ></div>
+
+
+        <button
+          id="editProfileBtn"
+          class="secondary-action profile-edit-btn"
+          type="button"
+        >
+          Profil bearbeiten
+        </button>
+
+      </section>
+
+
+
+      <!-- WEEK SHARE -->
+
+      <section class="profile-card weekly-share-section">
+
+        <div class="profile-card-head">
+
+          <div class="profile-card-title">
+
+            <div class="eyebrow">
+              DEINE WOCHE
+            </div>
+
+            <h3>
+              Woche teilen
+            </h3>
+
+          </div>
+
+        </div>
+
+
+        <!-- WEEK SELECTOR -->
+
+        <div class="weekly-share-selector">
+
+          <button
+            id="shareWeekPrevBtn"
+            class="weekly-share-arrow"
+            type="button"
+            aria-label="Vorherige Woche"
+          >
+            ‹
+          </button>
+
+
+          <button
+            id="shareWeekCurrentBtn"
+            class="weekly-share-current"
+            type="button"
+          >
+
+            <span class="weekly-share-current-label">
+              AUSGEWÄHLTE WOCHE
+            </span>
+
+            <span
+              id="shareWeekTitle"
+              class="weekly-share-current-title"
+            >
+              Diese Woche
+            </span>
+
+          </button>
+
+
+          <button
+            id="shareWeekNextBtn"
+            class="weekly-share-arrow"
+            type="button"
+            aria-label="Nächste Woche"
+          >
+            ›
+          </button>
+
+        </div>
+
+
+        <!-- SHARE PREVIEW -->
+
+        <div
+          id="weeklyShareCard"
+          class="weekly-share-card"
+        >
+
+          <div class="weekly-share-brand">
+            HYPE
+          </div>
+
+          <div
+            id="weeklyShareName"
+            class="weekly-share-name"
+          >
+            Deine Woche
+          </div>
+
+          <div
+            id="weeklyShareRange"
+            class="weekly-share-range"
+          ></div>
+
+          <div
+            id="weeklyShareDays"
+            class="weekly-share-days"
+          ></div>
+
+          <div
+            id="weeklyShareSummary"
+            class="weekly-share-summary"
+          ></div>
+
+          <div
+            id="weeklyShareFooter"
+            class="weekly-share-footer"
+          >
+            Trainiert jemand genauso gerne wie du?<br>
+            Dann schicke HYPE an einen Freund oder einen Trainingspartner.
+          </div>
+
+        </div>
+
+
+        <button
+          id="shareWeekBtn"
+          class="primary full profile-share-btn"
+          type="button"
+        >
+          📸 Auf Instagram teilen
+        </button>
+
+      </section>
+
+
+
+      <!-- RECOMMEND HYPE -->
+
+      <section class="profile-card recommend-section">
+
+        <div class="profile-card-head">
+
+          <div class="profile-card-title">
+
+            <div class="eyebrow">
+              HYPE WEITEREMPFEHLEN
+            </div>
+
+            <h3>
+              Trainiert jemand
+              genauso gerne wie du?
+            </h3>
+
+          </div>
+
+        </div>
+
+
+        <p class="profile-description">
+          Dann schicke HYPE an einen Freund
+          oder einen Trainingspartner.
+        </p>
+
+
+        <button
+          id="shareHypeProfileBtn"
+          class="secondary-action profile-share-hype"
+          type="button"
+        >
+          🚀 HYPE weiterempfehlen
+        </button>
+
+      </section>
+
+
+
+      <!-- ACCOUNT ACTIONS -->
+
+      <section class="profile-card profile-account-actions">
+
+        <button
+          id="logoutBtn"
+          class="profile-logout"
+          type="button"
+        >
+          Ausloggen
+        </button>
+
+      </section>
+
+    </section>
+
+
+
+    <!-- =========================
+         TODAY VIEW
+    ========================== -->
+
+    <section
+      id="todayView"
+      class="view hidden"
     >
-      🚀 HYPE weiterempfehlen
-    </button>
-  </section>
-  <!-- =========================
-       ACCOUNT ACTIONS
-  ========================== -->
-  <section class="profile-card profile-account-actions">
-    <button
-      id="logoutBtn"
-      class="profile-logout"
-      type="button"
-    >
-      Ausloggen
-    </button>
-  </section>
-</section>
-<!-- =========================
-     TODAY VIEW
-========================== -->
-<section
-  id="todayView"
-  class="view hidden"
->
-  <div class="hero today-hero">
-    <div>
-      <div class="eyebrow">
-        HEUTE
+
+      <div class="hero today-hero">
+
+        <div>
+
+          <div class="eyebrow">
+            HEUTE
+          </div>
+
+          <h2 id="todayTitle">
+            Heute
+          </h2>
+
+        </div>
+
+
+        <div class="today-symbol">
+          ●
+        </div>
+
       </div>
-      <h2 id="todayTitle">
-        Heute
-      </h2>
-    </div>
-    <div class="today-symbol">
-      ●
-    </div>
-  </div>
-  <div
-    id="todayContent"
-  ></div>
-</section>
+
+
+      <div
+        id="todayContent"
+      ></div>
+
+    </section>
+
   </main>
+
+
+
   <!-- =========================
        BOTTOM NAVIGATION
   ========================== -->
+
   <nav
     id="bottomNav"
     class="bottom-nav hidden"
   >
-<button
-  class="nav-item active"
-  data-view="plan"
-  type="button"
->
-  <span class="nav-icon">
-    ▣
-  </span>
-  <span>
-    Woche
-  </span>
-</button>
-<button
-  class="nav-item"
-  data-view="overview"
-  type="button"
->
-  <span class="nav-icon">
-    ▦
-  </span>
-  <span>
-    Übersicht
-  </span>
-</button>
-<button
-  class="nav-item"
-  data-view="profile"
-  type="button"
->
-  <span class="nav-icon">
-    ●
-  </span>
-  <span>
-    Profil
-  </span>
-</button>
+
+    <button
+      class="nav-item active"
+      data-view="plan"
+      type="button"
+    >
+
+      <span class="nav-icon">
+        ▣
+      </span>
+
+      <span>
+        Woche
+      </span>
+
+    </button>
+
+
+    <button
+      class="nav-item"
+      data-view="overview"
+      type="button"
+    >
+
+      <span class="nav-icon">
+        ▦
+      </span>
+
+      <span>
+        Übersicht
+      </span>
+
+    </button>
+
+
+    <button
+      class="nav-item"
+      data-view="profile"
+      type="button"
+    >
+
+      <span class="nav-icon">
+        ●
+      </span>
+
+      <span>
+        Profil
+      </span>
+
+    </button>
+
   </nav>
+
+
+
   <!-- =========================
        PROFILE EDIT DIALOG
   ========================== -->
+
   <dialog id="profileDialog">
-<form id="profileForm">
-  <div class="dialog-head">
-    <div>
-      <div class="eyebrow">
-        PROFIL
+
+    <form id="profileForm">
+
+      <div class="dialog-head">
+
+        <div>
+
+          <div class="eyebrow">
+            PROFIL
+          </div>
+
+          <h3>
+            Profil bearbeiten
+          </h3>
+
+        </div>
+
+
+        <button
+          type="button"
+          class="close"
+          id="closeProfileDialogBtn"
+          aria-label="Schließen"
+        >
+          ×
+        </button>
+
       </div>
-      <h3>
-        Profil bearbeiten
-      </h3>
-    </div>
-    <button
-      type="button"
-      class="close"
-      id="closeProfileDialogBtn"
-      aria-label="Schließen"
-    >
-      ×
-    </button>
-  </div>
-  <label>
-    Vorname
-    <input
-      id="profileFirstNameInput"
-      type="text"
-      autocomplete="given-name"
-      placeholder="z. B. Tano"
-      maxlength="40"
-      required
-    >
-  </label>
-  <div
-    id="profileEmailEdit"
-    class="profile-dialog-email"
-  ></div>
-  <button
-    type="submit"
-    class="primary full"
-  >
-    Profil speichern
-  </button>
-</form>
+
+
+      <label>
+
+        Vorname
+
+        <input
+          id="profileFirstNameInput"
+          type="text"
+          autocomplete="given-name"
+          placeholder="z. B. Tano"
+          maxlength="40"
+          required
+        >
+
+      </label>
+
+
+      <div
+        id="profileEmailEdit"
+        class="profile-dialog-email"
+      ></div>
+
+
+      <button
+        type="submit"
+        class="primary full"
+      >
+        Profil speichern
+      </button>
+
+    </form>
+
   </dialog>
+
+
+
   <!-- =========================
        TRAINING DIALOG
   ========================== -->
+
   <dialog id="trainingDialog">
-<form id="trainingForm">
-  <div class="dialog-head">
-    <div>
-      <div class="eyebrow">
-        TRAINING
-      </div>
-      <h3 id="dialogTitle">
-        Training hinzufügen
-      </h3>
-    </div>
-    <button
-      type="button"
-      class="close"
-      id="closeDialogBtn"
-      aria-label="Schließen"
-    >
-      ×
-    </button>
-  </div>
-  <label>
-    Sport
-    <select
-      id="sportInput"
-      required
-    >
-      <option value="running">
-        🏃 Laufen
-      </option>
-      <option value="strength">
-        🏋️ Krafttraining
-      </option>
-      <option value="hyrox">
-        ⚡ HYROX
-      </option>
-      <option value="cycling">
-        🚴 Rad
-      </option>
-      <option value="swimming">
-        🏊 Schwimmen
-      </option>
-      <option value="mobility">
-        🧘 Mobility
-      </option>
-      <option value="rest">
-        😴 Erholung
-      </option>
-      <option value="other">
-        🎯 Sonstige Sportart
-      </option>
-    </select>
-  </label>
-  <!-- SONSTIGE SPORTART -->
-  <label
-    id="customSportField"
-    class="training-conditional-field hidden"
-  >
-    Sonstige Sportart
-    <input
-      id="customSportInput"
-      type="text"
-      placeholder="z. B. Tennis"
-      maxlength="40"
-    >
-  </label>
-  <!-- LAUF-ANGABE -->
-  <div
-    id="runningMetricField"
-    class="running-metric-field hidden"
-  >
-    <label>
-      Angabe
-      <select id="runningMetricInput">
-        <option value="duration">
-          Minuten
-        </option>
-        <option value="distance">
-          Kilometer
-        </option>
-      </select>
-    </label>
-  </div>
-  <label id="durationField">
-    Dauer
-    <input
-      id="durationInput"
-      type="number"
-      min="1"
-      step="1"
-      value="45"
-      required
-    >
-  </label>
-  <label
-    id="distanceField"
-    class="training-conditional-field hidden"
-  >
-    Distanz
-    <input
-      id="distanceInput"
-      type="number"
-      min="0.1"
-      step="0.1"
-      placeholder="z. B. 8,5"
-    >
-    <span class="field-hint">
-      Angabe in Kilometern
-    </span>
-  </label>
-  <label>
-    Titel
-    <input
-      id="titleInput"
-      type="text"
-      placeholder="z. B. Easy Run"
-      required
-    >
-  </label>
-  <div class="two">
-    <label>
-      Intensität
-      <select id="intensityInput">
-        <option value="0">
-          0 · entspannend
-        </option>
-        <option value="1">
-          1 · sehr leicht
-        </option>
-        <option value="2">
-          2 · leicht
-        </option>
-        <option
-          value="3"
-          selected
+
+    <form id="trainingForm">
+
+      <div class="dialog-head">
+
+        <div>
+
+          <div class="eyebrow">
+            TRAINING
+          </div>
+
+          <h3 id="dialogTitle">
+            Training hinzufügen
+          </h3>
+
+        </div>
+
+
+        <button
+          type="button"
+          class="close"
+          id="closeDialogBtn"
+          aria-label="Schließen"
         >
-          3 · moderat
-        </option>
-        <option value="4">
-          4 · hart
-        </option>
-        <option value="5">
-          5 · sehr hart
-        </option>
-      </select>
-    </label>
-  </div>
-  <label>
-    Notizen
-    <textarea
-      id="notesInput"
-      rows="4"
-      placeholder="z. B. 5 × 1 km @ 4:30/km"
-    ></textarea>
-  </label>
-  <button
-    type="submit"
-    class="primary full"
-  >
-    Training speichern
-  </button>
-</form>
+          ×
+        </button>
+
+      </div>
+
+
+
+      <!-- SPORT -->
+
+      <label>
+
+        Sport
+
+        <select
+          id="sportInput"
+          required
+        >
+
+          <option value="running">
+            🏃 Laufen
+          </option>
+
+          <option value="strength">
+            🏋️ Krafttraining
+          </option>
+
+          <option value="hyrox">
+            ⚡ HYROX
+          </option>
+
+          <option value="cycling">
+            🚴 Rad
+          </option>
+
+          <option value="swimming">
+            🏊 Schwimmen
+          </option>
+
+          <option value="mobility">
+            🧘 Mobility
+          </option>
+
+          <option value="rest">
+            😴 Erholung
+          </option>
+
+          <option value="other">
+            🎯 Sonstige Sportart
+          </option>
+
+        </select>
+
+      </label>
+
+
+
+      <!-- SONSTIGE SPORTART -->
+
+      <label
+        id="customSportField"
+        class="custom-sport-field hidden"
+      >
+
+        Sonstige Sportart
+
+        <input
+          id="customSportInput"
+          type="text"
+          placeholder="z. B. Tennis"
+          maxlength="50"
+        >
+
+      </label>
+
+
+
+      <!-- =========================
+           TRAINING METRIC
+      ========================== -->
+
+      <div
+        id="trainingMetricRow"
+        class="training-metric-row standard-mode"
+      >
+
+        <!-- LAUF-ANGABE -->
+
+        <label
+          id="runningMetricField"
+          class="hidden"
+        >
+
+          Angabe
+
+          <select id="runningMetricInput">
+
+            <option value="duration">
+              Minuten
+            </option>
+
+            <option value="distance">
+              Kilometer
+            </option>
+
+          </select>
+
+        </label>
+
+
+        <!-- WERT -->
+
+        <label id="metricValueField">
+
+          <span id="metricValueLabel">
+            Dauer
+          </span>
+
+          <input
+            id="durationInput"
+            type="number"
+            min="1"
+            step="1"
+            value="45"
+            required
+          >
+
+        </label>
+
+      </div>
+
+
+
+      <!-- TITEL -->
+
+      <label>
+
+        Titel
+
+        <input
+          id="titleInput"
+          type="text"
+          placeholder="z. B. Easy Run"
+          required
+        >
+
+      </label>
+
+
+
+      <!-- INTENSITÄT -->
+
+      <label>
+
+        Intensität
+
+        <select id="intensityInput">
+
+          <option value="0">
+            0 · entspannend
+          </option>
+
+          <option value="1">
+            1 · sehr leicht
+          </option>
+
+          <option value="2">
+            2 · leicht
+          </option>
+
+          <option
+            value="3"
+            selected
+          >
+            3 · moderat
+          </option>
+
+          <option value="4">
+            4 · hart
+          </option>
+
+          <option value="5">
+            5 · sehr hart
+          </option>
+
+        </select>
+
+      </label>
+
+
+
+      <!-- NOTIZEN -->
+
+      <label>
+
+        Notizen
+
+        <textarea
+          id="notesInput"
+          rows="4"
+          placeholder="z. B. 5 × 1 km @ 4:30/km"
+        ></textarea>
+
+      </label>
+
+
+
+      <!-- SPEICHERN -->
+
+      <button
+        type="submit"
+        class="primary full"
+      >
+        Training speichern
+      </button>
+
+    </form>
+
   </dialog>
+
+
+
   <!-- =========================
        SUPABASE
   ========================== -->
+
   <script
     src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
   ></script>
+
+
   <!-- =========================
        SCRIPTS
   ========================== -->
+
   <script src="auth.js"></script>
   <script src="calendar.js"></script>
   <script src="app.js"></script>
+
 </body>
 </html>
