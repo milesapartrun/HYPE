@@ -25,6 +25,10 @@ const supabaseClient = window.supabase.createClient(
 const PASSWORD_RESET_REDIRECT =
   window.location.origin + window.location.pathname;
 
+// Marker für einen laufenden Passwort-Reset
+const PASSWORD_RECOVERY_STORAGE_KEY =
+  "hype_password_recovery_pending";
+
 
 // ---------------------------------------------------------
 // ELEMENTE
@@ -47,6 +51,84 @@ let authMessage = null;
 
 let isPasswordRecovery = false;
 let isResetMode = false;
+
+
+// ---------------------------------------------------------
+// RECOVERY-MARKER
+// ---------------------------------------------------------
+
+function setPasswordRecoveryPending() {
+  try {
+    localStorage.setItem(
+      PASSWORD_RECOVERY_STORAGE_KEY,
+      String(Date.now())
+    );
+  } catch (error) {
+    console.warn(
+      "Recovery-Marker konnte nicht gespeichert werden:",
+      error
+    );
+  }
+}
+
+
+function isPasswordRecoveryPending() {
+  try {
+    const value = localStorage.getItem(
+      PASSWORD_RECOVERY_STORAGE_KEY
+    );
+
+    if (!value) {
+      return false;
+    }
+
+    const timestamp = Number(value);
+
+    if (!Number.isFinite(timestamp)) {
+      localStorage.removeItem(
+        PASSWORD_RECOVERY_STORAGE_KEY
+      );
+
+      return false;
+    }
+
+    // Recovery-Marker nach 1 Stunde verfallen lassen.
+    // Dadurch bleibt ein alter Reset nicht dauerhaft aktiv.
+    const oneHour = 60 * 60 * 1000;
+
+    if (Date.now() - timestamp > oneHour) {
+      localStorage.removeItem(
+        PASSWORD_RECOVERY_STORAGE_KEY
+      );
+
+      return false;
+    }
+
+    return true;
+
+  } catch (error) {
+    console.warn(
+      "Recovery-Marker konnte nicht gelesen werden:",
+      error
+    );
+
+    return false;
+  }
+}
+
+
+function clearPasswordRecoveryPending() {
+  try {
+    localStorage.removeItem(
+      PASSWORD_RECOVERY_STORAGE_KEY
+    );
+  } catch (error) {
+    console.warn(
+      "Recovery-Marker konnte nicht gelöscht werden:",
+      error
+    );
+  }
+}
 
 
 // ---------------------------------------------------------
@@ -197,6 +279,8 @@ function enterLoginMode() {
   isPasswordRecovery = false;
   isResetMode = false;
 
+  clearPasswordRecoveryPending();
+
   getAuthElements();
   ensureForgotPasswordLink();
   ensureResetConfirmField();
@@ -223,6 +307,7 @@ function enterLoginMode() {
 
   if (loginButton) {
     loginButton.style.display = "";
+    loginButton.disabled = false;
     loginButton.textContent = "Einloggen";
   }
 
@@ -232,6 +317,7 @@ function enterLoginMode() {
 
   if (forgotPasswordLink) {
     forgotPasswordLink.style.display = "";
+    forgotPasswordLink.textContent = "Passwort vergessen?";
   }
 
   if (registerLink) {
@@ -269,6 +355,7 @@ function enterForgotPasswordMode() {
 
   if (loginButton) {
     loginButton.style.display = "";
+    loginButton.disabled = false;
     loginButton.textContent = "Reset-Link senden";
   }
 
@@ -290,7 +377,6 @@ function enterForgotPasswordMode() {
     false
   );
 
-  // Button neu verbinden
   if (loginButton) {
     loginButton.onclick = requestPasswordReset;
   }
@@ -361,6 +447,17 @@ async function requestPasswordReset() {
     return;
   }
 
+  // -------------------------------------------------------
+  // WICHTIG:
+  // Wir merken uns, dass dieser Browser auf einen
+  // Passwort-Reset wartet.
+  //
+  // Supabase kann beim Zurückkommen die URL bereits
+  // verarbeitet haben, sodass nur "#" übrig bleibt.
+  // -------------------------------------------------------
+
+  setPasswordRecoveryPending();
+
   showAuthMessage(
     "Wenn für diese E-Mail-Adresse ein Konto existiert, wurde ein Reset-Link gesendet. Bitte überprüfe dein E-Mail-Postfach.",
     false
@@ -379,12 +476,10 @@ function enterResetMode() {
   getAuthElements();
   ensureResetConfirmField();
 
-  // E-Mail wird im Reset-Modus nicht benötigt
   if (emailInput) {
     emailInput.style.display = "none";
   }
 
-  // Neues Passwort
   if (passwordInput) {
     passwordInput.style.display = "";
     passwordInput.disabled = false;
@@ -394,7 +489,6 @@ function enterResetMode() {
     passwordInput.autocomplete = "new-password";
   }
 
-  // Bestätigung
   if (resetConfirmInput) {
     resetConfirmInput.style.display = "";
     resetConfirmInput.disabled = false;
@@ -511,17 +605,17 @@ async function updatePassword() {
   }
 
   // -------------------------------------------------------
-  // WICHTIG:
+  // Passwort erfolgreich geändert.
   // Recovery-Session beenden.
-  // Danach KEIN automatischer Login.
   // -------------------------------------------------------
 
   isPasswordRecovery = false;
   isResetMode = false;
 
+  clearPasswordRecoveryPending();
+
   await supabaseClient.auth.signOut();
 
-  // Login-Oberfläche wieder herstellen
   enterLoginMode();
 
   showAuthMessage(
@@ -552,7 +646,7 @@ function updateAuthMode() {
 function showApp() {
 
   // -------------------------------------------------------
-  // ABSOLUT WICHTIG:
+  // WICHTIG:
   // Während Passwort-Recovery niemals Dashboard öffnen.
   // -------------------------------------------------------
 
@@ -567,7 +661,6 @@ function showApp() {
 
   console.log("showApp()");
 
-  // Häufige HYPE-Strukturen
   const authElements = [
     document.querySelector("#auth"),
     document.querySelector(".auth"),
@@ -697,6 +790,10 @@ async function login() {
     return;
   }
 
+  // Falls vorher ein alter Recovery-Marker existierte,
+  // ist der normale Login jetzt wieder eindeutig.
+  clearPasswordRecoveryPending();
+
   console.log(
     "Login erfolgreich:",
     data?.user?.email
@@ -775,9 +872,9 @@ async function register() {
     return;
   }
 
-  // Supabase kann je nach Projekt-Einstellung
-  // eine E-Mail-Bestätigung verlangen.
   if (data?.session) {
+    clearPasswordRecoveryPending();
+
     showApp();
 
     showAuthMessage(
@@ -819,7 +916,6 @@ supabaseClient.auth.onAuthStateChange(
       isPasswordRecovery = true;
       isResetMode = true;
 
-      // Niemals showApp()
       enterResetMode();
 
       return;
@@ -827,7 +923,7 @@ supabaseClient.auth.onAuthStateChange(
 
 
     // -----------------------------------------------------
-    // Während Recovery NIEMALS automatisch anmelden
+    // Während Recovery niemals automatisch anmelden
     // -----------------------------------------------------
 
     if (isPasswordRecovery || isResetMode) {
@@ -865,6 +961,28 @@ supabaseClient.auth.onAuthStateChange(
     // -----------------------------------------------------
 
     if (event === "INITIAL_SESSION") {
+
+      // ---------------------------------------------------
+      // GANZ WICHTIG:
+      // Wenn vorher ein Passwort-Reset gestartet wurde,
+      // darf die vorhandene Recovery-Session NICHT als
+      // normaler Login behandelt werden.
+      // ---------------------------------------------------
+
+      if (isPasswordRecoveryPending()) {
+
+        console.log(
+          "INITIAL_SESSION: Passwort-Recovery wartet – Dashboard bleibt geschlossen."
+        );
+
+        isPasswordRecovery = true;
+        isResetMode = true;
+
+        showLogin();
+        enterResetMode();
+
+        return;
+      }
 
       if (session) {
         showApp();
@@ -918,7 +1036,7 @@ async function initAuth() {
 
 
   // -------------------------------------------------------
-  // RECOVERY ERKENNEN
+  // RECOVERY AUS URL ERKENNEN
   // -------------------------------------------------------
 
   const hasRecoveryHash =
@@ -929,26 +1047,29 @@ async function initAuth() {
   const hasRecoveryQuery =
     search.includes("type=recovery");
 
-
   const hasRecoveryCode =
     search.includes("code=");
 
 
+  // -------------------------------------------------------
+  // RECOVERY AUS URL ODER STORAGE
+  // -------------------------------------------------------
+
   if (
     hasRecoveryHash ||
     hasRecoveryQuery ||
-    hasRecoveryCode
+    hasRecoveryCode ||
+    isPasswordRecoveryPending()
   ) {
 
     console.log(
-      "Recovery-URL erkannt."
+      "Passwort-Recovery erkannt."
     );
 
     isPasswordRecovery = true;
     isResetMode = true;
 
     showLogin();
-
     enterResetMode();
 
     return;
@@ -979,8 +1100,7 @@ async function initAuth() {
 
 
   // -------------------------------------------------------
-  // SICHERHEIT:
-  // Recovery niemals durch Session überschreiben
+  // RECOVERY NIEMALS DURCH SESSION ÜBERSCHREIBEN
   // -------------------------------------------------------
 
   if (
