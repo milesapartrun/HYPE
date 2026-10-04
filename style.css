@@ -452,6 +452,21 @@ h2 {
 
 
 /* =========================
+   TRAINING ACTIONS
+========================= */
+
+.training-actions {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: flex-end;
+
+  gap: 8px;
+}
+
+
+/* =========================
    BUTTONS
 ========================= */
 
@@ -467,6 +482,8 @@ h2 {
   padding: 11px 15px;
 
   border-radius: 13px;
+
+  white-space: nowrap;
 }
 
 .primary:hover {
@@ -481,10 +498,10 @@ h2 {
 
 
 /* =========================
-   CALENDAR BUTTON
+   CALENDAR EXPORT BUTTON
 ========================= */
 
-.calendar-button {
+.calendar-export-btn {
   appearance: none;
   -webkit-appearance: none;
 
@@ -494,13 +511,16 @@ h2 {
 
   justify-content: center;
 
-  gap: 7px;
+  gap: 6px;
 
   border:
     1px solid
     rgba(215,255,63,.35);
 
   background:
+    rgba(215,255,63,.08);
+
+  background-color:
     rgba(215,255,63,.08);
 
   color: var(--accent);
@@ -517,33 +537,36 @@ h2 {
 
   white-space: nowrap;
 
+  box-shadow: none;
+
+  outline: none;
+
   transition:
     background .15s ease,
     border-color .15s ease,
     transform .15s ease;
 }
 
-.calendar-button:hover {
+.calendar-export-btn:hover {
   background:
+    rgba(215,255,63,.14);
+
+  background-color:
     rgba(215,255,63,.14);
 
   border-color:
     rgba(215,255,63,.55);
 }
 
-.calendar-button:active {
+.calendar-export-btn:active {
   transform: scale(.96);
 }
 
-.calendar-button:focus,
-.calendar-button:focus-visible {
+.calendar-export-btn:focus,
+.calendar-export-btn:focus-visible {
   outline: none;
-}
 
-.calendar-button .calendar-icon {
-  font-size: 14px;
-
-  line-height: 1;
+  box-shadow: none;
 }
 
 
@@ -1774,16 +1797,20 @@ textarea:focus {
   }
 
 
-  .calendar-button {
-    padding: 9px 11px;
-
-    font-size: 10px;
-
-    gap: 5px;
+  .training-actions {
+    gap: 7px;
   }
 
-  .calendar-button .calendar-icon {
-    font-size: 13px;
+
+  .calendar-export-btn {
+    padding: 10px 12px;
+
+    font-size: 10px;
+  }
+
+
+  .primary {
+    padding: 11px 14px;
   }
 
 }
