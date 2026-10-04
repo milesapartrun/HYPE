@@ -62,10 +62,6 @@ let overviewPeriod = "week";
 let overviewDate = new Date();
 overviewDate.setHours(12, 0, 0, 0);
 
-/*
-  Profil-Share:
-  Immer mit der aktuell laufenden Woche starten.
-*/
 let shareWeekStart = startOfWeek(
   new Date()
 );
@@ -264,14 +260,6 @@ const logoutBtn =
    PROFILE CLEANUP
 ========================= */
 
-/*
-  Entfernt ausschließlich die unerwünschten
-  Profil-Überschriften/Labels.
-
-  Wichtig:
-  Das globale HYPE-Branding bleibt unangetastet.
-*/
-
 function cleanupProfileHeadings() {
   if (!profileView) {
     return;
@@ -282,47 +270,30 @@ function cleanupProfileHeadings() {
       "h1, h2, h3, h4, .eyebrow, .section-label, .section-title"
     );
 
-  elements.forEach(
-    element => {
-      const text =
-        element.textContent
-          .replace(/\s+/g, " ")
-          .trim()
-          .toUpperCase();
+  elements.forEach(element => {
+    const text =
+      element.textContent
+        .replace(/\s+/g, " ")
+        .trim()
+        .toUpperCase();
 
-      /*
-        "DEIN HYPE" vollständig entfernen.
-      */
-
-      if (
-        text === "DEIN HYPE"
-      ) {
-        element.remove();
-
-        return;
-      }
-
-      /*
-        Falls im Share-Bereich noch ein
-        zusätzliches einzelnes HYPE-Label
-        vorhanden ist, entfernen.
-
-        Nicht betroffen:
-        HYPE-Buttons, HYPE-Branding außerhalb
-        dieses Bereichs und der Produktname.
-      */
-
-      if (
-        weeklyShareCard &&
-        weeklyShareCard.contains(
-          element
-        ) &&
-        text === "HYPE"
-      ) {
-        element.remove();
-      }
+    /* 1. DEIN HYPE entfernen */
+    if (text === "DEIN HYPE") {
+      element.remove();
+      return;
     }
-  );
+
+    /* 2. Das einzelne HYPE unter WOCHE TEILEN entfernen */
+    if (
+      weeklyShareCard &&
+      weeklyShareCard.contains(element) &&
+      text === "HYPE" &&
+      !element.closest("button") &&
+      !element.closest("a")
+    ) {
+      element.remove();
+    }
+  });
 }
 
 /* =========================
@@ -491,34 +462,13 @@ function ensureProfileShareStyles() {
     }
 
     /* =========================
-       IDENTITÄT / WOCHEN-TITEL
+       Tanos Woche + Datum
+       werden nicht mehr angezeigt
     ========================= */
 
-    #profileView .weekly-share-identity {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      margin-top: 0;
-      margin-bottom: 24px;
-    }
-
-    #profileView #weeklyShareName {
-      display: block;
-      margin: 0;
-      color: #f5f6f7;
-      font-size: clamp(27px, 7vw, 38px);
-      line-height: 1.04;
-      font-weight: 900;
-      letter-spacing: -.045em;
-    }
-
+    #profileView #weeklyShareName,
     #profileView #weeklyShareRange {
-      display: block;
-      margin: 0;
-      color: #8d949e;
-      font-size: 13px;
-      line-height: 1.4;
-      font-weight: 600;
+      display: none !important;
     }
 
     /* =========================
@@ -528,17 +478,17 @@ function ensureProfileShareStyles() {
     #profileView #weeklyShareDays {
       display: grid;
       grid-template-columns: repeat(7, minmax(0, 1fr));
-      gap: 6px;
+      gap: 7px;
       width: 100%;
       margin: 0;
     }
 
     #profileView .weekly-share-day {
       min-width: 0;
-      min-height: 104px;
-      padding: 10px 7px 9px;
+      min-height: 132px;
+      padding: 12px 8px 10px;
       border: 1px solid rgba(255,255,255,.08);
-      border-radius: 13px;
+      border-radius: 14px;
       background: #12151a;
       overflow: hidden;
     }
@@ -557,8 +507,8 @@ function ensureProfileShareStyles() {
     #profileView .weekly-share-day-top {
       display: flex;
       flex-direction: column;
-      gap: 2px;
-      margin-bottom: 9px;
+      gap: 3px;
+      margin-bottom: 11px;
     }
 
     #profileView .weekly-share-day-top span {
@@ -572,7 +522,7 @@ function ensureProfileShareStyles() {
 
     #profileView .weekly-share-day-top strong {
       color: #f5f6f7;
-      font-size: 17px;
+      font-size: 19px;
       line-height: 1;
       font-weight: 900;
     }
@@ -589,7 +539,7 @@ function ensureProfileShareStyles() {
       min-width: 0;
       color: #d7dbe0;
       font-size: 9px;
-      line-height: 1.25;
+      line-height: 1.3;
       font-weight: 700;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -674,6 +624,21 @@ function ensureProfileShareStyles() {
       color: #8d949e;
       font-size: 12px;
       line-height: 1.45;
+    }
+
+    /* =========================
+       EMPFEHLUNG
+       "Trainiert jemand genauso gerne wie du?"
+       einzeilig
+    ========================= */
+
+    #profileView .hype-recommendation-title {
+      white-space: nowrap !important;
+      overflow: hidden !important;
+      text-overflow: ellipsis !important;
+      width: 100% !important;
+      font-size: clamp(15px, 4vw, 21px) !important;
+      line-height: 1.1 !important;
     }
 
     /* =========================
@@ -763,13 +728,13 @@ function ensureProfileShareStyles() {
       }
 
       #profileView #weeklyShareDays {
-        gap: 4px;
+        gap: 5px;
       }
 
       #profileView .weekly-share-day {
-        min-height: 96px;
-        padding: 9px 5px 8px;
-        border-radius: 11px;
+        min-height: 128px;
+        padding: 11px 6px 9px;
+        border-radius: 12px;
       }
 
       #profileView .weekly-share-day-top span {
@@ -777,7 +742,7 @@ function ensureProfileShareStyles() {
       }
 
       #profileView .weekly-share-day-top strong {
-        font-size: 15px;
+        font-size: 18px;
       }
 
       #profileView .weekly-share-day-training span {
@@ -786,6 +751,10 @@ function ensureProfileShareStyles() {
 
       #profileView .weekly-share-stats {
         gap: 7px;
+      }
+
+      #profileView .hype-recommendation-title {
+        font-size: 15px !important;
       }
     }
   `;
@@ -815,17 +784,15 @@ function ensureShareWeekNavigation() {
     shareWeekNextBtn,
     shareWeekCurrentBtn,
     shareWeekTitle
-  ].forEach(
-    element => {
-      if (!element) {
-        return;
-      }
-
-      element.classList.add(
-        "hype-share-legacy-control"
-      );
+  ].forEach(element => {
+    if (!element) {
+      return;
     }
-  );
+
+    element.classList.add(
+      "hype-share-legacy-control"
+    );
+  });
 
   const navigation =
     document.createElement("div");
@@ -1257,11 +1224,6 @@ async function renderProfile() {
     return;
   }
 
-  /*
-    Jedes erneute Öffnen der Profilseite
-    startet mit der aktuell laufenden Woche.
-  */
-
   shareWeekStart =
     startOfWeek(
       new Date()
@@ -1324,6 +1286,8 @@ async function renderProfile() {
   renderWeeklySharePreview(
     displayName
   );
+
+  applyFinalFourChanges();
 }
 
 /* =========================
@@ -1724,18 +1688,21 @@ function renderWeeklySharePreview(
       );
   }
 
+  /* 3. Tanos Woche + Datum nicht anzeigen */
   if (weeklyShareName) {
     weeklyShareName.textContent =
-      firstNameForPossessive(
-        cleanName
-      );
+      "";
+
+    weeklyShareName.style.display =
+      "none";
   }
 
   if (weeklyShareRange) {
     weeklyShareRange.textContent =
-      formatShareWeek(
-        weekStart
-      );
+      "";
+
+    weeklyShareRange.style.display =
+      "none";
   }
 
   if (weeklyShareDays) {
@@ -1905,12 +1872,6 @@ function renderWeeklySharePreview(
     }
   }
 
-  /*
-    Die Share-Karte endet ab jetzt
-    ausschließlich mit dem bestehenden
-    TRAIN SMART. STAY HYPE.-Bereich.
-  */
-
   if (weeklyShareFooter) {
     weeklyShareFooter.innerHTML =
       "";
@@ -1918,6 +1879,8 @@ function renderWeeklySharePreview(
     weeklyShareFooter.style.display =
       "none";
   }
+
+  applyFinalFourChanges();
 }
 
 function firstNameForPossessive(
@@ -1939,6 +1902,153 @@ function firstNameForPossessive(
   }
 
   return `${clean}s Woche`;
+}
+
+/* =========================
+   DIE VIER FINALEN ÄNDERUNGEN
+========================= */
+
+function applyFinalFourChanges() {
+  if (!profileView) {
+    return;
+  }
+
+  /*
+    1. DEIN HYPE entfernen
+  */
+
+  profileView
+    .querySelectorAll(
+      "*"
+    )
+    .forEach(element => {
+      const text =
+        element.textContent
+          .replace(/\s+/g, " ")
+          .trim();
+
+      if (
+        text === "DEIN HYPE" &&
+        element.children.length === 0
+      ) {
+        element.remove();
+      }
+    });
+
+  /*
+    2. Das einzelne HYPE unter
+       "Woche teilen" entfernen
+  */
+
+  if (weeklyShareCard) {
+    weeklyShareCard
+      .querySelectorAll("*")
+      .forEach(element => {
+        const text =
+          element.textContent
+            .replace(/\s+/g, " ")
+            .trim();
+
+        if (
+          text === "HYPE" &&
+          element.children.length === 0 &&
+          !element.closest("button") &&
+          !element.closest("a")
+        ) {
+          element.remove();
+        }
+      });
+  }
+
+  /*
+    3. Tanos Woche + Datum entfernen
+       und Mo–So größer machen
+  */
+
+  if (weeklyShareName) {
+    weeklyShareName.style.display =
+      "none";
+  }
+
+  if (weeklyShareRange) {
+    weeklyShareRange.style.display =
+      "none";
+  }
+
+  if (weeklyShareDays) {
+    weeklyShareDays.style.display =
+      "grid";
+
+    weeklyShareDays.style.gridTemplateColumns =
+      "repeat(7, minmax(0, 1fr))";
+
+    weeklyShareDays.style.gap =
+      "7px";
+
+    weeklyShareDays.style.width =
+      "100%";
+
+    weeklyShareDays.style.margin =
+      "0";
+
+    weeklyShareDays
+      .querySelectorAll(
+        ".weekly-share-day"
+      )
+      .forEach(card => {
+        card.style.minHeight =
+          "132px";
+
+        card.style.padding =
+          "12px 8px 10px";
+
+        card.style.borderRadius =
+          "14px";
+      });
+  }
+
+  /*
+    4. "Trainiert jemand genauso gerne wie du?"
+       einzeilig darstellen
+  */
+
+  profileView
+    .querySelectorAll(
+      "h1, h2, h3, h4, p, span, strong, div"
+    )
+    .forEach(element => {
+      const text =
+        element.textContent
+          .replace(/\s+/g, " ")
+          .trim();
+
+      if (
+        text ===
+        "Trainiert jemand genauso gerne wie du?"
+      ) {
+        element.classList.add(
+          "hype-recommendation-title"
+        );
+
+        element.style.whiteSpace =
+          "nowrap";
+
+        element.style.overflow =
+          "hidden";
+
+        element.style.textOverflow =
+          "ellipsis";
+
+        element.style.width =
+          "100%";
+
+        element.style.fontSize =
+          "clamp(15px, 4vw, 21px)";
+
+        element.style.lineHeight =
+          "1.1";
+      }
+    });
 }
 
 /* =========================
@@ -2415,12 +2525,6 @@ async function createWeeklyShareImage() {
       );
     }
   }
-
-  /*
-    Die Instagram-Grafik endet ab hier
-    direkt mit TRAIN SMART. STAY HYPE.
-    Kein Trainingspartner-Werbetext mehr.
-  */
 
   ctx.fillStyle =
     "#d7ff3f";
