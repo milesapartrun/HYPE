@@ -96,7 +96,7 @@ button {
     center;
 
   gap:
-    9px;
+    8px;
 
 }
 
@@ -133,75 +133,29 @@ h1 {
 }
 
 
-/* HYPE LOGO */
+/* HYPE SYMBOL */
 
 .hype-logo {
 
   width:
-    20px;
+    21px;
 
   height:
-    20px;
+    21px;
 
-  display:
-    flex;
-
-  align-items:
-    center;
-
-  justify-content:
-    center;
-
-  gap:
-    2px;
-
-  transform:
-    skewX(-12deg);
-
-}
-
-
-.hype-logo span {
+  object-fit:
+    contain;
 
   display:
     block;
 
-  width:
-    4px;
-
-  border-radius:
-    3px;
-
-  background:
-    var(--accent);
-
-  box-shadow:
-    0 0 7px rgba(
-      215,
-      255,
-      63,
-      .25
-    );
+  margin-top:
+    2px;
 
 }
 
 
-.hype-logo span:nth-child(1) {
-  height: 10px;
-}
-
-
-.hype-logo span:nth-child(2) {
-  height: 17px;
-}
-
-
-.hype-logo span:nth-child(3) {
-  height: 12px;
-}
-
-
-/* ICON BUTTON */
+/* SETTINGS BUTTON */
 
 .icon-btn {
 
@@ -278,7 +232,7 @@ h2 {
 }
 
 
-/* 2026 */
+/* YEAR */
 
 .hero-year {
 
@@ -459,7 +413,7 @@ h2 {
 }
 
 
-/* AUSGEWÄHLTES DATUM */
+/* SELECTED DATE */
 
 .selected-date {
 
@@ -469,7 +423,7 @@ h2 {
 }
 
 
-/* PRIMARY */
+/* PRIMARY BUTTON */
 
 .primary {
 
