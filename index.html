@@ -92,10 +92,7 @@
           ></div>
 
 
-          <!--
-            Wird nur bei Registrierung
-            von auth.js eingeblendet.
-          -->
+          <!-- VORNAME -->
 
           <label
             id="authFirstNameField"
@@ -115,6 +112,8 @@
           </label>
 
 
+          <!-- E-MAIL -->
+
           <label>
 
             E-Mail
@@ -129,6 +128,8 @@
 
           </label>
 
+
+          <!-- PASSWORT -->
 
           <label>
 
@@ -531,16 +532,9 @@
             </div>
 
             <h3 id="profileName">
-              Athlete
+              —
             </h3>
 
-          </div>
-
-          <div
-            class="profile-card-icon"
-            aria-hidden="true"
-          >
-            ●
           </div>
 
         </div>
@@ -549,9 +543,7 @@
         <div
           id="profileEmail"
           class="profile-email"
-        >
-          —
-        </div>
+        ></div>
 
 
         <button
@@ -566,7 +558,7 @@
 
 
       <!-- =========================
-           LAST WEEK SHARE
+           WEEK SHARE
       ========================== -->
 
       <section class="profile-card weekly-share-section">
@@ -576,24 +568,65 @@
           <div class="profile-card-title">
 
             <div class="eyebrow">
-              LETZTE WOCHE
+              DEINE WOCHE
             </div>
 
             <h3>
-              Deine Woche teilen
+              Woche teilen
             </h3>
 
           </div>
 
-          <div
-            class="profile-card-icon"
-            aria-hidden="true"
+        </div>
+
+
+        <!-- WEEK SELECTOR -->
+
+        <div class="weekly-share-selector">
+
+          <button
+            id="shareWeekPrevBtn"
+            class="weekly-share-arrow"
+            type="button"
+            aria-label="Vorherige Woche"
           >
-            📸
-          </div>
+            ‹
+          </button>
+
+
+          <button
+            id="shareWeekCurrentBtn"
+            class="weekly-share-current"
+            type="button"
+          >
+
+            <span class="weekly-share-current-label">
+              AUSGEWÄHLTE WOCHE
+            </span>
+
+            <span
+              id="shareWeekTitle"
+              class="weekly-share-current-title"
+            >
+              Diese Woche
+            </span>
+
+          </button>
+
+
+          <button
+            id="shareWeekNextBtn"
+            class="weekly-share-arrow"
+            type="button"
+            aria-label="Nächste Woche"
+          >
+            ›
+          </button>
 
         </div>
 
+
+        <!-- SHARE PREVIEW -->
 
         <div
           id="weeklyShareCard"
@@ -614,6 +647,12 @@
 
 
           <div
+            id="weeklyShareRange"
+            class="weekly-share-range"
+          ></div>
+
+
+          <div
             id="weeklyShareDays"
             class="weekly-share-days"
           ></div>
@@ -624,6 +663,15 @@
             class="weekly-share-summary"
           ></div>
 
+
+          <div
+            id="weeklyShareFooter"
+            class="weekly-share-footer"
+          >
+            Trainiert jemand genauso gerne wie du?<br>
+            Dann schicke HYPE an einen Freund oder einen Trainingspartner.
+          </div>
+
         </div>
 
 
@@ -632,7 +680,7 @@
           class="primary full profile-share-btn"
           type="button"
         >
-          📸 Woche auf Instagram teilen
+          📸 Auf Instagram teilen
         </button>
 
       </section>
@@ -654,25 +702,17 @@
 
             <h3>
               Trainiert jemand
-              genauso wie du?
+              genauso gerne wie du?
             </h3>
 
-          </div>
-
-          <div
-            class="profile-card-icon"
-            aria-hidden="true"
-          >
-            🚀
           </div>
 
         </div>
 
 
         <p class="profile-description">
-          Schick HYPE an einen Freund,
-          Trainingspartner oder deine
-          Crew.
+          Dann schicke HYPE an einen Freund
+          oder einen Trainingspartner.
         </p>
 
 
@@ -824,7 +864,7 @@
           </div>
 
           <h3>
-            Dein Profil
+            Profil bearbeiten
           </h3>
 
         </div>
@@ -861,9 +901,7 @@
       <div
         id="profileEmailEdit"
         class="profile-dialog-email"
-      >
-        —
-      </div>
+      ></div>
 
 
       <button
