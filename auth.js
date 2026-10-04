@@ -53,6 +53,24 @@ const authSubtitle =
 
 let isRegisterMode = false;
 
+let instagramCompleted = false;
+
+let shareCompleted = false;
+
+
+/* =========================
+   CONSTANTS
+========================= */
+
+const INSTAGRAM_URL =
+  "https://www.instagram.com/tano.loew/";
+
+const HYPE_SHARE_TEXT =
+  "Check HYPE – meine Trainingsplanung für Hybrid Athletes.";
+
+const HYPE_SHARE_URL =
+  window.location.href;
+
 
 /* =========================
    MESSAGE
@@ -62,19 +80,426 @@ function showAuthMessage(
   message,
   type = ""
 ) {
-  authMessage.textContent = message;
+
+  authMessage.textContent =
+    message;
 
   authMessage.className =
     "auth-message";
 
   if (type) {
-    authMessage.classList.add(type);
+
+    authMessage.classList.add(
+      type
+    );
+
   }
+
 }
 
 
 function clearAuthMessage() {
+
   showAuthMessage("");
+
+}
+
+
+/* =========================
+   REGISTRATION CHECKS
+========================= */
+
+function getRegistrationGate() {
+
+  return document.getElementById(
+    "registrationGate"
+  );
+
+}
+
+
+function renderRegistrationGate() {
+
+  if (!isRegisterMode) {
+
+    const existing =
+      getRegistrationGate();
+
+    if (existing) {
+      existing.remove();
+    }
+
+    return;
+
+  }
+
+
+  let gate =
+    getRegistrationGate();
+
+
+  if (!gate) {
+
+    gate =
+      document.createElement(
+        "div"
+      );
+
+    gate.id =
+      "registrationGate";
+
+    gate.className =
+      "registration-gate";
+
+
+    authForm.insertBefore(
+      gate,
+      authEmail
+    );
+
+  }
+
+
+  const instagramDoneClass =
+    instagramCompleted
+      ? "completed"
+      : "";
+
+
+  const shareDoneClass =
+    shareCompleted
+      ? "completed"
+      : "";
+
+
+  gate.innerHTML = `
+
+    <div class="registration-step">
+
+      <div class="registration-step-number">
+        1
+      </div>
+
+      <div class="registration-step-content">
+
+        <strong>
+          Folge Tano auf Instagram
+        </strong>
+
+        <span>
+          Unterstütze HYPE auf Instagram.
+        </span>
+
+        <a
+          href="${INSTAGRAM_URL}"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="registration-action instagram-action"
+          id="instagramFollowBtn"
+        >
+          <span>Instagram öffnen</span>
+          <span>↗</span>
+        </a>
+
+        <button
+          type="button"
+          class="registration-confirm ${instagramDoneClass}"
+          id="instagramConfirmBtn"
+        >
+          ${
+            instagramCompleted
+              ? "✓ Ich folge Tano"
+              : "Ich folge Tano"
+          }
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <div
+      class="registration-divider"
+    ></div>
+
+
+    <div
+      class="registration-step ${
+        instagramCompleted
+          ? ""
+          : "locked"
+      }"
+    >
+
+      <div class="registration-step-number">
+        2
+      </div>
+
+      <div class="registration-step-content">
+
+        <strong>
+          Teile HYPE mit jemandem
+        </strong>
+
+        <span>
+          Schick HYPE an eine Person über
+          WhatsApp, Instagram oder Nachrichten.
+        </span>
+
+        <button
+          type="button"
+          class="registration-action share-action"
+          id="shareHypeBtn"
+          ${
+            instagramCompleted
+              ? ""
+              : "disabled"
+          }
+        >
+          <span>HYPE teilen</span>
+          <span>↗</span>
+        </button>
+
+        <button
+          type="button"
+          class="registration-confirm ${shareDoneClass}"
+          id="shareConfirmBtn"
+          ${
+            instagramCompleted
+              ? ""
+              : "disabled"
+          }
+        >
+          ${
+            shareCompleted
+              ? "✓ Ich habe HYPE geteilt"
+              : "Ich habe HYPE geteilt"
+          }
+        </button>
+
+      </div>
+
+    </div>
+
+  `;
+
+
+  attachRegistrationGateEvents();
+
+  updateRegistrationSubmitState();
+
+}
+
+
+function attachRegistrationGateEvents() {
+
+  const instagramConfirm =
+    document.getElementById(
+      "instagramConfirmBtn"
+    );
+
+
+  const shareButton =
+    document.getElementById(
+      "shareHypeBtn"
+    );
+
+
+  const shareConfirm =
+    document.getElementById(
+      "shareConfirmBtn"
+    );
+
+
+  if (instagramConfirm) {
+
+    instagramConfirm.addEventListener(
+      "click",
+      () => {
+
+        instagramCompleted =
+          true;
+
+        clearAuthMessage();
+
+        renderRegistrationGate();
+
+      }
+    );
+
+  }
+
+
+  if (shareButton) {
+
+    shareButton.addEventListener(
+      "click",
+      async () => {
+
+        if (!instagramCompleted) {
+          return;
+        }
+
+
+        clearAuthMessage();
+
+
+        try {
+
+          if (
+            navigator.share
+          ) {
+
+            await navigator.share({
+              title:
+                "HYPE",
+              text:
+                HYPE_SHARE_TEXT,
+              url:
+                HYPE_SHARE_URL
+            });
+
+            shareCompleted =
+              true;
+
+            renderRegistrationGate();
+
+            showAuthMessage(
+              "Perfekt – HYPE wurde geteilt.",
+              "success"
+            );
+
+            return;
+
+          }
+
+
+          /*
+           * Fallback für Browser,
+           * die das native Teilen nicht
+           * unterstützen.
+           */
+
+          await navigator.clipboard.writeText(
+            `${HYPE_SHARE_TEXT} ${HYPE_SHARE_URL}`
+          );
+
+
+          showAuthMessage(
+            "Der HYPE-Link wurde kopiert. Du kannst ihn jetzt über WhatsApp, Instagram oder Nachrichten verschicken.",
+            "success"
+          );
+
+
+        } catch (error) {
+
+          /*
+           * Der Nutzer kann das
+           * native Share-Menü auch
+           * wieder schließen.
+           */
+
+          if (
+            error?.name ===
+            "AbortError"
+          ) {
+
+            return;
+
+          }
+
+
+          console.error(
+            "HYPE share error:",
+            error
+          );
+
+
+          showAuthMessage(
+            "Das Teilen konnte nicht geöffnet werden.",
+            "error"
+          );
+
+        }
+
+      }
+    );
+
+  }
+
+
+  if (shareConfirm) {
+
+    shareConfirm.addEventListener(
+      "click",
+      () => {
+
+        if (!instagramCompleted) {
+          return;
+        }
+
+
+        shareCompleted =
+          true;
+
+        clearAuthMessage();
+
+        renderRegistrationGate();
+
+        showAuthMessage(
+          "Perfekt – jetzt kannst du deinen HYPE-Account erstellen.",
+          "success"
+        );
+
+      }
+    );
+
+  }
+
+}
+
+
+function updateRegistrationSubmitState() {
+
+  if (!authSubmit) {
+    return;
+  }
+
+
+  if (!isRegisterMode) {
+
+    authSubmit.disabled =
+      false;
+
+    return;
+
+  }
+
+
+  /*
+   * Registrierung erst möglich,
+   * wenn beide Schritte bestätigt wurden.
+   */
+
+  const requirementsComplete =
+    instagramCompleted &&
+    shareCompleted;
+
+
+  authSubmit.disabled =
+    !requirementsComplete;
+
+}
+
+
+function resetRegistrationProgress() {
+
+  instagramCompleted =
+    false;
+
+  shareCompleted =
+    false;
+
 }
 
 
@@ -86,9 +511,7 @@ function updateAuthMode() {
 
   clearAuthMessage();
 
-  /*
-   * Drei Zeilen für den HYPE-Claim.
-   */
+
   authSubtitle.innerHTML = `
     Deine Trainingsplanung.<br>
     Dein Account.<br>
@@ -100,6 +523,7 @@ function updateAuthMode() {
 
     authSubmit.textContent =
       "Account erstellen";
+
 
     authSwitch.innerHTML = `
       <span style="
@@ -122,15 +546,26 @@ function updateAuthMode() {
       </span>
     `;
 
+
     authPassword.autocomplete =
       "new-password";
 
+
+    renderRegistrationGate();
+
+    updateRegistrationSubmitState();
+
     return;
+
   }
 
 
   authSubmit.textContent =
     "Einloggen";
+
+
+  authSubmit.disabled =
+    false;
 
 
   authSwitch.innerHTML = `
@@ -157,6 +592,10 @@ function updateAuthMode() {
 
   authPassword.autocomplete =
     "current-password";
+
+
+  renderRegistrationGate();
+
 }
 
 
@@ -173,8 +612,6 @@ function setAuthLoading(
     loading
   );
 
-  authSubmit.disabled =
-    loading;
 
   authSwitch.disabled =
     loading;
@@ -185,7 +622,11 @@ function setAuthLoading(
     authSubmit.textContent =
       "Bitte warten …";
 
+    authSubmit.disabled =
+      true;
+
     return;
+
   }
 
 
@@ -193,6 +634,10 @@ function setAuthLoading(
     isRegisterMode
       ? "Account erstellen"
       : "Einloggen";
+
+
+  updateRegistrationSubmitState();
+
 }
 
 
@@ -217,10 +662,12 @@ async function signIn() {
     );
 
     return;
+
   }
 
 
   setAuthLoading(true);
+
   clearAuthMessage();
 
 
@@ -243,16 +690,20 @@ async function signIn() {
       error
     );
 
+
     showAuthMessage(
       getAuthErrorMessage(error),
       "error"
     );
 
+
     return;
+
   }
 
 
   showApp();
+
 }
 
 
@@ -261,6 +712,30 @@ async function signIn() {
 ========================= */
 
 async function signUp() {
+
+  /*
+   * Sicherheitscheck:
+   * Selbst wenn jemand versucht,
+   * den Button technisch zu umgehen,
+   * wird hier nochmals geprüft.
+   */
+
+  if (
+    !instagramCompleted ||
+    !shareCompleted
+  ) {
+
+    showAuthMessage(
+      "Bitte zuerst beide Schritte abschließen.",
+      "error"
+    );
+
+    updateRegistrationSubmitState();
+
+    return;
+
+  }
+
 
   const email =
     authEmail.value.trim();
@@ -277,6 +752,7 @@ async function signUp() {
     );
 
     return;
+
   }
 
 
@@ -288,10 +764,12 @@ async function signUp() {
     );
 
     return;
+
   }
 
 
   setAuthLoading(true);
+
   clearAuthMessage();
 
 
@@ -315,19 +793,17 @@ async function signUp() {
       error
     );
 
+
     showAuthMessage(
       getAuthErrorMessage(error),
       "error"
     );
 
+
     return;
+
   }
 
-
-  /*
-   * Bei deaktivierter E-Mail-Bestätigung
-   * bekommen wir direkt eine Session.
-   */
 
   if (
     data &&
@@ -337,13 +813,9 @@ async function signUp() {
     showApp();
 
     return;
+
   }
 
-
-  /*
-   * Falls E-Mail-Bestätigung aktiviert
-   * wird, bleibt der User zunächst hier.
-   */
 
   showAuthMessage(
     "Account erstellt. Bitte bestätige deine E-Mail-Adresse.",
@@ -351,10 +823,15 @@ async function signUp() {
   );
 
 
+  resetRegistrationProgress();
+
+
   isRegisterMode =
     false;
 
+
   updateAuthMode();
+
 }
 
 
@@ -379,6 +856,7 @@ function getAuthErrorMessage(
   ) {
 
     return "E-Mail oder Passwort ist falsch.";
+
   }
 
 
@@ -389,6 +867,7 @@ function getAuthErrorMessage(
   ) {
 
     return "Für diese E-Mail existiert bereits ein Account.";
+
   }
 
 
@@ -399,6 +878,7 @@ function getAuthErrorMessage(
   ) {
 
     return "Das Passwort ist zu kurz.";
+
   }
 
 
@@ -409,6 +889,7 @@ function getAuthErrorMessage(
   ) {
 
     return "Bitte bestätige zuerst deine E-Mail-Adresse.";
+
   }
 
 
@@ -416,6 +897,7 @@ function getAuthErrorMessage(
     error?.message ||
     "Es ist ein Fehler aufgetreten."
   );
+
 }
 
 
@@ -432,6 +914,7 @@ function showApp() {
   appContent.classList.remove(
     "hidden"
   );
+
 }
 
 
@@ -449,12 +932,19 @@ function showLogin() {
     "hidden"
   );
 
+
   authForm.reset();
+
+
+  resetRegistrationProgress();
+
 
   isRegisterMode =
     false;
 
+
   updateAuthMode();
+
 }
 
 
@@ -478,10 +968,12 @@ async function logout() {
     );
 
     return;
+
   }
 
 
   showLogin();
+
 }
 
 
@@ -495,14 +987,18 @@ authForm.addEventListener(
 
     event.preventDefault();
 
+
     if (isRegisterMode) {
 
       await signUp();
 
       return;
+
     }
 
+
     await signIn();
+
   }
 );
 
@@ -511,15 +1007,6 @@ authForm.addEventListener(
    LOGIN / REGISTER SWITCH
 ========================= */
 
-/*
- * Separater Click-Handler.
- *
- * Wichtig:
- * preventDefault verhindert,
- * dass der Button versehentlich
- * irgendeine Formularaktion auslöst.
- */
-
 authSwitch.addEventListener(
   "click",
   event => {
@@ -527,20 +1014,37 @@ authSwitch.addEventListener(
     event.preventDefault();
     event.stopPropagation();
 
+
     if (authSwitch.disabled) {
       return;
     }
 
+
     isRegisterMode =
       !isRegisterMode;
 
-    authPassword.value = "";
+
+    authPassword.value =
+      "";
+
+
+    if (isRegisterMode) {
+
+      resetRegistrationProgress();
+
+    }
+
 
     updateAuthMode();
 
-    setTimeout(() => {
-      authEmail.focus();
-    }, 50);
+
+    setTimeout(
+      () => {
+        authEmail.focus();
+      },
+      50
+    );
+
   }
 );
 
@@ -561,6 +1065,7 @@ supabaseClient.auth.onAuthStateChange(
       showLogin();
 
     }
+
   }
 );
 
@@ -585,12 +1090,15 @@ async function initAuth() {
       error
     );
 
+
     showAuthMessage(
       "Die Verbindung zu HYPE konnte nicht hergestellt werden.",
       "error"
     );
 
+
     return;
+
   }
 
 
@@ -601,7 +1109,9 @@ async function initAuth() {
   } else {
 
     showLogin();
+
   }
+
 }
 
 
