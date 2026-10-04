@@ -1,1328 +1,1746 @@
 const KEY = "hype_sessions_v1";
 
-
 const sportMeta = {
-
   running: {
     icon: "🏃",
     label: "Laufen",
-    title: "z. B. Easy Run 45 min",
-    notes: "Pace, Distanz, Intervalle, Laufgefühl …"
+    placeholder: "z. B. Easy Run"
   },
 
   strength: {
     icon: "🏋️",
-    label: "Gym",
-    title: "z. B. Oberkörper Push",
-    notes: "Übungen, Sätze, Wiederholungen, Gewichte …"
+    label: "Krafttraining",
+    placeholder: "z. B. Upper Body"
   },
 
   hyrox: {
-    icon: "🔥",
+    icon: "⚡",
     label: "HYROX",
-    title: "z. B. HYROX Simulation",
-    notes: "Stationen, Splits, Lauf-Pace, Gewichte …"
+    placeholder: "z. B. HYROX Intervals"
   },
 
   cycling: {
     icon: "🚴",
     label: "Rad",
-    title: "z. B. Zone 2 Ride 60 min",
-    notes: "Distanz, Watt, Strecke, Höhenmeter …"
+    placeholder: "z. B. Zone 2 Ride"
   },
 
   swimming: {
     icon: "🏊",
     label: "Schwimmen",
-    title: "z. B. 2.000 m Technik",
-    notes: "Bahnen, Intervalle, Pace, Technik …"
+    placeholder: "z. B. Technik & Ausdauer"
   },
 
   mobility: {
     icon: "🧘",
     label: "Mobility",
-    title: "z. B. Hüfte & Sprunggelenk",
-    notes: "Bereiche, Übungen, Dauer, Beweglichkeit …"
+    placeholder: "z. B. 20 min Mobility"
   },
 
   rest: {
     icon: "😴",
-    label: "Recovery",
-    title: "z. B. Recovery & Sauna",
-    notes: "Schlaf, Spaziergang, Sauna, Stretching …"
+    label: "Erholung",
+    placeholder: "z. B. Rest Day"
   }
-
 };
 
 
-/* -------------------------------- */
-/* DATEN LADEN                       */
-/* -------------------------------- */
+/* =========================
+   STATE
+========================= */
 
-let sessions = [];
+let sessions = loadSessions();
 
-try {
-
-  sessions =
-    JSON.parse(
-      localStorage.getItem(KEY) || "[]"
-    );
-
-} catch (error) {
-
-  sessions = [];
-
-}
-
-
-sessions =
-  sessions.map(session => ({
-
-    ...session,
-
-    completed:
-      session.completed === true,
-
-    actualIntensity:
-      session.actualIntensity ??
-      null,
-
-    postNotes:
-      session.postNotes ??
-      ""
-
-  }));
-
-
-let selected =
-  new Date();
-
-selected.setHours(
-  12,
-  0,
-  0,
-  0
-);
-
+let selected = new Date();
+selected.setHours(12, 0, 0, 0);
 
 let editingId = null;
 
+let currentView = "plan";
 
-/* -------------------------------- */
-/* HILFSFUNKTIONEN                  */
-/* -------------------------------- */
+let overviewPeriod = "week";
 
-const pad = n =>
-  String(n).padStart(2, "0");
-
-
-const iso = d =>
-  `${d.getFullYear()}-${pad(
-    d.getMonth() + 1
-  )}-${pad(
-    d.getDate()
-  )}`;
+let overviewDate = new Date();
+overviewDate.setHours(12, 0, 0, 0);
 
 
-const startOfWeek = d => {
+/* =========================
+   DOM
+========================= */
 
-  const x =
-    new Date(d);
+const planView = document.getElementById("planView");
+const overviewView = document.getElementById("overviewView");
+const todayView = document.getElementById("todayView");
 
-  const day =
-    (x.getDay() + 6) % 7;
+const weekTitle = document.getElementById("weekTitle");
+const heroYear = document.getElementById("heroYear");
 
-  x.setDate(
-    x.getDate() - day
-  );
+const weekStrip = document.getElementById("weekStrip");
+const sessionsEl = document.getElementById("sessions");
+const selectedDateLabel = document.getElementById("selectedDateLabel");
+const weeklyInsight = document.getElementById("weeklyInsight");
 
-  x.setHours(
+const addTrainingBtn = document.getElementById("addTrainingBtn");
+
+const overviewContent = document.getElementById("overviewContent");
+const periodTitle = document.getElementById("periodTitle");
+const periodPrevBtn = document.getElementById("periodPrevBtn");
+const periodNextBtn = document.getElementById("periodNextBtn");
+const periodTodayBtn = document.getElementById("periodTodayBtn");
+
+const todayTitle = document.getElementById("todayTitle");
+const todayContent = document.getElementById("todayContent");
+
+const trainingDialog = document.getElementById("trainingDialog");
+const trainingForm = document.getElementById("trainingForm");
+
+const dialogTitle = document.getElementById("dialogTitle");
+const closeDialogBtn = document.getElementById("closeDialogBtn");
+
+const sportInput = document.getElementById("sportInput");
+const titleInput = document.getElementById("titleInput");
+const durationInput = document.getElementById("durationInput");
+const intensityInput = document.getElementById("intensityInput");
+const notesInput = document.getElementById("notesInput");
+
+
+/* =========================
+   HELPERS
+========================= */
+
+function pad(value) {
+  return String(value).padStart(2, "0");
+}
+
+
+function iso(date) {
+  return [
+    date.getFullYear(),
+    pad(date.getMonth() + 1),
+    pad(date.getDate())
+  ].join("-");
+}
+
+
+function parseDate(value) {
+  const [year, month, day] = value.split("-").map(Number);
+
+  return new Date(
+    year,
+    month - 1,
+    day,
     12,
     0,
     0,
     0
   );
-
-  return x;
-
-};
-
-
-const esc = s =>
-  String(s || "")
-    .replace(
-      /[&<>"']/g,
-      c => ({
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        '"': "&quot;",
-        "'": "&#39;"
-      }[c])
-    );
-
-
-function save() {
-
-  localStorage.setItem(
-    KEY,
-    JSON.stringify(
-      sessions
-    )
-  );
-
 }
 
 
-/* -------------------------------- */
-/* ZUKUNFT PRÜFEN                   */
-/* -------------------------------- */
+function startOfWeek(date) {
+  const d = new Date(date);
+
+  d.setHours(12, 0, 0, 0);
+
+  const day = d.getDay();
+
+  const diff = day === 0 ? -6 : 1 - day;
+
+  d.setDate(d.getDate() + diff);
+
+  return d;
+}
+
+
+function endOfWeek(date) {
+  const d = startOfWeek(date);
+
+  d.setDate(d.getDate() + 6);
+
+  return d;
+}
+
+
+function addDays(date, amount) {
+  const d = new Date(date);
+
+  d.setDate(d.getDate() + amount);
+
+  return d;
+}
+
+
+function addMonths(date, amount) {
+  const d = new Date(date);
+
+  d.setDate(1);
+  d.setMonth(d.getMonth() + amount);
+
+  return d;
+}
+
+
+function addYears(date, amount) {
+  const d = new Date(date);
+
+  d.setDate(1);
+  d.setMonth(0);
+  d.setFullYear(d.getFullYear() + amount);
+
+  return d;
+}
+
+
+function esc(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+
+function formatLongDate(date) {
+  return new Intl.DateTimeFormat("de-DE", {
+    weekday: "long",
+    day: "numeric",
+    month: "long"
+  }).format(date);
+}
+
+
+function formatShortDate(date) {
+  return new Intl.DateTimeFormat("de-DE", {
+    day: "numeric",
+    month: "short"
+  }).format(date);
+}
+
+
+function formatMonthYear(date) {
+  return new Intl.DateTimeFormat("de-DE", {
+    month: "long",
+    year: "numeric"
+  }).format(date);
+}
+
+
+function formatMonth(date) {
+  return new Intl.DateTimeFormat("de-DE", {
+    month: "long"
+  }).format(date);
+}
+
+
+function isToday(date) {
+  return iso(date) === iso(new Date());
+}
+
 
 function isFutureDate(dateString) {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
 
-  return dateString >
-    iso(new Date());
+  const target = parseDate(dateString);
+  target.setHours(0, 0, 0, 0);
 
+  return target > today;
 }
 
 
 function getFutureMessage(dateString) {
+  const date = parseDate(dateString);
 
-  const today =
-    new Date();
-
-  today.setHours(
-    12,
-    0,
-    0,
-    0
-  );
-
-
-  const date =
-    new Date(
-      dateString +
-      "T12:00:00"
-    );
-
-
-  const tomorrow =
-    new Date(today);
-
-  tomorrow.setDate(
-    tomorrow.getDate() + 1
-  );
-
-
-  if (
-    iso(date) ===
-    iso(tomorrow)
-  ) {
-
+  if (iso(addDays(new Date(), 1)) === dateString) {
     return "Diese Einheit kommt erst morgen. Du kannst sie noch nicht abhaken.";
-
   }
 
-
-  const formatted =
-    date.toLocaleDateString(
-      "de-DE",
-      {
-        weekday: "long",
-        day: "numeric",
-        month: "long"
-      }
-    );
-
-
-  return `Diese Einheit kommt erst am ${formatted}. Du kannst sie noch nicht abhaken.`;
-
+  return `Diese Einheit kommt erst am ${formatLongDate(date)}. Du kannst sie noch nicht abhaken.`;
 }
 
 
-/* -------------------------------- */
-/* WOCHENTAGE                        */
-/* -------------------------------- */
+function escapeForAttribute(value) {
+  return esc(value).replace(/\n/g, " ");
+}
 
-function weekDays() {
 
-  const s =
-    startOfWeek(selected);
+/* =========================
+   STORAGE
+========================= */
 
-  return Array.from(
-    { length: 7 },
-    (_, i) => {
+function loadSessions() {
+  try {
+    const raw = localStorage.getItem(KEY);
 
-      const d =
-        new Date(s);
+    if (!raw) {
+      return [];
+    }
 
-      d.setDate(
-        s.getDate() + i
+    const data = JSON.parse(raw);
+
+    if (!Array.isArray(data)) {
+      return [];
+    }
+
+    return data.map(session => ({
+      ...session,
+      completed: Boolean(session.completed),
+      actualIntensity:
+        session.actualIntensity === undefined
+          ? null
+          : session.actualIntensity,
+      postNotes: session.postNotes || ""
+    }));
+
+  } catch (error) {
+    console.error("HYPE storage error:", error);
+
+    return [];
+  }
+}
+
+
+function save() {
+  localStorage.setItem(
+    KEY,
+    JSON.stringify(sessions)
+  );
+}
+
+
+/* =========================
+   SESSION QUERIES
+========================= */
+
+function sessionsForDate(dateString) {
+  return sessions
+    .filter(session => session.date === dateString)
+    .sort((a, b) => {
+      return Number(a.createdAt || 0) - Number(b.createdAt || 0);
+    });
+}
+
+
+function sessionsForWeek(date) {
+  const start = startOfWeek(date);
+  const end = endOfWeek(date);
+
+  const startIso = iso(start);
+  const endIso = iso(end);
+
+  return sessions.filter(session => {
+    return session.date >= startIso &&
+           session.date <= endIso;
+  });
+}
+
+
+function sessionsForMonth(date) {
+  const year = date.getFullYear();
+  const month = date.getMonth();
+
+  return sessions.filter(session => {
+    const d = parseDate(session.date);
+
+    return (
+      d.getFullYear() === year &&
+      d.getMonth() === month
+    );
+  });
+}
+
+
+function sessionsForYear(year) {
+  return sessions.filter(session => {
+    return parseDate(session.date).getFullYear() === year;
+  });
+}
+
+
+/* =========================
+   PLAN VIEW
+========================= */
+
+function renderPlan() {
+  const start = startOfWeek(selected);
+
+  const end = endOfWeek(selected);
+
+  const startText = new Intl.DateTimeFormat("de-DE", {
+    day: "numeric",
+    month: "short"
+  }).format(start);
+
+  const endText = new Intl.DateTimeFormat("de-DE", {
+    day: "numeric",
+    month: "short"
+  }).format(end);
+
+  weekTitle.textContent =
+    `${startText} – ${endText}`;
+
+  heroYear.textContent =
+    start.getFullYear();
+
+
+  renderWeekStrip();
+
+  selectedDateLabel.textContent =
+    formatLongDate(selected);
+
+  renderSelectedDay();
+
+  renderWeeklyInsight();
+}
+
+
+function renderWeekStrip() {
+  weekStrip.innerHTML = "";
+
+  const start = startOfWeek(selected);
+
+  const dayNames = [
+    "Mo",
+    "Di",
+    "Mi",
+    "Do",
+    "Fr",
+    "Sa",
+    "So"
+  ];
+
+  for (let i = 0; i < 7; i++) {
+    const date = addDays(start, i);
+
+    const dateString = iso(date);
+
+    const daySessions =
+      sessionsForDate(dateString);
+
+    const button =
+      document.createElement("button");
+
+    button.className =
+      "day" +
+      (
+        dateString === iso(selected)
+          ? " active"
+          : ""
       );
 
-      return d;
+    button.type = "button";
 
-    }
-  );
+    const todayLabel =
+      isToday(date)
+        ? `<span class="today-label">HEUTE</span>`
+        : `<span class="today-label">&nbsp;</span>`;
 
-}
-
-
-/* -------------------------------- */
-/* RENDER                            */
-/* -------------------------------- */
-
-function render() {
-
-  const days =
-    weekDays();
-
-  const today =
-    iso(new Date());
-
-
-  /* WEEK TITLE */
-
-  const end =
-    new Date(days[6]);
-
-
-  document.getElementById(
-    "weekTitle"
-  ).textContent =
-    `${days[0].toLocaleDateString(
-      "de-DE",
-      {
-        day: "2-digit",
-        month: "short"
+    button.innerHTML = `
+      ${dayNames[i]}
+      <strong>${date.getDate()}</strong>
+      ${todayLabel}
+      ${
+        daySessions.length
+          ? `<span class="dot"></span>`
+          : `<span style="display:block;height:5px;margin-top:7px;"></span>`
       }
-    )} – ${end.toLocaleDateString(
-      "de-DE",
-      {
-        day: "2-digit",
-        month: "short"
-      }
-    )}`;
+    `;
 
+    button.addEventListener("click", () => {
+      selected = date;
 
-  /* SELECTED DATE */
-
-  const selectedLabel =
-    document.getElementById(
-      "selectedDateLabel"
-    );
-
-
-  selectedLabel.textContent =
-    selected.toLocaleDateString(
-      "de-DE",
-      {
-        weekday: "long",
-        day: "numeric",
-        month: "long"
-      }
-    );
-
-
-  selectedLabel.classList.add(
-    "selected-date"
-  );
-
-
-  /* WEEK STRIP */
-
-  const strip =
-    document.getElementById(
-      "weekStrip"
-    );
-
-
-  strip.innerHTML =
-    days.map(d => {
-
-      const date =
-        iso(d);
-
-
-      const list =
-        sessions.filter(
-          s =>
-            s.date === date
-        );
-
-
-      const isToday =
-        date === today;
-
-
-      const isSelected =
-        date === iso(selected);
-
-
-      return `
-
-        <button
-          class="day ${
-            isSelected
-              ? "active"
-              : ""
-          }"
-          data-date="${date}"
-          type="button"
-        >
-
-          ${d.toLocaleDateString(
-            "de-DE",
-            {
-              weekday: "short"
-            }
-          ).slice(0, 2).toUpperCase()}
-
-          <strong>
-            ${d.getDate()}
-          </strong>
-
-          ${
-            isToday
-              ? `
-                <span class="today-label">
-                  HEUTE
-                </span>
-              `
-              : ""
-          }
-
-          ${
-            list.length
-              ? `
-                <span class="dot"></span>
-              `
-              : ""
-          }
-
-        </button>
-
-      `;
-
-    }).join("");
-
-
-  /* DAY CLICK */
-
-  strip
-    .querySelectorAll(".day")
-    .forEach(button => {
-
-      button.onclick = () => {
-
-        selected =
-          new Date(
-            button.dataset.date +
-            "T12:00:00"
-          );
-
-        render();
-
-      };
-
+      renderPlan();
     });
 
-
-  renderSessions();
-
-
-  /* WEEKLY INSIGHT */
-
-  const count =
-    sessions.filter(s =>
-      days.some(
-        d =>
-          iso(d) === s.date
-      )
-    ).length;
-
-
-  const completed =
-    sessions.filter(s =>
-      days.some(
-        d =>
-          iso(d) === s.date
-      ) &&
-      s.completed === true
-    ).length;
-
-
-  document.getElementById(
-    "insightText"
-  ).textContent =
-    count === 0
-      ? "Füge Trainings hinzu, um deine Woche zu planen."
-      : `${completed} von ${count} Einheiten abgeschlossen.`;
-
+    weekStrip.appendChild(button);
+  }
 }
 
 
-/* -------------------------------- */
-/* TRAININGS DARSTELLEN              */
-/* -------------------------------- */
-
-function renderSessions() {
-
+function renderSelectedDay() {
   const list =
-    sessions
-      .filter(
-        s =>
-          s.date ===
-          iso(selected)
-      )
-      .sort(
-        (a, b) =>
-          a.created -
-          b.created
-      );
-
-
-  const el =
-    document.getElementById(
-      "sessions"
-    );
-
+    sessionsForDate(iso(selected));
 
   if (!list.length) {
-
-    el.innerHTML = `
-
+    sessionsEl.innerHTML = `
       <div class="empty">
+        Für diesen Tag ist noch kein Training geplant.
+      </div>
+    `;
 
-        Noch kein Training geplant.
+    return;
+  }
 
-        <br>
-        <br>
+  sessionsEl.innerHTML =
+    list.map(renderSessionCard).join("");
+
+  attachSessionEvents(sessionsEl);
+}
+
+
+/* =========================
+   SESSION CARD
+========================= */
+
+function renderSessionCard(session) {
+  const meta =
+    sportMeta[session.sport] ||
+    sportMeta.running;
+
+  const dots =
+    Array.from({ length: 5 })
+      .map((_, index) => {
+        return index < Number(session.intensity || 0)
+          ? "●"
+          : "○";
+      })
+      .join("");
+
+  const actualOptions = [
+    [0, "entspannend"],
+    [1, "sehr leicht"],
+    [2, "leicht"],
+    [3, "moderat"],
+    [4, "hart"],
+    [5, "sehr hart"]
+  ];
+
+  const actualSelect = actualOptions
+    .map(([value, label]) => {
+      return `
+        <option
+          value="${value}"
+          ${
+            Number(session.actualIntensity) === value
+              ? "selected"
+              : ""
+          }
+        >
+          ${value} · ${label}
+        </option>
+      `;
+    })
+    .join("");
+
+
+  return `
+    <article
+      class="session ${session.completed ? "completed" : ""}"
+      data-id="${esc(session.id)}"
+    >
+
+      <div class="sport-icon">
+        ${meta.icon}
+      </div>
+
+
+      <div class="session-content">
+
+        <div class="session-title-row">
+
+          <h4>${esc(session.title)}</h4>
+
+          ${
+            session.completed
+              ? `<span class="completed-label">ERLEDIGT</span>`
+              : ""
+          }
+
+        </div>
+
+
+        <p>
+          ${meta.label}
+          · ${esc(session.duration)} min
+        </p>
+
+
+        <p>
+          ${dots}
+        </p>
+
+
+        ${
+          session.notes
+            ? `<p>${esc(session.notes)}</p>`
+            : ""
+        }
+
+
+        ${
+          session.completed
+            ? `
+              <div class="actual-intensity">
+
+                <span>Gefühlt:</span>
+
+                <select
+                  class="actual-intensity-select"
+                  data-action="actual-intensity"
+                >
+                  ${actualSelect}
+                </select>
+
+              </div>
+
+
+              <div class="post-training-notes">
+
+                <label>
+                  Wie war das Training?
+
+                  <textarea
+                    rows="3"
+                    data-action="post-notes"
+                    placeholder="z. B. Hat sich heute sehr gut angefühlt …"
+                  >${esc(session.postNotes || "")}</textarea>
+
+                </label>
+
+              </div>
+            `
+            : ""
+        }
+
+      </div>
+
+
+      <div class="session-actions">
 
         <button
-          class="primary"
-          id="emptyAdd"
           type="button"
+          class="complete-btn ${
+            session.completed
+              ? "is-completed"
+              : ""
+          }"
+          data-action="complete"
+          aria-label="${
+            session.completed
+              ? "Training als offen markieren"
+              : "Training abhaken"
+          }"
         >
-          Erste Einheit planen
+          ${
+            session.completed
+              ? "✓"
+              : "○"
+          }
+        </button>
+
+
+        <button
+          type="button"
+          class="edit-btn"
+          data-action="edit"
+        >
+          ✎ Bearbeiten
+        </button>
+
+
+        <button
+          type="button"
+          class="edit-btn"
+          data-action="delete"
+        >
+          × Löschen
         </button>
 
       </div>
 
-    `;
+    </article>
+  `;
+}
 
 
-    document.getElementById(
-      "emptyAdd"
-    ).onclick =
-      openNewDialog;
+/* =========================
+   SESSION EVENTS
+========================= */
+
+function attachSessionEvents(container) {
+  container
+    .querySelectorAll(".session")
+    .forEach(card => {
+
+      const id = card.dataset.id;
+
+      const session =
+        sessions.find(item => item.id === id);
+
+      if (!session) {
+        return;
+      }
 
 
-    return;
+      const completeButton =
+        card.querySelector(
+          '[data-action="complete"]'
+        );
 
-  }
+      const editButton =
+        card.querySelector(
+          '[data-action="edit"]'
+        );
 
+      const deleteButton =
+        card.querySelector(
+          '[data-action="delete"]'
+        );
 
-  el.innerHTML =
-    list.map(s => {
+      const actualIntensity =
+        card.querySelector(
+          '[data-action="actual-intensity"]'
+        );
 
-      const m =
-        sportMeta[s.sport] ||
-        sportMeta.running;
-
-
-      const plannedIntensity =
-        Number(
-          s.intensity || 0
+      const postNotes =
+        card.querySelector(
+          '[data-action="post-notes"]'
         );
 
 
-      const actualIntensity =
-        s.actualIntensity !== null &&
-        s.actualIntensity !== undefined
-          ? Number(
-              s.actualIntensity
-            )
-          : null;
-
-
-      return `
-
-        <article
-          class="session ${
-            s.completed
-              ? "completed"
-              : ""
-          }"
-        >
-
-          <div class="sport-icon">
-            ${m.icon}
-          </div>
-
-
-          <div class="session-content">
-
-            <div class="session-title-row">
-
-              <h4>
-                ${esc(s.title)}
-              </h4>
-
-              ${
-                s.completed
-                  ? `
-                    <span class="completed-label">
-                      ABGESCHLOSSEN
-                    </span>
-                  `
-                  : ""
-              }
-
-            </div>
-
-
-            <p>
-              ${m.label}
-              ·
-              ${s.duration} min
-              ${
-                "●".repeat(
-                  plannedIntensity
-                )
-              }${
-                "○".repeat(
-                  5 -
-                  plannedIntensity
-                )
-              }
-            </p>
-
-
-            ${
-              s.notes
-                ? `
-                  <p>
-                    ${esc(
-                      s.notes
-                    )}
-                  </p>
-                `
-                : ""
-            }
-
-
-            ${
-              s.completed
-                ? `
-                  <div class="actual-intensity">
-
-                    <span>
-                      Tatsächlich
-                    </span>
-
-                    <select
-                      class="actual-intensity-select"
-                      data-id="${s.id}"
-                    >
-
-                      <option
-                        value=""
-                        ${
-                          actualIntensity === null
-                            ? "selected"
-                            : ""
-                        }
-                      >
-                        0–5
-                      </option>
-
-                      <option
-                        value="0"
-                        ${
-                          actualIntensity === 0
-                            ? "selected"
-                            : ""
-                        }
-                      >
-                        0 — entspannend
-                      </option>
-
-                      <option
-                        value="1"
-                        ${
-                          actualIntensity === 1
-                            ? "selected"
-                            : ""
-                        }
-                      >
-                        1 — sehr leicht
-                      </option>
-
-                      <option
-                        value="2"
-                        ${
-                          actualIntensity === 2
-                            ? "selected"
-                            : ""
-                        }
-                      >
-                        2 — leicht
-                      </option>
-
-                      <option
-                        value="3"
-                        ${
-                          actualIntensity === 3
-                            ? "selected"
-                            : ""
-                        }
-                      >
-                        3 — moderat
-                      </option>
-
-                      <option
-                        value="4"
-                        ${
-                          actualIntensity === 4
-                            ? "selected"
-                            : ""
-                        }
-                      >
-                        4 — hart
-                      </option>
-
-                      <option
-                        value="5"
-                        ${
-                          actualIntensity === 5
-                            ? "selected"
-                            : ""
-                        }
-                      >
-                        5 — sehr hart
-                      </option>
-
-                    </select>
-
-                  </div>
-
-
-                  <div class="post-training-notes">
-
-                    <label
-                      for="postNotes-${s.id}"
-                    >
-                      Wie war das Training?
-
-                      <textarea
-                        id="postNotes-${s.id}"
-                        class="post-training-notes-input"
-                        data-id="${s.id}"
-                        rows="3"
-                        placeholder="z. B. Hat sich heute sehr gut angefühlt …"
-                      >${esc(s.postNotes)}</textarea>
-
-                    </label>
-
-                  </div>
-                `
-                : ""
-            }
-
-          </div>
-
-
-          <div class="session-actions">
-
-            <!-- TRAINING ABHAKEN -->
-
-            <button
-              class="complete-btn ${
-                s.completed
-                  ? "is-completed"
-                  : ""
-              }"
-              data-id="${s.id}"
-              type="button"
-              aria-label="${
-                s.completed
-                  ? "Training als offen markieren"
-                  : "Training abschließen"
-              }"
-            >
-              ${
-                s.completed
-                  ? "✓"
-                  : "○"
-              }
-            </button>
-
-
-            <!-- BEARBEITEN -->
-
-            <button
-              class="edit-btn"
-              data-id="${s.id}"
-              type="button"
-              aria-label="Training bearbeiten"
-            >
-              ✎&nbsp; Bearbeiten
-            </button>
-
-
-            <!-- LÖSCHEN -->
-
-            <button
-              class="icon-btn delete"
-              data-id="${s.id}"
-              type="button"
-              aria-label="Training löschen"
-            >
-              ×
-            </button>
-
-          </div>
-
-        </article>
-
-      `;
-
-    }).join("");
-
-
-  /* -------------------------------- */
-  /* TRAINING ABHAKEN                 */
-  /* -------------------------------- */
-
-  el
-    .querySelectorAll(
-      ".complete-btn"
-    )
-    .forEach(button => {
-
-      button.addEventListener(
+      completeButton.addEventListener(
         "click",
-        function () {
+        () => {
 
-          const id =
-            this.dataset.id;
-
-
-          const session =
-            sessions.find(
-              s =>
-                String(s.id) ===
-                String(id)
-            );
-
-
-          if (!session) {
-            return;
-          }
-
-
-          if (
-            !session.completed &&
-            isFutureDate(session.date)
-          ) {
+          if (!session.completed &&
+              isFutureDate(session.date)) {
 
             alert(
-              getFutureMessage(
-                session.date
-              )
+              getFutureMessage(session.date)
             );
 
             return;
-
           }
-
 
           session.completed =
             !session.completed;
 
-
-          if (
-            session.completed === false
-          ) {
-
-            session.actualIntensity =
-              null;
-
-            session.postNotes =
-              "";
-
+          if (!session.completed) {
+            session.actualIntensity = null;
+            session.postNotes = "";
           }
-
 
           save();
 
-          render();
+          renderAll();
+        }
+      );
+
+
+      editButton.addEventListener(
+        "click",
+        () => {
+
+          openEditDialog(session);
 
         }
       );
 
-    });
 
-
-  /* -------------------------------- */
-  /* BEARBEITEN                       */
-  /* -------------------------------- */
-
-  el
-    .querySelectorAll(
-      ".edit-btn"
-    )
-    .forEach(button => {
-
-      button.addEventListener(
+      deleteButton.addEventListener(
         "click",
-        function () {
-
-          openEditDialog(
-            this.dataset.id
-          );
-
-        }
-      );
-
-    });
-
-
-  /* -------------------------------- */
-  /* LÖSCHEN                          */
-  /* -------------------------------- */
-
-  el
-    .querySelectorAll(
-      ".delete"
-    )
-    .forEach(button => {
-
-      button.addEventListener(
-        "click",
-        function () {
-
-          const id =
-            this.dataset.id;
-
-
-          const session =
-            sessions.find(
-              s =>
-                String(s.id) ===
-                String(id)
-            );
-
-
-          if (!session) {
-            return;
-          }
-
+        () => {
 
           const confirmed =
             window.confirm(
-              `Möchtest du diese Einheit wirklich löschen?\n\n${session.title}`
+              "Möchtest du diese Einheit wirklich löschen?\n\n" +
+              session.title
             );
-
 
           if (!confirmed) {
             return;
           }
 
-
           sessions =
             sessions.filter(
-              s =>
-                String(s.id) !==
-                String(id)
+              item => item.id !== id
             );
-
 
           save();
 
-          render();
-
+          renderAll();
         }
       );
 
-    });
 
+      if (actualIntensity) {
+        actualIntensity.addEventListener(
+          "change",
+          () => {
 
-  /* -------------------------------- */
-  /* TATSÄCHLICHE INTENSITÄT         */
-  /* -------------------------------- */
+            session.actualIntensity =
+              Number(actualIntensity.value);
 
-  el
-    .querySelectorAll(
-      ".actual-intensity-select"
-    )
-    .forEach(select => {
+            save();
 
-      select.addEventListener(
-        "change",
-        function () {
-
-          const session =
-            sessions.find(
-              s =>
-                String(s.id) ===
-                String(
-                  this.dataset.id
-                )
-            );
-
-
-          if (!session) {
-            return;
           }
+        );
+      }
 
 
-          session.actualIntensity =
-            this.value === ""
-              ? null
-              : Number(
-                  this.value
-                );
+      if (postNotes) {
+        postNotes.addEventListener(
+          "input",
+          () => {
 
+            session.postNotes =
+              postNotes.value;
 
-          save();
+            save();
 
-          render();
-
-        }
-      );
-
-    });
-
-
-  /* -------------------------------- */
-  /* TRAININGS-NOTIZ NACH ABSCHLUSS  */
-  /* -------------------------------- */
-
-  el
-    .querySelectorAll(
-      ".post-training-notes-input"
-    )
-    .forEach(textarea => {
-
-      textarea.addEventListener(
-        "input",
-        function () {
-
-          const session =
-            sessions.find(
-              s =>
-                String(s.id) ===
-                String(
-                  this.dataset.id
-                )
-            );
-
-
-          if (!session) {
-            return;
           }
-
-
-          session.postNotes =
-            this.value;
-
-          save();
-
-        }
-      );
+        );
+      }
 
     });
-
 }
 
 
-/* -------------------------------- */
-/* DIALOG                            */
-/* -------------------------------- */
+/* =========================
+   WEEKLY INSIGHT
+========================= */
 
-const dialog =
-  document.getElementById(
-    "sessionDialog"
-  );
+function renderWeeklyInsight() {
+  const weekSessions =
+    sessionsForWeek(selected);
 
+  const completed =
+    weekSessions.filter(
+      session => session.completed
+    ).length;
 
-function updatePlaceholders() {
+  const planned =
+    weekSessions.length;
 
-  const sport =
-    document.getElementById(
-      "sport"
-    ).value;
+  if (!planned) {
+    weeklyInsight.innerHTML = `
+      <div class="insight-icon">✦</div>
 
+      <div>
+        <strong>Deine Woche ist noch frei.</strong>
 
-  const meta =
-    sportMeta[sport] ||
-    sportMeta.running;
+        <p>
+          Plane deine ersten Einheiten und baue dir
+          deine Woche Schritt für Schritt auf.
+        </p>
+      </div>
+    `;
 
-
-  document.getElementById(
-    "title"
-  ).placeholder =
-    meta.title;
-
-
-  document.getElementById(
-    "notes"
-  ).placeholder =
-    meta.notes;
-
-}
-
-
-/* -------------------------------- */
-/* NEUES TRAINING                    */
-/* -------------------------------- */
-
-function openNewDialog() {
-
-  editingId = null;
-
-
-  document.getElementById(
-    "dialogEyebrow"
-  ).textContent =
-    "NEUES TRAINING";
-
-
-  document.getElementById(
-    "dialogTitle"
-  ).textContent =
-    "Einheit planen";
-
-
-  document.getElementById(
-    "saveSessionBtn"
-  ).textContent =
-    "Training speichern";
-
-
-  document.getElementById(
-    "sport"
-  ).value =
-    "running";
-
-
-  document.getElementById(
-    "title"
-  ).value =
-    "";
-
-
-  document.getElementById(
-    "duration"
-  ).value =
-    60;
-
-
-  document.getElementById(
-    "intensity"
-  ).value =
-    3;
-
-
-  document.getElementById(
-    "notes"
-  ).value =
-    "";
-
-
-  updatePlaceholders();
-
-
-  dialog.showModal();
-
-}
-
-
-/* -------------------------------- */
-/* TRAINING BEARBEITEN               */
-/* -------------------------------- */
-
-function openEditDialog(id) {
-
-  const session =
-    sessions.find(
-      s =>
-        String(s.id) ===
-        String(id)
-    );
-
-
-  if (!session) {
     return;
   }
 
 
-  editingId =
-    session.id;
+  const remaining =
+    planned - completed;
 
 
-  document.getElementById(
-    "dialogEyebrow"
-  ).textContent =
-    "TRAINING BEARBEITEN";
+  let text =
+    `${completed} von ${planned} Einheiten erledigt.`;
+
+  if (remaining > 0) {
+    text += ` ${remaining} ${
+      remaining === 1
+        ? "Einheit ist"
+        : "Einheiten sind"
+    } noch offen.`;
+  } else {
+    text += " Stark – deine Woche ist komplett.";
+  }
 
 
-  document.getElementById(
-    "dialogTitle"
-  ).textContent =
-    "Einheit bearbeiten";
+  weeklyInsight.innerHTML = `
+    <div class="insight-icon">✦</div>
 
+    <div>
+      <strong>Wochenstatus</strong>
 
-  document.getElementById(
-    "saveSessionBtn"
-  ).textContent =
-    "Änderungen speichern";
-
-
-  document.getElementById(
-    "sport"
-  ).value =
-    session.sport;
-
-
-  document.getElementById(
-    "title"
-  ).value =
-    session.title;
-
-
-  document.getElementById(
-    "duration"
-  ).value =
-    session.duration;
-
-
-  document.getElementById(
-    "intensity"
-  ).value =
-    session.intensity;
-
-
-  document.getElementById(
-    "notes"
-  ).value =
-    session.notes || "";
-
-
-  updatePlaceholders();
-
-
-  dialog.showModal();
-
+      <p>
+        ${text}
+      </p>
+    </div>
+  `;
 }
 
 
-/* -------------------------------- */
-/* SPORTART ÄNDERN                   */
-/* -------------------------------- */
+/* =========================
+   OVERVIEW
+========================= */
 
-document.getElementById(
-  "sport"
-).addEventListener(
-  "change",
-  updatePlaceholders
-);
+function renderOverview() {
+  renderPeriodButtons();
 
+  renderPeriodNavigation();
 
-/* -------------------------------- */
-/* + TRAINING                        */
-/* -------------------------------- */
-
-document.getElementById(
-  "addBtn"
-).addEventListener(
-  "click",
-  openNewDialog
-);
-
-
-/* -------------------------------- */
-/* DIALOG SCHLIESSEN                 */
-/* -------------------------------- */
-
-document.getElementById(
-  "closeDialog"
-).addEventListener(
-  "click",
-  () => {
-
-    editingId = null;
-
-    dialog.close();
-
+  if (overviewPeriod === "week") {
+    renderOverviewWeek();
   }
-);
+
+  if (overviewPeriod === "month") {
+    renderOverviewMonth();
+  }
+
+  if (overviewPeriod === "year") {
+    renderOverviewYear();
+  }
+}
 
 
-/* -------------------------------- */
-/* SPEICHERN                         */
-/* -------------------------------- */
+function renderPeriodButtons() {
+  document
+    .querySelectorAll(".period-btn")
+    .forEach(button => {
 
-document.getElementById(
-  "saveSessionBtn"
-).addEventListener(
-  "click",
-  () => {
+      button.classList.toggle(
+        "active",
+        button.dataset.period === overviewPeriod
+      );
 
-    const sport =
-      document.getElementById(
-        "sport"
-      ).value;
+    });
+}
 
 
-    const title =
-      document.getElementById(
-        "title"
-      ).value.trim();
+function renderPeriodNavigation() {
+  if (overviewPeriod === "week") {
+
+    const start = startOfWeek(overviewDate);
+    const end = endOfWeek(overviewDate);
+
+    const startText =
+      new Intl.DateTimeFormat("de-DE", {
+        day: "numeric",
+        month: "short"
+      }).format(start);
+
+    const endText =
+      new Intl.DateTimeFormat("de-DE", {
+        day: "numeric",
+        month: "short"
+      }).format(end);
+
+    periodTitle.textContent =
+      `${startText} – ${endText} ${start.getFullYear()}`;
+
+    return;
+  }
 
 
-    const duration =
-      document.getElementById(
-        "duration"
-      ).value;
+  if (overviewPeriod === "month") {
+
+    periodTitle.textContent =
+      formatMonthYear(overviewDate);
+
+    return;
+  }
 
 
-    const intensity =
-      document.getElementById(
-        "intensity"
-      ).value;
+  periodTitle.textContent =
+    overviewDate.getFullYear();
+}
 
 
-    const notes =
-      document.getElementById(
-        "notes"
-      ).value.trim();
+/* =========================
+   OVERVIEW WEEK
+========================= */
+
+function renderOverviewWeek() {
+  const start =
+    startOfWeek(overviewDate);
+
+  let html =
+    `<div class="overview-week">`;
 
 
-    if (!title) {
+  for (let i = 0; i < 7; i++) {
 
-      document.getElementById(
-        "title"
-      ).focus();
+    const date =
+      addDays(start, i);
 
-      return;
+    const dateString =
+      iso(date);
+
+    const daySessions =
+      sessionsForDate(dateString);
+
+    const completed =
+      daySessions.filter(
+        session => session.completed
+      ).length;
+
+
+    html += `
+      <section
+        class="overview-day ${
+          isToday(date)
+            ? "today"
+            : ""
+        }"
+      >
+
+        <div class="overview-day-head">
+
+          <div class="overview-day-date">
+
+            <span class="overview-day-name">
+              ${
+                new Intl.DateTimeFormat("de-DE", {
+                  weekday: "long"
+                }).format(date)
+              }
+            </span>
+
+            <span class="overview-day-number">
+              ${date.getDate()}.${pad(date.getMonth() + 1)}.
+            </span>
+
+          </div>
+
+
+          <span
+            class="overview-day-status ${
+              daySessions.length &&
+              completed === daySessions.length
+                ? "done"
+                : ""
+            }"
+          >
+            ${
+              daySessions.length
+                ? `${completed}/${daySessions.length}`
+                : "frei"
+            }
+          </span>
+
+        </div>
+
+
+        <div class="overview-day-sessions">
+    `;
+
+
+    if (!daySessions.length) {
+
+      html += `
+        <div class="overview-empty-day">
+          Keine Einheit geplant
+        </div>
+      `;
+
+    } else {
+
+      daySessions.forEach(session => {
+
+        const meta =
+          sportMeta[session.sport] ||
+          sportMeta.running;
+
+        html += `
+          <div
+            class="overview-mini-session"
+            data-session-id="${esc(session.id)}"
+          >
+
+            <div class="mini-icon">
+              ${meta.icon}
+            </div>
+
+
+            <div>
+
+              <div class="mini-title">
+                ${esc(session.title)}
+              </div>
+
+              <div class="mini-meta">
+                ${meta.label}
+                · ${esc(session.duration)} min
+              </div>
+
+            </div>
+
+
+            <div
+              class="mini-status ${
+                session.completed
+                  ? "completed"
+                  : ""
+              }"
+            >
+              ${
+                session.completed
+                  ? "✓"
+                  : "○"
+              }
+            </div>
+
+          </div>
+        `;
+      });
 
     }
 
 
-    /* BEARBEITEN */
+    html += `
+        </div>
 
-    if (editingId !== null) {
+      </section>
+    `;
+
+  }
+
+
+  html += `
+    </div>
+  `;
+
+
+  overviewContent.innerHTML = html;
+}
+
+
+/* =========================
+   OVERVIEW MONTH
+========================= */
+
+function renderOverviewMonth() {
+  const year =
+    overviewDate.getFullYear();
+
+  const month =
+    overviewDate.getMonth();
+
+  const firstDay =
+    new Date(
+      year,
+      month,
+      1,
+      12
+    );
+
+  const lastDay =
+    new Date(
+      year,
+      month + 1,
+      0,
+      12
+    );
+
+
+  const mondayOffset =
+    firstDay.getDay() === 0
+      ? 6
+      : firstDay.getDay() - 1;
+
+  const daysInMonth =
+    lastDay.getDate();
+
+
+  let html = `
+    <div class="month-calendar">
+
+      <div class="month-weekdays">
+
+        <div class="month-weekday">MO</div>
+        <div class="month-weekday">DI</div>
+        <div class="month-weekday">MI</div>
+        <div class="month-weekday">DO</div>
+        <div class="month-weekday">FR</div>
+        <div class="month-weekday">SA</div>
+        <div class="month-weekday">SO</div>
+
+      </div>
+
+      <div class="month-grid">
+  `;
+
+
+  for (let i = 0; i < mondayOffset; i++) {
+
+    const previousDate =
+      new Date(
+        year,
+        month,
+        i - mondayOffset + 1,
+        12
+      );
+
+    html += renderMonthCell(
+      previousDate,
+      true
+    );
+  }
+
+
+  for (let day = 1; day <= daysInMonth; day++) {
+
+    const date =
+      new Date(
+        year,
+        month,
+        day,
+        12
+      );
+
+    html += renderMonthCell(
+      date,
+      false
+    );
+  }
+
+
+  const usedCells =
+    mondayOffset + daysInMonth;
+
+  const remaining =
+    (7 - (usedCells % 7)) % 7;
+
+
+  for (let i = 1; i <= remaining; i++) {
+
+    const nextDate =
+      new Date(
+        year,
+        month,
+        daysInMonth + i,
+        12
+      );
+
+    html += renderMonthCell(
+      nextDate,
+      true
+    );
+  }
+
+
+  html += `
+      </div>
+    </div>
+  `;
+
+
+  overviewContent.innerHTML = html;
+}
+
+
+function renderMonthCell(date, otherMonth) {
+  const dateString =
+    iso(date);
+
+  const daySessions =
+    sessionsForDate(dateString);
+
+  const completed =
+    daySessions.filter(
+      session => session.completed
+    ).length;
+
+
+  let dots = "";
+
+  daySessions
+    .slice(0, 5)
+    .forEach(session => {
+
+      dots += `
+        <span
+          class="month-dot ${
+            session.completed
+              ? "completed"
+              : ""
+          }"
+        ></span>
+      `;
+    });
+
+
+  return `
+    <div
+      class="month-cell ${
+        otherMonth
+          ? "other-month"
+          : ""
+      } ${
+        isToday(date)
+          ? "today"
+          : ""
+      }"
+    >
+
+      <div class="month-date">
+        ${date.getDate()}
+      </div>
+
+      ${
+        daySessions.length
+          ? `
+            <div class="month-dots">
+              ${dots}
+            </div>
+
+            <div class="month-count">
+              ${completed}/${daySessions.length}
+            </div>
+          `
+          : ""
+      }
+
+    </div>
+  `;
+}
+
+
+/* =========================
+   OVERVIEW YEAR
+========================= */
+
+function renderOverviewYear() {
+  const year =
+    overviewDate.getFullYear();
+
+  const yearSessions =
+    sessionsForYear(year);
+
+  const completed =
+    yearSessions.filter(
+      session => session.completed
+    ).length;
+
+  const planned =
+    yearSessions.length;
+
+
+  const trainingDays =
+    new Set(
+      yearSessions.map(
+        session => session.date
+      )
+    ).size;
+
+
+  let html = `
+    <div class="year-overview">
+
+      <div class="year-summary">
+
+        <div class="year-stat">
+          <strong>${planned}</strong>
+          <span>Einheiten</span>
+        </div>
+
+        <div class="year-stat">
+          <strong>${completed}</strong>
+          <span>Erledigt</span>
+        </div>
+
+        <div class="year-stat">
+          <strong>${trainingDays}</strong>
+          <span>Trainingstage</span>
+        </div>
+
+      </div>
+
+
+      <div class="year-months">
+  `;
+
+
+  for (let month = 0; month < 12; month++) {
+
+    html += renderYearMonth(
+      year,
+      month
+    );
+
+  }
+
+
+  html += `
+      </div>
+
+    </div>
+  `;
+
+
+  overviewContent.innerHTML = html;
+}
+
+
+function renderYearMonth(year, month) {
+  const firstDay =
+    new Date(
+      year,
+      month,
+      1,
+      12
+    );
+
+  const daysInMonth =
+    new Date(
+      year,
+      month + 1,
+      0,
+      12
+    ).getDate();
+
+
+  const mondayOffset =
+    firstDay.getDay() === 0
+      ? 6
+      : firstDay.getDay() - 1;
+
+
+  const monthSessions =
+    sessions.filter(session => {
+
+      const date =
+        parseDate(session.date);
+
+      return (
+        date.getFullYear() === year &&
+        date.getMonth() === month
+      );
+
+    });
+
+
+  let html = `
+    <div class="year-month">
+
+      <div class="year-month-head">
+
+        <span class="year-month-name">
+          ${
+            new Intl.DateTimeFormat("de-DE", {
+              month: "long"
+            }).format(firstDay)
+          }
+        </span>
+
+        <span class="year-month-count">
+          ${monthSessions.length}
+          ${
+            monthSessions.length === 1
+              ? "Einheit"
+              : "Einheiten"
+          }
+        </span>
+
+      </div>
+
+
+      <div class="year-month-grid">
+
+        <div class="year-weekday">M</div>
+        <div class="year-weekday">D</div>
+        <div class="year-weekday">M</div>
+        <div class="year-weekday">D</div>
+        <div class="year-weekday">F</div>
+        <div class="year-weekday">S</div>
+        <div class="year-weekday">S</div>
+  `;
+
+
+  for (let i = 0; i < mondayOffset; i++) {
+
+    html += `
+      <div></div>
+    `;
+
+  }
+
+
+  for (let day = 1; day <= daysInMonth; day++) {
+
+    const date =
+      new Date(
+        year,
+        month,
+        day,
+        12
+      );
+
+    const dateString =
+      iso(date);
+
+    const daySessions =
+      sessionsForDate(dateString);
+
+    const hasTraining =
+      daySessions.length > 0;
+
+    const allCompleted =
+      hasTraining &&
+      daySessions.every(
+        session => session.completed
+      );
+
+
+    html += `
+      <div
+        class="year-day ${
+          hasTraining
+            ? "has-training"
+            : ""
+        } ${
+          allCompleted
+            ? "completed"
+            : ""
+        } ${
+          isToday(date)
+            ? "today"
+            : ""
+        }"
+        title="${
+          hasTraining
+            ? `${formatShortDate(date)} · ${daySessions.length} Training`
+            : formatShortDate(date)
+        }"
+      ></div>
+    `;
+  }
+
+
+  html += `
+      </div>
+    </div>
+  `;
+
+
+  return html;
+}
+
+
+/* =========================
+   TODAY VIEW
+========================= */
+
+function renderToday() {
+  const today =
+    new Date();
+
+  todayTitle.textContent =
+    formatLongDate(today);
+
+  const todaySessions =
+    sessionsForDate(
+      iso(today)
+    );
+
+
+  if (!todaySessions.length) {
+
+    todayContent.innerHTML = `
+      <div class="today-empty">
+
+        <strong>
+          Heute steht nichts im Plan.
+        </strong>
+
+        <p>
+          Du kannst den Tag frei lassen
+          oder eine neue Einheit hinzufügen.
+        </p>
+
+        <button
+          class="primary"
+          id="todayAddBtn"
+        >
+          + Training hinzufügen
+        </button>
+
+      </div>
+    `;
+
+    document
+      .getElementById("todayAddBtn")
+      .addEventListener(
+        "click",
+        () => openNewDialog(today)
+      );
+
+    return;
+  }
+
+
+  todayContent.innerHTML = `
+    <div class="today-session-list">
+      ${todaySessions.map(renderSessionCard).join("")}
+    </div>
+  `;
+
+  attachSessionEvents(todayContent);
+}
+
+
+/* =========================
+   VIEW SWITCHING
+========================= */
+
+function setView(view) {
+  currentView = view;
+
+  planView.classList.toggle(
+    "hidden",
+    view !== "plan"
+  );
+
+  overviewView.classList.toggle(
+    "hidden",
+    view !== "overview"
+  );
+
+  todayView.classList.toggle(
+    "hidden",
+    view !== "today"
+  );
+
+
+  document
+    .querySelectorAll(".nav-item")
+    .forEach(button => {
+
+      button.classList.toggle(
+        "active",
+        button.dataset.view === view
+      );
+
+    });
+
+
+  if (view === "plan") {
+    renderPlan();
+  }
+
+  if (view === "overview") {
+    renderOverview();
+  }
+
+  if (view === "today") {
+    renderToday();
+  }
+}
+
+
+/* =========================
+   DIALOG
+========================= */
+
+function openNewDialog(date = selected) {
+  editingId = null;
+
+  dialogTitle.textContent =
+    "Training hinzufügen";
+
+  trainingForm.reset();
+
+  sportInput.value = "running";
+
+  durationInput.value = 45;
+
+  intensityInput.value = 3;
+
+  titleInput.placeholder =
+    sportMeta.running.placeholder;
+
+  trainingDialog.showModal();
+
+  setTimeout(() => {
+    titleInput.focus();
+  }, 50);
+}
+
+
+function openEditDialog(session) {
+  editingId = session.id;
+
+  dialogTitle.textContent =
+    "Training bearbeiten";
+
+  sportInput.value =
+    session.sport;
+
+  titleInput.value =
+    session.title;
+
+  durationInput.value =
+    session.duration;
+
+  intensityInput.value =
+    session.intensity;
+
+  notesInput.value =
+    session.notes || "";
+
+  updateTitlePlaceholder();
+
+  trainingDialog.showModal();
+
+  setTimeout(() => {
+    titleInput.focus();
+  }, 50);
+}
+
+
+function closeDialog() {
+  trainingDialog.close();
+
+  editingId = null;
+}
+
+
+function updateTitlePlaceholder() {
+  const meta =
+    sportMeta[sportInput.value] ||
+    sportMeta.running;
+
+  titleInput.placeholder =
+    meta.placeholder;
+}
+
+
+/* =========================
+   FORM
+========================= */
+
+trainingForm.addEventListener(
+  "submit",
+  event => {
+
+    event.preventDefault();
+
+
+    const sport =
+      sportInput.value;
+
+    const title =
+      titleInput.value.trim();
+
+    const duration =
+      Number(durationInput.value);
+
+    const intensity =
+      Number(intensityInput.value);
+
+    const notes =
+      notesInput.value.trim();
+
+
+    if (!title) {
+      return;
+    }
+
+
+    if (!duration || duration < 1) {
+      return;
+    }
+
+
+    if (editingId) {
 
       const session =
         sessions.find(
-          s =>
-            String(s.id) ===
-            String(editingId)
+          item => item.id === editingId
         );
-
 
       if (session) {
 
@@ -1343,48 +1761,31 @@ document.getElementById(
 
       }
 
-    }
-
-
-    /* NEUES TRAINING */
-
-    else {
+    } else {
 
       sessions.push({
-
         id:
-          Date.now().toString(),
+          `${Date.now()}-${Math.random()
+            .toString(16)
+            .slice(2)}`,
 
         date:
           iso(selected),
 
-        sport:
-          sport,
+        sport,
+        title,
+        duration,
+        intensity,
+        notes,
 
-        title:
-          title,
+        completed: false,
 
-        duration:
-          duration,
+        actualIntensity: null,
 
-        intensity:
-          intensity,
+        postNotes: "",
 
-        notes:
-          notes,
-
-        completed:
-          false,
-
-        actualIntensity:
-          null,
-
-        postNotes:
-          "",
-
-        created:
+        createdAt:
           Date.now()
-
       });
 
     }
@@ -1392,87 +1793,244 @@ document.getElementById(
 
     save();
 
+    closeDialog();
 
-    editingId =
-      null;
+    renderAll();
+  }
+);
 
 
-    dialog.close();
+sportInput.addEventListener(
+  "change",
+  updateTitlePlaceholder
+);
 
 
-    render();
+closeDialogBtn.addEventListener(
+  "click",
+  closeDialog
+);
+
+
+trainingDialog.addEventListener(
+  "click",
+  event => {
+
+    if (event.target === trainingDialog) {
+      closeDialog();
+    }
 
   }
 );
 
 
-/* -------------------------------- */
-/* HEUTE                             */
-/* -------------------------------- */
+/* =========================
+   NAVIGATION
+========================= */
 
-document.getElementById(
-  "todayBtn"
-).addEventListener(
+document
+  .querySelectorAll(".nav-item")
+  .forEach(button => {
+
+    button.addEventListener(
+      "click",
+      () => {
+
+        setView(
+          button.dataset.view
+        );
+
+      }
+    );
+
+  });
+
+
+/* =========================
+   OVERVIEW PERIOD BUTTONS
+========================= */
+
+document
+  .querySelectorAll(".period-btn")
+  .forEach(button => {
+
+    button.addEventListener(
+      "click",
+      () => {
+
+        overviewPeriod =
+          button.dataset.period;
+
+        renderOverview();
+
+      }
+    );
+
+  });
+
+
+/* =========================
+   OVERVIEW PERIOD NAVIGATION
+========================= */
+
+periodPrevBtn.addEventListener(
   "click",
   () => {
 
-    selected =
+    if (overviewPeriod === "week") {
+
+      overviewDate =
+        addDays(
+          overviewDate,
+          -7
+        );
+
+    }
+
+    if (overviewPeriod === "month") {
+
+      overviewDate =
+        addMonths(
+          overviewDate,
+          -1
+        );
+
+    }
+
+    if (overviewPeriod === "year") {
+
+      overviewDate =
+        addYears(
+          overviewDate,
+          -1
+        );
+
+    }
+
+    renderOverview();
+  }
+);
+
+
+periodNextBtn.addEventListener(
+  "click",
+  () => {
+
+    if (overviewPeriod === "week") {
+
+      overviewDate =
+        addDays(
+          overviewDate,
+          7
+        );
+
+    }
+
+    if (overviewPeriod === "month") {
+
+      overviewDate =
+        addMonths(
+          overviewDate,
+          1
+        );
+
+    }
+
+    if (overviewPeriod === "year") {
+
+      overviewDate =
+        addYears(
+          overviewDate,
+          1
+        );
+
+    }
+
+    renderOverview();
+  }
+);
+
+
+periodTodayBtn.addEventListener(
+  "click",
+  () => {
+
+    overviewDate =
       new Date();
 
-    selected.setHours(
+    overviewDate.setHours(
       12,
       0,
       0,
       0
     );
 
-    render();
+    renderOverview();
 
   }
 );
 
 
-/* -------------------------------- */
-/* ALLE                              */
-/* -------------------------------- */
+/* =========================
+   ADD TRAINING
+========================= */
 
-document.getElementById(
-  "allBtn"
-).addEventListener(
+addTrainingBtn.addEventListener(
   "click",
   () => {
 
-    const s =
-      startOfWeek(
-        selected
-      );
-
-    selected =
-      new Date(s);
-
-    render();
+    openNewDialog(selected);
 
   }
 );
 
 
-/* -------------------------------- */
-/* SERVICE WORKER                    */
-/* -------------------------------- */
+/* =========================
+   GLOBAL RENDER
+========================= */
 
-if (
-  "serviceWorker" in navigator
-) {
+function renderAll() {
+  renderPlan();
 
-  navigator.serviceWorker
-    .register("sw.js")
-    .catch(() => {});
+  if (currentView === "overview") {
+    renderOverview();
+  }
+
+  if (currentView === "today") {
+    renderToday();
+  }
+}
+
+
+/* =========================
+   PWA
+========================= */
+
+if ("serviceWorker" in navigator) {
+
+  window.addEventListener(
+    "load",
+    () => {
+
+      navigator.serviceWorker
+        .register("sw.js")
+        .catch(error => {
+          console.error(
+            "Service worker registration failed:",
+            error
+          );
+        });
+
+    }
+  );
 
 }
 
 
-/* -------------------------------- */
-/* START                             */
-/* -------------------------------- */
+/* =========================
+   INITIAL RENDER
+========================= */
 
-render();
+renderPlan();
+
+setView("plan");
