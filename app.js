@@ -584,10 +584,19 @@ function sessionsForYear(year) {
  * Erstellt eine .ics-Datei für
  * die aktuell geöffnete HYPE-Woche.
  *
- * Die Trainings werden als
- * ganztägige Kalendereinträge
- * exportiert.
+ * Auf iPhone/iPad wird die Datei
+ * bevorzugt über die native Teilen-
+ * funktion von iOS übergeben.
+ *
+ * Dadurch kann anschließend
+ * "Kalender" ausgewählt werden.
+ *
+ * Fallback:
+ * Wenn die Datei-Freigabe nicht
+ * unterstützt wird, wird die
+ * .ics-Datei normal heruntergeladen.
  */
+
 
 function calendarEscape(value) {
 
@@ -627,7 +636,7 @@ function calendarDateTimeUTC(date) {
 }
 
 
-function createCalendarFile() {
+function buildCalendarContent() {
 
   const weekStart =
     startOfWeek(selected);
@@ -665,11 +674,7 @@ function createCalendarFile() {
 
   if (!weekSessions.length) {
 
-    alert(
-      "Für diese Woche sind noch keine Trainings geplant."
-    );
-
-    return;
+    return null;
 
   }
 
@@ -744,65 +749,190 @@ function createCalendarFile() {
     );
 
 
+  return [
+    "BEGIN:VCALENDAR",
+    "VERSION:2.0",
+    "PRODID:-//HYPE//Training Planner//DE",
+    "CALSCALE:GREGORIAN",
+    "METHOD:PUBLISH",
+    ...events,
+    "END:VCALENDAR"
+  ].join("\r\n");
+
+}
+
+
+/*
+ * Kalender öffnen
+ */
+
+async function createCalendarFile() {
+
   const calendar =
-    [
-      "BEGIN:VCALENDAR",
-      "VERSION:2.0",
-      "PRODID:-//HYPE//Training Planner//DE",
-      "CALSCALE:GREGORIAN",
-      "METHOD:PUBLISH",
-      ...events,
-      "END:VCALENDAR"
-    ].join("\r\n");
+    buildCalendarContent();
 
 
-  const blob =
-    new Blob(
-      [calendar],
-      {
-        type:
-          "text/calendar;charset=utf-8"
-      }
+  if (!calendar) {
+
+    alert(
+      "Für diese Woche sind noch keine Trainings geplant."
     );
 
+    return;
 
-  const url =
-    URL.createObjectURL(blob);
-
-
-  const link =
-    document.createElement("a");
+  }
 
 
-  link.href =
-    url;
+  const weekStart =
+    startOfWeek(selected);
 
 
-  link.download =
+  const fileName =
     `HYPE-${calendarDate(weekStart)}.ics`;
 
 
-  document.body.appendChild(
-    link
-  );
+  /*
+   * iOS / moderne Browser:
+   *
+   * Die .ics-Datei wird direkt
+   * an die native Teilen-Funktion
+   * übergeben.
+   */
 
+  try {
 
-  link.click();
-
-
-  link.remove();
-
-
-  setTimeout(
-    () => {
-
-      URL.revokeObjectURL(
-        url
+    const file =
+      new File(
+        [calendar],
+        fileName,
+        {
+          type:
+            "text/calendar"
+        }
       );
 
-    },
-    1000
-  );
+
+    if (
+      navigator.share &&
+      navigator.canShare &&
+      navigator.canShare({
+        files: [file]
+      })
+    ) {
+
+      await navigator.share({
+
+        files: [file],
+
+        title:
+          "HYPE Trainingsplan",
+
+        text:
+          `Trainingsplan ${formatShortDate(
+            weekStart
+          )} – ${formatShortDate(
+            endOfWeek(selected)
+          )}`
+
+      });
+
+
+      return;
+
+    }
+
+  } catch (error) {
+
+    /*
+     * Wenn der Nutzer das Teilen-Menü
+     * abbricht, soll keine Fehlermeldung
+     * erscheinen.
+     */
+
+    if (
+      error &&
+      error.name ===
+        "AbortError"
+    ) {
+
+      return;
+
+    }
+
+    console.warn(
+      "Native calendar sharing unavailable:",
+      error
+    );
+
+  }
+
+
+  /*
+   * Fallback für Browser ohne
+   * native Datei-Freigabe.
+   */
+
+  try {
+
+    const blob =
+      new Blob(
+        [calendar],
+        {
+          type:
+            "text/calendar;charset=utf-8"
+        }
+      );
+
+
+    const url =
+      URL.createObjectURL(blob);
+
+
+    const link =
+      document.createElement("a");
+
+
+    link.href =
+      url;
+
+    link.download =
+      fileName;
+
+
+    document.body.appendChild(
+      link
+    );
+
+
+    link.click();
+
+
+    link.remove();
+
+
+    setTimeout(
+      () => {
+
+        URL.revokeObjectURL(
+          url
+        );
+
+      },
+      1000
+    );
+
+  } catch (error) {
+
+    console.error(
+      "Calendar export failed:",
+      error
+    );
+
+    alert(
+      "Der Kalender konnte nicht geöffnet werden."
+    );
+
+  }
 
 }
 
