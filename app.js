@@ -171,6 +171,72 @@ function save() {
 
 
 /* -------------------------------- */
+/* ZUKUNFT PRÜFEN                   */
+/* -------------------------------- */
+
+function isFutureDate(dateString) {
+
+  return dateString >
+    iso(new Date());
+
+}
+
+
+function getFutureMessage(dateString) {
+
+  const today =
+    new Date();
+
+  today.setHours(
+    12,
+    0,
+    0,
+    0
+  );
+
+
+  const date =
+    new Date(
+      dateString +
+      "T12:00:00"
+    );
+
+
+  const tomorrow =
+    new Date(today);
+
+  tomorrow.setDate(
+    tomorrow.getDate() + 1
+  );
+
+
+  if (
+    iso(date) ===
+    iso(tomorrow)
+  ) {
+
+    return "Diese Einheit kommt erst morgen. Du kannst sie noch nicht abhaken.";
+
+  }
+
+
+  const formatted =
+    date.toLocaleDateString(
+      "de-DE",
+      {
+        weekday: "long",
+        day: "numeric",
+        month: "long"
+      }
+    );
+
+
+  return `Diese Einheit kommt erst am ${formatted}. Du kannst sie noch nicht abhaken.`;
+
+}
+
+
+/* -------------------------------- */
 /* WOCHENTAGE                        */
 /* -------------------------------- */
 
@@ -576,7 +642,7 @@ function renderSessions() {
                             : ""
                         }
                       >
-                        0 — sehr leicht
+                        0 — entspannend
                       </option>
 
                       <option
@@ -730,6 +796,28 @@ function renderSessions() {
 
           if (!session) {
             return;
+          }
+
+
+          /*
+            ZUKÜNFTIGE EINHEITEN
+            KÖNNEN NOCH NICHT
+            ABGEHAKT WERDEN.
+          */
+
+          if (
+            !session.completed &&
+            isFutureDate(session.date)
+          ) {
+
+            alert(
+              getFutureMessage(
+                session.date
+              )
+            );
+
+            return;
+
           }
 
 
