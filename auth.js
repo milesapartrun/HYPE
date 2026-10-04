@@ -46,6 +46,12 @@ const authMessage =
 const authSubtitle =
   document.getElementById("authSubtitle");
 
+const authFirstNameField =
+  document.getElementById("authFirstNameField");
+
+const authFirstName =
+  document.getElementById("authFirstName");
+
 
 /* =========================
    STATE
@@ -75,15 +81,6 @@ const HYPE_SHARE_URL =
 /* =========================
    HELPERS
 ========================= */
-
-function getFirstNameInput() {
-
-  return document.getElementById(
-    "authFirstName"
-  );
-
-}
-
 
 function getRegistrationGate() {
 
@@ -128,6 +125,50 @@ function clearAuthMessage() {
 
 
 /* =========================
+   FIRST NAME FIELD
+========================= */
+
+function updateFirstNameField() {
+
+  if (!authFirstNameField) {
+    return;
+  }
+
+  if (isRegisterMode) {
+
+    authFirstNameField.classList.remove(
+      "hidden"
+    );
+
+    authFirstName.required =
+      true;
+
+    return;
+
+  }
+
+  authFirstNameField.classList.add(
+    "hidden"
+  );
+
+  authFirstName.required =
+    false;
+
+}
+
+
+function getFirstName() {
+
+  if (!authFirstName) {
+    return "";
+  }
+
+  return authFirstName.value.trim();
+
+}
+
+
+/* =========================
    REGISTRATION GATE
 ========================= */
 
@@ -141,6 +182,8 @@ function renderRegistrationGate() {
     if (existing) {
       existing.remove();
     }
+
+    updateFirstNameField();
 
     return;
 
@@ -166,13 +209,14 @@ function renderRegistrationGate() {
 
 
     /*
-     * Der Gate-Block wird direkt
-     * vor den E-Mail-Input gesetzt.
+     * Wichtig:
+     * Das Gate steht VOR dem
+     * Vorname-Feld.
      */
 
     authForm.insertBefore(
       gate,
-      authEmail
+      authFirstNameField
     );
 
   }
@@ -213,7 +257,6 @@ function renderRegistrationGate() {
           target="_blank"
           rel="noopener noreferrer"
           class="registration-action instagram-action"
-          id="instagramFollowBtn"
         >
           <span>Instagram öffnen</span>
           <span>↗</span>
@@ -302,6 +345,8 @@ function renderRegistrationGate() {
 
   attachRegistrationGateEvents();
 
+  updateFirstNameField();
+
   updateRegistrationSubmitState();
 
 }
@@ -371,12 +416,16 @@ function attachRegistrationGateEvents() {
           ) {
 
             await navigator.share({
+
               title:
                 "HYPE",
+
               text:
                 HYPE_SHARE_TEXT,
+
               url:
                 HYPE_SHARE_URL
+
             });
 
 
@@ -389,11 +438,6 @@ function attachRegistrationGateEvents() {
 
           }
 
-
-          /*
-           * Fallback für Browser ohne
-           * native Share API.
-           */
 
           if (
             navigator.clipboard &&
@@ -421,11 +465,6 @@ function attachRegistrationGateEvents() {
           );
 
         } catch (error) {
-
-          /*
-           * Das native Share-Menü wurde
-           * möglicherweise nur geschlossen.
-           */
 
           if (
             error?.name ===
@@ -584,6 +623,8 @@ function updateAuthMode() {
 
     renderRegistrationGate();
 
+    updateFirstNameField();
+
     updateRegistrationSubmitState();
 
     return;
@@ -626,6 +667,8 @@ function updateAuthMode() {
 
 
   renderRegistrationGate();
+
+  updateFirstNameField();
 
 }
 
@@ -744,11 +787,6 @@ async function signIn() {
 
 async function signUp() {
 
-  /*
-   * Zweite Prüfung direkt vor
-   * der Supabase-Registrierung.
-   */
-
   if (
     !instagramCompleted ||
     !shareCompleted
@@ -766,15 +804,8 @@ async function signUp() {
   }
 
 
-  const firstNameInput =
-    getFirstNameInput();
-
-
   const firstName =
-    firstNameInput
-      ? firstNameInput.value.trim()
-      : "";
-
+    getFirstName();
 
   const email =
     authEmail.value.trim();
@@ -790,9 +821,7 @@ async function signUp() {
       "error"
     );
 
-    if (firstNameInput) {
-      firstNameInput.focus();
-    }
+    authFirstName.focus();
 
     return;
 
@@ -833,14 +862,22 @@ async function signUp() {
     error
   } =
     await supabaseClient.auth.signUp({
+
       email,
+
       password,
+
       options: {
+
         data: {
+
           first_name:
             firstName
+
         }
+
       }
+
     });
 
 
@@ -866,12 +903,6 @@ async function signUp() {
   }
 
 
-  /*
-   * Wenn Supabase direkt eine
-   * Session erstellt, ist der User
-   * sofort eingeloggt.
-   */
-
   if (
     data &&
     data.session
@@ -884,11 +915,6 @@ async function signUp() {
   }
 
 
-  /*
-   * Falls E-Mail-Bestätigung
-   * aktiviert ist.
-   */
-
   showAuthMessage(
     "Account erstellt. Bitte bestätige deine E-Mail-Adresse.",
     "success"
@@ -897,14 +923,132 @@ async function signUp() {
 
   resetRegistrationProgress();
 
-
   isRegisterMode =
     false;
-
 
   updateAuthMode();
 
 }
+
+
+/* =========================
+   UPDATE PROFILE
+========================= */
+
+async function updateProfileFirstName(
+  firstName
+) {
+
+  const cleanName =
+    String(
+      firstName || ""
+    ).trim();
+
+
+  if (!cleanName) {
+
+    return {
+      success: false,
+      error:
+        "Bitte gib einen Vornamen ein."
+    };
+
+  }
+
+
+  if (cleanName.length > 40) {
+
+    return {
+      success: false,
+      error:
+        "Der Vorname darf maximal 40 Zeichen haben."
+    };
+
+  }
+
+
+  const {
+    data,
+    error
+  } =
+    await supabaseClient.auth.updateUser({
+
+      data: {
+
+        first_name:
+          cleanName
+
+      }
+
+    });
+
+
+  if (error) {
+
+    console.error(
+      "HYPE profile update error:",
+      error
+    );
+
+
+    return {
+      success: false,
+      error:
+        getAuthErrorMessage(error)
+    };
+
+  }
+
+
+  return {
+    success: true,
+    user:
+      data?.user || null
+  };
+
+}
+
+
+/*
+ * Für app.js verfügbar machen.
+ */
+
+window.updateProfileFirstName =
+  updateProfileFirstName;
+
+
+/* =========================
+   GET CURRENT USER
+========================= */
+
+async function getCurrentUser() {
+
+  const {
+    data,
+    error
+  } =
+    await supabaseClient.auth.getUser();
+
+
+  if (error) {
+
+    console.error(
+      "HYPE get user error:",
+      error
+    );
+
+    return null;
+
+  }
+
+
+  return data?.user || null;
+
+}
+
+
+window.getCurrentUser =
+  getCurrentUser;
 
 
 /* =========================
@@ -997,11 +1141,6 @@ function showApp() {
   }
 
 
-  /*
-   * Bottom Navigation wieder
-   * sichtbar machen.
-   */
-
   const bottomNav =
     document.getElementById(
       "bottomNav"
@@ -1090,6 +1229,7 @@ async function logout() {
       error
     );
 
+
     showAuthMessage(
       "Logout fehlgeschlagen.",
       "error"
@@ -1104,11 +1244,6 @@ async function logout() {
 
 }
 
-
-/*
- * app.js kann logout()
- * direkt verwenden.
- */
 
 window.logout =
   logout;
@@ -1178,16 +1313,12 @@ authSwitch.addEventListener(
     setTimeout(
       () => {
 
-        const firstNameInput =
-          getFirstNameInput();
-
-
         if (
           isRegisterMode &&
-          firstNameInput
+          authFirstName
         ) {
 
-          firstNameInput.focus();
+          authFirstName.focus();
 
           return;
 
