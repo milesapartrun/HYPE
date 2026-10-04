@@ -41,6 +41,12 @@ const sportMeta = {
     icon: "😴",
     label: "Erholung",
     placeholder: "z. B. Rest Day"
+  },
+
+  other: {
+    icon: "🏅",
+    label: "Sonstige Sportart",
+    placeholder: "z. B. Tennis"
   }
 };
 
@@ -167,6 +173,22 @@ const intensityInput =
 
 const notesInput =
   document.getElementById("notesInput");
+
+/* =========================
+   NEUE TRAININGS-FELDER
+========================= */
+
+const customSportField =
+  document.getElementById("customSportField");
+
+const customSportInput =
+  document.getElementById("customSportInput");
+
+const runningMetricInput =
+  document.getElementById("runningMetricInput");
+
+const metricValueLabel =
+  document.getElementById("metricValueLabel");
 
 /* =========================
    PROFILE DOM
@@ -609,6 +631,10 @@ function ensureProfileShareStyles() {
       gap: 10px;
     }
 
+    #profileView .weekly-share-stats.has-distance {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
     #profileView .weekly-share-stat {
       min-width: 0;
       padding: 15px 14px;
@@ -770,10 +796,213 @@ function ensureProfileShareStyles() {
       #profileView .weekly-share-stats {
         gap: 7px;
       }
+
+      #profileView .weekly-share-stats.has-distance {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
     }
   `;
 
   document.head.appendChild(style);
+}
+
+/* =========================
+   TRAINING INPUT HELPERS
+========================= */
+
+function formatNumber(value) {
+  const number =
+    Number(value);
+
+  if (!Number.isFinite(number)) {
+    return "0";
+  }
+
+  return number.toLocaleString(
+    "de-DE",
+    {
+      maximumFractionDigits: 2
+    }
+  );
+}
+
+function getSportLabel(session) {
+  if (
+    session?.sport === "other"
+  ) {
+    const custom =
+      String(
+        session.customSport || ""
+      ).trim();
+
+    return (
+      custom ||
+      "Sonstige Sportart"
+    );
+  }
+
+  const meta =
+    sportMeta[
+      session?.sport
+    ] ||
+    sportMeta.running;
+
+  return meta.label;
+}
+
+function getSportIcon(session) {
+  const meta =
+    sportMeta[
+      session?.sport
+    ] ||
+    sportMeta.running;
+
+  return meta.icon;
+}
+
+function getSessionMetricText(session) {
+  if (
+    session?.sport === "running" &&
+    session?.runMetric === "distance"
+  ) {
+    return `${formatNumber(
+      session.distance
+    )} km`;
+  }
+
+  return `${formatNumber(
+    session?.duration
+  )} min`;
+}
+
+function getSessionDurationMinutes(session) {
+  if (
+    session?.sport === "running" &&
+    session?.runMetric === "distance"
+  ) {
+    return 0;
+  }
+
+  return Number(
+    session?.duration || 0
+  );
+}
+
+function getSessionRunningDistance(session) {
+  if (
+    session?.sport === "running" &&
+    session?.runMetric === "distance"
+  ) {
+    return Number(
+      session?.distance || 0
+    );
+  }
+
+  return 0;
+}
+
+function updateTrainingInputVisibility(
+  resetValue = false
+) {
+  const sport =
+    sportInput?.value || "running";
+
+  const isRunning =
+    sport === "running";
+
+  const isOther =
+    sport === "other";
+
+  if (customSportField) {
+    customSportField.classList.toggle(
+      "hidden",
+      !isOther
+    );
+  }
+
+  if (customSportInput) {
+    customSportInput.required =
+      isOther;
+  }
+
+  if (runningMetricInput) {
+    runningMetricInput.parentElement?.classList.toggle(
+      "hidden",
+      !isRunning
+    );
+  }
+
+  if (isRunning) {
+    const metric =
+      runningMetricInput?.value ||
+      "duration";
+
+    if (metricValueLabel) {
+      metricValueLabel.textContent =
+        metric === "distance"
+          ? "Kilometer"
+          : "Dauer";
+    }
+
+    durationInput.min =
+      metric === "distance"
+        ? "0.1"
+        : "1";
+
+    durationInput.step =
+      metric === "distance"
+        ? "0.1"
+        : "1";
+
+    if (
+      resetValue &&
+      runningMetricInput
+    ) {
+      if (
+        metric === "distance"
+      ) {
+        durationInput.value =
+          "";
+      } else {
+        durationInput.value =
+          45;
+      }
+    }
+
+  } else {
+    if (metricValueLabel) {
+      metricValueLabel.textContent =
+        "Dauer";
+    }
+
+    durationInput.min =
+      "1";
+
+    durationInput.step =
+      "1";
+  }
+}
+
+function updateTitlePlaceholder() {
+  const meta =
+    sportMeta[
+      sportInput.value
+    ] ||
+    sportMeta.running;
+
+  if (
+    sportInput.value === "other" &&
+    customSportInput &&
+    customSportInput.value.trim()
+  ) {
+    titleInput.placeholder =
+      `z. B. ${customSportInput.value.trim()}`;
+  } else {
+    titleInput.placeholder =
+      meta.placeholder;
+  }
+
+  updateTrainingInputVisibility();
 }
 
 /* =========================
@@ -1476,23 +1705,49 @@ function loadSessions() {
     }
 
     return data.map(
-      session => ({
-        ...session,
+      session => {
+        const normalized = {
+          ...session,
 
-        completed:
-          Boolean(
-            session.completed
-          ),
+          completed:
+            Boolean(
+              session.completed
+            ),
 
-        actualIntensity:
-          session.actualIntensity ===
-          undefined
-            ? null
-            : session.actualIntensity,
+          actualIntensity:
+            session.actualIntensity ===
+            undefined
+              ? null
+              : session.actualIntensity,
 
-        postNotes:
-          session.postNotes || ""
-      })
+          postNotes:
+            session.postNotes || "",
+
+          customSport:
+            session.customSport || "",
+
+          distance:
+            session.distance ===
+            undefined ||
+            session.distance === null
+              ? null
+              : Number(
+                  session.distance
+                ),
+
+          runMetric:
+            session.runMetric ||
+            (
+              session.sport === "running" &&
+              session.distance !== undefined &&
+              session.distance !== null
+                ? "distance"
+                : "duration"
+            )
+        };
+
+        return normalized;
+      }
     );
 
   } catch (error) {
@@ -1639,8 +1894,18 @@ function renderWeeklySharePreview(
     completed.reduce(
       (sum, session) =>
         sum +
-        Number(
-          session.duration || 0
+        getSessionDurationMinutes(
+          session
+        ),
+      0
+    );
+
+  const totalDistance =
+    completed.reduce(
+      (sum, session) =>
+        sum +
+        getSessionRunningDistance(
+          session
         ),
       0
     );
@@ -1698,6 +1963,7 @@ function renderWeeklySharePreview(
   if (shareWeekTitle) {
     shareWeekTitle.textContent =
       "";
+
     shareWeekTitle.style.display =
       "none";
   }
@@ -1876,7 +2142,11 @@ function renderWeeklySharePreview(
       `;
     } else {
       weeklyShareSummary.innerHTML = `
-        <div class="weekly-share-stats">
+        <div class="weekly-share-stats ${
+          totalDistance > 0
+            ? "has-distance"
+            : ""
+        }">
 
           <div class="weekly-share-stat">
 
@@ -1897,7 +2167,9 @@ function renderWeeklySharePreview(
           <div class="weekly-share-stat">
 
             <strong>
-              ${totalMinutes}
+              ${formatNumber(
+                totalMinutes
+              )}
             </strong>
 
             <span>
@@ -1905,6 +2177,26 @@ function renderWeeklySharePreview(
             </span>
 
           </div>
+
+          ${
+            totalDistance > 0
+              ? `
+                <div class="weekly-share-stat">
+
+                  <strong>
+                    ${formatNumber(
+                      totalDistance
+                    )}
+                  </strong>
+
+                  <span>
+                    Kilometer gelaufen
+                  </span>
+
+                </div>
+              `
+              : ""
+          }
 
         </div>
       `;
@@ -2145,8 +2437,18 @@ async function createWeeklyShareImage() {
     completed.reduce(
       (sum, session) =>
         sum +
-        Number(
-          session.duration || 0
+        getSessionDurationMinutes(
+          session
+        ),
+      0
+    );
+
+  const totalDistance =
+    completed.reduce(
+      (sum, session) =>
+        sum +
+        getSessionRunningDistance(
+          session
         ),
       0
     );
@@ -2292,22 +2594,35 @@ async function createWeeklyShareImage() {
 
   drawShareStat(
     ctx,
-    80,
+    70,
     470,
     String(
       completed.length
     ),
-    "TRAININGS"
+    "TRAININGS",
+    300
   );
 
   drawShareStat(
     ctx,
-    540,
+    390,
     470,
-    String(
+    formatNumber(
       totalMinutes
     ),
-    "MINUTEN"
+    "MINUTEN",
+    300
+  );
+
+  drawShareStat(
+    ctx,
+    710,
+    470,
+    formatNumber(
+      totalDistance
+    ),
+    "KM LAUFEN",
+    300
   );
 
   const dayStartY =
@@ -2434,12 +2749,6 @@ async function createWeeklyShareImage() {
         session,
         index
       ) => {
-        const meta =
-          sportMeta[
-            session.sport
-          ] ||
-          sportMeta.running;
-
         const lineY =
           y +
           39 +
@@ -2449,7 +2758,7 @@ async function createWeeklyShareImage() {
           "28px Arial";
 
         ctx.fillText(
-          meta.icon,
+          getSportIcon(session),
           270,
           lineY
         );
@@ -2469,7 +2778,7 @@ async function createWeeklyShareImage() {
           );
 
         const maxTitleWidth =
-          520;
+          500;
 
         const title =
           fitCanvasText(
@@ -2491,7 +2800,9 @@ async function createWeeklyShareImage() {
           "600 16px Arial";
 
         ctx.fillText(
-          `${session.duration || 0} min`,
+          getSessionMetricText(
+            session
+          ),
           855,
           lineY
         );
@@ -2589,7 +2900,8 @@ function drawShareStat(
   x,
   y,
   value,
-  label
+  label,
+  width = 460
 ) {
   ctx.fillStyle =
     "#14171c";
@@ -2598,7 +2910,7 @@ function drawShareStat(
     ctx,
     x,
     y,
-    460,
+    width,
     150,
     24
   );
@@ -2990,20 +3302,21 @@ function createCalendarFile() {
   const events =
     weekSessions.map(
       session => {
-        const meta =
-          sportMeta[
-            session.sport
-          ] ||
-          sportMeta.running;
+        const sportLabel =
+          getSportLabel(
+            session
+          );
 
         const title =
-          `${meta.label} · ${session.title}`;
+          `${sportLabel} · ${session.title}`;
 
         let description =
           [
             "HYPE Training",
-            `Sport: ${meta.label}`,
-            `Dauer: ${session.duration || 0} min`,
+            `Sport: ${sportLabel}`,
+            `Umfang: ${getSessionMetricText(
+              session
+            )}`,
             `Intensität: ${session.intensity || 0}/5`
           ].join("\n");
 
@@ -3336,7 +3649,7 @@ function renderSessionCard(
     >
 
       <div class="sport-icon">
-        ${meta.icon}
+        ${getSportIcon(session)}
       </div>
 
       <div class="session-content">
@@ -3360,8 +3673,12 @@ function renderSessionCard(
         </div>
 
         <p>
-          ${meta.label}
-          · ${esc(session.duration)} min
+          ${esc(
+            getSportLabel(session)
+          )}
+          · ${esc(
+            getSessionMetricText(session)
+          )}
         </p>
 
         <p>
@@ -3881,19 +4198,13 @@ function renderOverviewWeek() {
     } else {
       daySessions.forEach(
         session => {
-          const meta =
-            sportMeta[
-              session.sport
-            ] ||
-            sportMeta.running;
-
           html += `
             <div
               class="overview-mini-session"
             >
 
               <div class="mini-icon">
-                ${meta.icon}
+                ${getSportIcon(session)}
               </div>
 
               <div>
@@ -3905,10 +4216,14 @@ function renderOverviewWeek() {
                 </div>
 
                 <div class="mini-meta">
-                  ${meta.label}
+                  ${esc(
+                    getSportLabel(session)
+                  )}
                   · ${esc(
-                    session.duration
-                  )} min
+                    getSessionMetricText(
+                      session
+                    )
+                  )}
                 </div>
 
               </div>
@@ -4705,13 +5020,25 @@ function openNewDialog() {
   sportInput.value =
     "running";
 
+  if (runningMetricInput) {
+    runningMetricInput.value =
+      "duration";
+  }
+
   durationInput.value =
     45;
 
   intensityInput.value =
     3;
 
+  if (customSportInput) {
+    customSportInput.value =
+      "";
+  }
+
   updateTitlePlaceholder();
+
+  updateTrainingInputVisibility();
 
   trainingDialog.showModal();
 
@@ -4738,16 +5065,44 @@ function openEditDialog(
   titleInput.value =
     session.title;
 
-  durationInput.value =
-    session.duration;
-
   intensityInput.value =
     session.intensity;
 
   notesInput.value =
     session.notes || "";
 
+  if (customSportInput) {
+    customSportInput.value =
+      session.customSport || "";
+  }
+
+  if (runningMetricInput) {
+    runningMetricInput.value =
+      session.sport === "running"
+        ? (
+            session.runMetric ||
+            "duration"
+          )
+        : "duration";
+  }
+
+  if (
+    session.sport === "running" &&
+    (
+      session.runMetric ===
+      "distance"
+    )
+  ) {
+    durationInput.value =
+      session.distance ?? "";
+  } else {
+    durationInput.value =
+      session.duration ?? "";
+  }
+
   updateTitlePlaceholder();
+
+  updateTrainingInputVisibility();
 
   trainingDialog.showModal();
 
@@ -4765,15 +5120,147 @@ function closeDialog() {
   editingId = null;
 }
 
-function updateTitlePlaceholder() {
-  const meta =
-    sportMeta[
-      sportInput.value
-    ] ||
-    sportMeta.running;
+function validateTrainingForm() {
+  const sport =
+    sportInput.value;
 
-  titleInput.placeholder =
-    meta.placeholder;
+  const title =
+    titleInput.value.trim();
+
+  const intensity =
+    Number(
+      intensityInput.value
+    );
+
+  if (!title) {
+    alert(
+      "Bitte gib einen Titel für das Training ein."
+    );
+
+    titleInput.focus();
+
+    return null;
+  }
+
+  if (
+    sport === "other"
+  ) {
+    const customSport =
+      customSportInput
+        ? customSportInput.value.trim()
+        : "";
+
+    if (!customSport) {
+      alert(
+        "Bitte gib die Sportart ein."
+      );
+
+      customSportInput?.focus();
+
+      return null;
+    }
+
+    if (customSport.length > 50) {
+      alert(
+        "Der Name der Sportart darf maximal 50 Zeichen haben."
+      );
+
+      customSportInput?.focus();
+
+      return null;
+    }
+  }
+
+  const value =
+    Number(
+      durationInput.value
+    );
+
+  if (!Number.isFinite(value)) {
+    alert(
+      sport === "running" &&
+      runningMetricInput?.value ===
+        "distance"
+        ? "Bitte gib die Kilometer ein."
+        : "Bitte gib die Dauer ein."
+    );
+
+    durationInput.focus();
+
+    return null;
+  }
+
+  if (
+    value <= 0
+  ) {
+    alert(
+      sport === "running" &&
+      runningMetricInput?.value ===
+        "distance"
+        ? "Die Kilometer müssen größer als 0 sein."
+        : "Die Dauer muss größer als 0 sein."
+    );
+
+    durationInput.focus();
+
+    return null;
+  }
+
+  if (
+    sport === "running" &&
+    runningMetricInput?.value ===
+      "duration" &&
+    !Number.isInteger(value)
+  ) {
+    alert(
+      "Die Dauer bitte in ganzen Minuten eingeben."
+    );
+
+    durationInput.focus();
+
+    return null;
+  }
+
+  if (
+    sport === "running" &&
+    runningMetricInput?.value ===
+      "distance" &&
+    value > 1000
+  ) {
+    alert(
+      "Bitte gib eine realistische Kilometerzahl ein."
+    );
+
+    durationInput.focus();
+
+    return null;
+  }
+
+  if (
+    !Number.isFinite(intensity)
+  ) {
+    return null;
+  }
+
+  return {
+    sport,
+    title,
+    intensity,
+    notes:
+      notesInput.value.trim(),
+    value,
+    customSport:
+      sport === "other"
+        ? customSportInput.value.trim()
+        : "",
+    runMetric:
+      sport === "running"
+        ? (
+            runningMetricInput?.value ||
+            "duration"
+          )
+        : null
+  };
 }
 
 /* =========================
@@ -4785,33 +5272,10 @@ trainingForm.addEventListener(
   event => {
     event.preventDefault();
 
-    const sport =
-      sportInput.value;
+    const formData =
+      validateTrainingForm();
 
-    const title =
-      titleInput.value.trim();
-
-    const duration =
-      Number(
-        durationInput.value
-      );
-
-    const intensity =
-      Number(
-        intensityInput.value
-      );
-
-    const notes =
-      notesInput.value.trim();
-
-    if (!title) {
-      return;
-    }
-
-    if (
-      !duration ||
-      duration < 1
-    ) {
+    if (!formData) {
       return;
     }
 
@@ -4825,19 +5289,48 @@ trainingForm.addEventListener(
 
       if (session) {
         session.sport =
-          sport;
+          formData.sport;
 
         session.title =
-          title;
-
-        session.duration =
-          duration;
+          formData.title;
 
         session.intensity =
-          intensity;
+          formData.intensity;
 
         session.notes =
-          notes;
+          formData.notes;
+
+        session.customSport =
+          formData.customSport;
+
+        if (
+          formData.sport ===
+            "running" &&
+          formData.runMetric ===
+            "distance"
+        ) {
+          session.runMetric =
+            "distance";
+
+          session.distance =
+            formData.value;
+
+          session.duration =
+            null;
+
+        } else {
+          session.runMetric =
+            formData.sport ===
+              "running"
+              ? "duration"
+              : null;
+
+          session.duration =
+            formData.value;
+
+          session.distance =
+            null;
+        }
       }
 
     } else {
@@ -4850,15 +5343,42 @@ trainingForm.addEventListener(
         date:
           iso(selected),
 
-        sport,
+        sport:
+          formData.sport,
 
-        title,
+        title:
+          formData.title,
 
-        duration,
+        duration:
+          formData.sport ===
+            "running" &&
+          formData.runMetric ===
+            "distance"
+            ? null
+            : formData.value,
 
-        intensity,
+        distance:
+          formData.sport ===
+            "running" &&
+          formData.runMetric ===
+            "distance"
+            ? formData.value
+            : null,
 
-        notes,
+        runMetric:
+          formData.sport ===
+            "running"
+            ? formData.runMetric
+            : null,
+
+        customSport:
+          formData.customSport,
+
+        intensity:
+          formData.intensity,
+
+        notes:
+          formData.notes,
 
         completed:
           false,
@@ -4884,8 +5404,68 @@ trainingForm.addEventListener(
 
 sportInput.addEventListener(
   "change",
-  updateTitlePlaceholder
+  () => {
+    updateTitlePlaceholder();
+
+    updateTrainingInputVisibility(
+      true
+    );
+  }
 );
+
+if (runningMetricInput) {
+  runningMetricInput.addEventListener(
+    "change",
+    () => {
+      const metric =
+        runningMetricInput.value;
+
+      if (metricValueLabel) {
+        metricValueLabel.textContent =
+          metric === "distance"
+            ? "Kilometer"
+            : "Dauer";
+      }
+
+      durationInput.min =
+        metric === "distance"
+          ? "0.1"
+          : "1";
+
+      durationInput.step =
+        metric === "distance"
+          ? "0.1"
+          : "1";
+
+      /*
+        Beim Wechsel der Einheit
+        wird der alte Wert nicht
+        fälschlich übernommen.
+      */
+
+      if (
+        metric === "distance"
+      ) {
+        durationInput.value =
+          "";
+      } else {
+        durationInput.value =
+          45;
+      }
+
+      durationInput.focus();
+    }
+  );
+}
+
+if (customSportInput) {
+  customSportInput.addEventListener(
+    "input",
+    () => {
+      updateTitlePlaceholder();
+    }
+  );
+}
 
 closeDialogBtn.addEventListener(
   "click",
@@ -5319,6 +5899,8 @@ shareWeekStart =
   startOfWeek(
     new Date()
   );
+
+updateTrainingInputVisibility();
 
 renderPlan();
 
