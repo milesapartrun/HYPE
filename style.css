@@ -2,10 +2,19 @@
   --bg: #0b0d10;
   --panel: #14171c;
   --panel2: #1a1e24;
+  --panel3: #20252c;
+
   --text: #f5f6f7;
   --muted: #8d949e;
+  --muted2: #69717c;
+
   --line: #292e36;
+  --line-soft: rgba(255,255,255,.075);
+
   --accent: #d7ff3f;
+  --accent-soft: rgba(215,255,63,.08);
+  --accent-border: rgba(215,255,63,.28);
+
   --danger: #ff6b6b;
 
   font-family:
@@ -18,6 +27,10 @@
 
 * {
   box-sizing: border-box;
+}
+
+html {
+  background: var(--bg);
 }
 
 body {
@@ -54,7 +67,7 @@ button:disabled {
 .app {
   width: min(760px, 100%);
   margin: auto;
-  padding: 20px 18px 100px;
+  padding: 20px 18px 112px;
 }
 
 
@@ -143,9 +156,7 @@ h1 {
       #101318
     );
 
-  border:
-    1px solid
-    var(--line);
+  border: 1px solid var(--line);
 
   border-radius: 24px;
 
@@ -165,9 +176,7 @@ h1 {
 
 .auth-brand h1 {
   margin: 0;
-
   font-size: 34px;
-
   letter-spacing: -.05em;
 }
 
@@ -177,13 +186,9 @@ h1 {
 
 .auth-subtitle {
   margin-top: 10px;
-
   color: var(--muted);
-
   font-size: 13px;
-
   line-height: 1.55;
-
   font-weight: 600;
 }
 
@@ -211,17 +216,11 @@ h1 {
 
 .auth-switch {
   width: 100%;
-
   border: 0;
-
   background: transparent;
-
   color: var(--text);
-
   text-align: center;
-
   padding: 15px 8px 3px;
-
   line-height: 1.3;
 }
 
@@ -231,15 +230,10 @@ h1 {
 
 .auth-message {
   min-height: 18px;
-
   margin: 10px 0 4px;
-
   color: var(--muted);
-
   font-size: 12px;
-
   line-height: 1.45;
-
   text-align: center;
 }
 
@@ -262,7 +256,6 @@ h1 {
 
 .registration-gate {
   margin: 0 0 18px;
-
   padding: 15px;
 
   background:
@@ -272,21 +265,14 @@ h1 {
       rgba(255,255,255,.012)
     );
 
-  border:
-    1px solid
-    var(--line);
-
+  border: 1px solid var(--line);
   border-radius: 18px;
 }
 
 .registration-step {
   display: grid;
-
-  grid-template-columns:
-    32px 1fr;
-
+  grid-template-columns: 32px 1fr;
   gap: 11px;
-
   align-items: start;
 
   transition:
@@ -307,17 +293,12 @@ h1 {
 
   border-radius: 10px;
 
-  background:
-    var(--panel2);
-
-  border:
-    1px solid
-    var(--line);
+  background: var(--panel2);
+  border: 1px solid var(--line);
 
   color: var(--muted);
 
   font-size: 12px;
-
   font-weight: 900;
 }
 
@@ -331,9 +312,7 @@ h1 {
   color: var(--text);
 
   font-size: 13px;
-
   font-weight: 850;
-
   line-height: 1.25;
 }
 
@@ -345,7 +324,6 @@ h1 {
   color: var(--muted);
 
   font-size: 11px;
-
   line-height: 1.4;
 }
 
@@ -353,34 +331,25 @@ h1 {
   width: 100%;
 
   display: flex;
-
   align-items: center;
-
   justify-content: space-between;
 
   gap: 8px;
 
   margin-top: 10px;
-
   padding: 10px 12px;
 
-  border:
-    1px solid
-    rgba(215,255,63,.30);
-
+  border: 1px solid rgba(215,255,63,.30);
   border-radius: 11px;
 
-  background:
-    rgba(215,255,63,.07);
+  background: rgba(215,255,63,.07);
 
   color: var(--accent);
 
   text-decoration: none;
 
   font-size: 11px;
-
   font-weight: 850;
-
   line-height: 1;
 
   transition:
@@ -390,11 +359,8 @@ h1 {
 }
 
 .registration-action:hover {
-  background:
-    rgba(215,255,63,.13);
-
-  border-color:
-    rgba(215,255,63,.52);
+  background: rgba(215,255,63,.13);
+  border-color: rgba(215,255,63,.52);
 }
 
 .registration-action:active {
@@ -409,19 +375,14 @@ h1 {
 .instagram-action {
   color: var(--text);
 
-  border-color:
-    rgba(255,255,255,.12);
+  border-color: rgba(255,255,255,.12);
 
-  background:
-    rgba(255,255,255,.045);
+  background: rgba(255,255,255,.045);
 }
 
 .instagram-action:hover {
-  background:
-    rgba(255,255,255,.075);
-
-  border-color:
-    rgba(255,255,255,.20);
+  background: rgba(255,255,255,.075);
+  border-color: rgba(255,255,255,.20);
 }
 
 .share-action {
@@ -429,7 +390,6 @@ h1 {
   -webkit-appearance: none;
 
   font: inherit;
-
   text-align: left;
 }
 
@@ -441,22 +401,16 @@ h1 {
   width: 100%;
 
   margin-top: 7px;
-
   padding: 8px 10px;
 
-  border:
-    1px solid
-    var(--line);
-
+  border: 1px solid var(--line);
   border-radius: 10px;
 
-  background:
-    transparent;
+  background: transparent;
 
   color: var(--muted);
 
   font-size: 10px;
-
   font-weight: 800;
 
   text-align: center;
@@ -469,22 +423,16 @@ h1 {
 
 .registration-confirm:hover:not(:disabled) {
   color: var(--text);
-
-  border-color:
-    #414750;
-
-  background:
-    rgba(255,255,255,.035);
+  border-color: #414750;
+  background: rgba(255,255,255,.035);
 }
 
 .registration-confirm.completed {
   color: var(--accent);
 
-  border-color:
-    rgba(215,255,63,.28);
+  border-color: rgba(215,255,63,.28);
 
-  background:
-    rgba(215,255,63,.06);
+  background: rgba(215,255,63,.06);
 }
 
 .registration-confirm:disabled {
@@ -494,13 +442,24 @@ h1 {
 
 .registration-divider {
   height: 18px;
-
   width: 1px;
 
   margin: 7px 0 7px 15px;
 
-  background:
-    var(--line);
+  background: var(--line);
+}
+
+.registration-ready {
+  margin-top: 14px;
+  padding-top: 13px;
+
+  border-top: 1px solid var(--line);
+
+  color: var(--accent);
+
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1.4;
 }
 
 
@@ -510,10 +469,6 @@ h1 {
 
 .auth-form .auth-first-name-field {
   margin-top: 15px;
-}
-
-.auth-first-name-field label {
-  display: block;
 }
 
 .auth-first-name-field input {
@@ -527,9 +482,11 @@ h1 {
 
 .hero {
   position: relative;
+
   display: flex;
   align-items: center;
   justify-content: space-between;
+
   margin: 34px 0 22px;
   padding: 20px;
 
@@ -573,16 +530,15 @@ h2 {
   display: grid;
 
   grid-template-columns:
-    42px
+    38px
     minmax(0, 1fr)
-    42px;
+    38px;
 
   align-items: center;
 
-  gap: 8px;
+  gap: 10px;
 
   width: 100%;
-
   margin-top: 10px;
 }
 
@@ -590,28 +546,26 @@ h2 {
   appearance: none;
   -webkit-appearance: none;
 
-  width: 42px;
-  height: 42px;
+  width: 38px;
+  height: 38px;
 
-  min-width: 42px;
-  min-height: 42px;
+  min-width: 38px;
+  min-height: 38px;
 
   padding: 0;
   margin: 0;
 
   border: 1px solid var(--line);
-  border-radius: 13px;
+  border-radius: 12px;
 
   background: var(--panel);
-  background-color: var(--panel);
-
   color: var(--text);
 
   display: grid;
   place-items: center;
 
-  font-size: 22px;
-  font-weight: 400;
+  font-size: 19px;
+  font-weight: 500;
 
   line-height: 1;
 
@@ -626,17 +580,17 @@ h2 {
 
 .week-nav-arrow:hover {
   border-color: #414750;
-
   background: var(--panel2);
-  background-color: var(--panel2);
 }
 
 .week-nav-arrow:active {
-  transform: scale(.95);
+  transform: scale(.94);
 }
 
-.week-nav-arrow:focus {
+.week-nav-arrow:focus,
+.week-nav-arrow:focus-visible {
   outline: none;
+  box-shadow: none;
 }
 
 
@@ -646,9 +600,7 @@ h2 {
 
 .week-title-area {
   min-width: 0;
-
   justify-self: center;
-
   text-align: center;
 }
 
@@ -661,7 +613,7 @@ h2 {
 
   color: var(--text);
 
-  font-size: 30px;
+  font-size: 28px;
   font-weight: 800;
 
   line-height: 1.05;
@@ -680,7 +632,7 @@ h2 {
   display: grid;
 
   grid-template-columns:
-    repeat(7, 1fr);
+    repeat(7, minmax(0, 1fr));
 
   gap: 7px;
 
@@ -688,6 +640,8 @@ h2 {
 }
 
 .day {
+  min-width: 0;
+
   border: 1px solid var(--line);
 
   background: var(--panel);
@@ -699,6 +653,8 @@ h2 {
   text-align: center;
 
   color: var(--muted);
+
+  overflow: hidden;
 
   transition:
     transform .15s ease,
@@ -736,9 +692,7 @@ h2 {
 
 .day.active {
   background: var(--accent);
-
   color: #111;
-
   border-color: var(--accent);
 }
 
@@ -770,7 +724,6 @@ h2 {
 
 .today-jump-wrap {
   display: flex;
-
   justify-content: center;
 
   margin-top: 0;
@@ -781,14 +734,9 @@ h2 {
   appearance: none;
   -webkit-appearance: none;
 
-  border: 1px solid
-    rgba(215,255,63,.35);
+  border: 1px solid rgba(215,255,63,.35);
 
-  background:
-    rgba(215,255,63,.08);
-
-  background-color:
-    rgba(215,255,63,.08);
+  background: rgba(215,255,63,.08);
 
   color: var(--accent);
 
@@ -797,15 +745,12 @@ h2 {
   border-radius: 10px;
 
   font-size: 10px;
-
   font-weight: 900;
 
   letter-spacing: .12em;
-
   line-height: 1;
 
   box-shadow: none;
-
   outline: none;
 
   transition:
@@ -815,14 +760,8 @@ h2 {
 }
 
 .today-jump-btn:hover {
-  background:
-    rgba(215,255,63,.14);
-
-  background-color:
-    rgba(215,255,63,.14);
-
-  border-color:
-    rgba(215,255,63,.55);
+  background: rgba(215,255,63,.14);
+  border-color: rgba(215,255,63,.55);
 }
 
 .today-jump-btn:active {
@@ -832,7 +771,6 @@ h2 {
 .today-jump-btn:focus,
 .today-jump-btn:focus-visible {
   outline: none;
-
   box-shadow: none;
 }
 
@@ -843,21 +781,18 @@ h2 {
 
 .section-head {
   display: flex;
-
   align-items: center;
-
   justify-content: space-between;
 
   margin-bottom: 14px;
 }
 
 .selected-date {
-  color: #d7ff3f !important;
+  color: var(--accent) !important;
 
   opacity: 1 !important;
 
   font-size: 13px;
-
   font-weight: 700;
 
   margin-top: 4px;
@@ -870,9 +805,7 @@ h2 {
 
 .training-actions {
   display: flex;
-
   align-items: center;
-
   justify-content: flex-end;
 
   gap: 8px;
@@ -886,8 +819,7 @@ h2 {
 .primary {
   border: 0;
 
-  background: #d7ff3f;
-
+  background: var(--accent);
   color: #111;
 
   font-weight: 800;
@@ -905,13 +837,12 @@ h2 {
 
 .full {
   width: 100%;
-
   margin-top: 8px;
 }
 
 
 /* =========================
-   CALENDAR EXPORT BUTTON
+   CALENDAR EXPORT
 ========================= */
 
 .calendar-export-btn {
@@ -919,22 +850,14 @@ h2 {
   -webkit-appearance: none;
 
   display: inline-flex;
-
   align-items: center;
-
   justify-content: center;
 
   gap: 6px;
 
-  border:
-    1px solid
-    rgba(215,255,63,.35);
+  border: 1px solid rgba(215,255,63,.35);
 
-  background:
-    rgba(215,255,63,.08);
-
-  background-color:
-    rgba(215,255,63,.08);
+  background: rgba(215,255,63,.08);
 
   color: var(--accent);
 
@@ -943,15 +866,12 @@ h2 {
   border-radius: 12px;
 
   font-size: 11px;
-
   font-weight: 850;
 
   line-height: 1;
-
   white-space: nowrap;
 
   box-shadow: none;
-
   outline: none;
 
   transition:
@@ -961,14 +881,8 @@ h2 {
 }
 
 .calendar-export-btn:hover {
-  background:
-    rgba(215,255,63,.14);
-
-  background-color:
-    rgba(215,255,63,.14);
-
-  border-color:
-    rgba(215,255,63,.55);
+  background: rgba(215,255,63,.14);
+  border-color: rgba(215,255,63,.55);
 }
 
 .calendar-export-btn:active {
@@ -978,7 +892,6 @@ h2 {
 .calendar-export-btn:focus,
 .calendar-export-btn:focus-visible {
   outline: none;
-
   box-shadow: none;
 }
 
@@ -989,7 +902,6 @@ h2 {
 
 .sessions {
   display: grid;
-
   gap: 10px;
 }
 
@@ -997,7 +909,9 @@ h2 {
   display: grid;
 
   grid-template-columns:
-    48px 1fr auto;
+    48px
+    minmax(0, 1fr)
+    auto;
 
   gap: 12px;
 
@@ -1017,8 +931,7 @@ h2 {
 }
 
 .session.completed {
-  border-color:
-    rgba(215,255,63,.55);
+  border-color: rgba(215,255,63,.55);
 
   background:
     linear-gradient(
@@ -1041,7 +954,6 @@ h2 {
   background: var(--panel2);
 
   display: grid;
-
   place-items: center;
 
   font-size: 22px;
@@ -1053,11 +965,9 @@ h2 {
 
 .session-title-row {
   display: flex;
-
   align-items: center;
 
   gap: 8px;
-
   flex-wrap: wrap;
 }
 
@@ -1077,16 +987,13 @@ h2 {
 
 .completed-label {
   font-size: 8px;
-
   font-weight: 900;
 
   letter-spacing: .08em;
 
   color: var(--accent);
 
-  border:
-    1px solid
-    rgba(215,255,63,.35);
+  border: 1px solid rgba(215,255,63,.35);
 
   padding: 3px 6px;
 
@@ -1097,7 +1004,6 @@ h2 {
   display: flex;
 
   flex-direction: column;
-
   align-items: flex-end;
 
   gap: 6px;
@@ -1107,9 +1013,7 @@ h2 {
   width: 32px;
   height: 32px;
 
-  border:
-    1px solid
-    var(--line);
+  border: 1px solid var(--line);
 
   border-radius: 10px;
 
@@ -1118,7 +1022,6 @@ h2 {
   color: var(--muted);
 
   font-size: 18px;
-
   font-weight: 800;
 }
 
@@ -1163,7 +1066,6 @@ h2 {
 
 .actual-intensity span {
   color: var(--muted);
-
   font-size: 11px;
 }
 
@@ -1200,7 +1102,6 @@ h2 {
   resize: vertical;
 
   font-size: 12px;
-
   line-height: 1.4;
 }
 
@@ -1227,8 +1128,7 @@ h2 {
 
 .insight-icon {
   font-size: 20px;
-
-  color: #d7ff3f;
+  color: var(--accent);
 }
 
 .insight p {
@@ -1237,7 +1137,6 @@ h2 {
   margin: 5px 0 0;
 
   font-size: 13px;
-
   line-height: 1.45;
 }
 
@@ -1288,13 +1187,11 @@ h2 {
   border-radius: 11px;
 
   font-size: 12px;
-
   font-weight: 800;
 }
 
 .period-btn.active {
   background: var(--panel2);
-
   color: var(--text);
 }
 
@@ -1307,7 +1204,9 @@ h2 {
   display: grid;
 
   grid-template-columns:
-    42px 1fr 42px;
+    38px
+    minmax(0, 1fr)
+    38px;
 
   align-items: center;
 
@@ -1317,26 +1216,30 @@ h2 {
 }
 
 .period-arrow {
-  width: 42px;
-  height: 42px;
+  appearance: none;
+  -webkit-appearance: none;
 
-  border:
-    1px solid
-    var(--line);
+  width: 38px;
+  height: 38px;
 
-  border-radius: 13px;
+  padding: 0;
+
+  border: 1px solid var(--line);
+
+  border-radius: 12px;
 
   background: var(--panel);
 
   color: var(--text);
 
-  font-size: 25px;
+  font-size: 20px;
 
   line-height: 1;
 }
 
 .period-arrow:hover {
   border-color: #414750;
+  background: var(--panel2);
 }
 
 .period-title-button {
@@ -1349,10 +1252,14 @@ h2 {
   color: var(--text);
 
   font-size: 14px;
-
   font-weight: 800;
 
   padding: 8px;
+
+  white-space: nowrap;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 
@@ -1362,16 +1269,13 @@ h2 {
 
 .overview-week {
   display: grid;
-
   gap: 8px;
 }
 
 .overview-day {
   background: var(--panel);
 
-  border:
-    1px solid
-    var(--line);
+  border: 1px solid var(--line);
 
   border-radius: 18px;
 
@@ -1379,22 +1283,18 @@ h2 {
 }
 
 .overview-day.today {
-  border-color:
-    rgba(215,255,63,.45);
+  border-color: rgba(215,255,63,.45);
 }
 
 .overview-day-head {
   display: flex;
 
   align-items: center;
-
   justify-content: space-between;
 
   padding: 13px 15px;
 
-  border-bottom:
-    1px solid
-    var(--line);
+  border-bottom: 1px solid var(--line);
 }
 
 .overview-day-date {
@@ -1409,19 +1309,16 @@ h2 {
   color: var(--text);
 
   font-size: 13px;
-
   font-weight: 800;
 }
 
 .overview-day-number {
   color: var(--muted);
-
   font-size: 12px;
 }
 
 .overview-day-status {
   color: var(--muted);
-
   font-size: 10px;
 }
 
@@ -1437,7 +1334,9 @@ h2 {
   display: grid;
 
   grid-template-columns:
-    30px 1fr auto;
+    30px
+    minmax(0, 1fr)
+    auto;
 
   gap: 9px;
 
@@ -1463,7 +1362,6 @@ h2 {
   background: var(--panel2);
 
   display: grid;
-
   place-items: center;
 
   font-size: 15px;
@@ -1475,8 +1373,11 @@ h2 {
   color: var(--text);
 
   font-size: 12px;
-
   font-weight: 700;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .mini-meta {
@@ -1494,12 +1395,9 @@ h2 {
   border-radius: 7px;
 
   display: grid;
-
   place-items: center;
 
-  border:
-    1px solid
-    var(--line);
+  border: 1px solid var(--line);
 
   color: var(--muted);
 
@@ -1530,9 +1428,7 @@ h2 {
 .month-calendar {
   background: var(--panel);
 
-  border:
-    1px solid
-    var(--line);
+  border: 1px solid var(--line);
 
   border-radius: 20px;
 
@@ -1561,7 +1457,6 @@ h2 {
   color: var(--muted);
 
   font-size: 9px;
-
   font-weight: 800;
 
   padding: 5px 0;
@@ -1576,9 +1471,7 @@ h2 {
 
   background: #111419;
 
-  border:
-    1px solid
-    transparent;
+  border: 1px solid transparent;
 
   border-radius: 10px;
 
@@ -1598,8 +1491,7 @@ h2 {
 }
 
 .month-cell.today {
-  border-color:
-    rgba(215,255,63,.65);
+  border-color: rgba(215,255,63,.65);
 }
 
 .month-date {
@@ -1610,7 +1502,6 @@ h2 {
   color: var(--muted);
 
   position: relative;
-
   z-index: 3;
 }
 
@@ -1628,7 +1519,6 @@ h2 {
   margin-top: 7px;
 
   position: relative;
-
   z-index: 3;
 }
 
@@ -1654,7 +1544,6 @@ h2 {
   color: #68707a;
 
   font-size: 8px;
-
   font-weight: 800;
 
   z-index: 3;
@@ -1683,13 +1572,11 @@ h2 {
 }
 
 .month-week-hit-area:hover {
-  background:
-    rgba(215,255,63,.035);
+  background: rgba(215,255,63,.035);
 }
 
 .month-week-hit-area:active {
-  background:
-    rgba(215,255,63,.07);
+  background: rgba(215,255,63,.07);
 }
 
 
@@ -1699,7 +1586,6 @@ h2 {
 
 .year-overview {
   display: grid;
-
   gap: 12px;
 }
 
@@ -1715,9 +1601,7 @@ h2 {
 .year-stat {
   background: var(--panel);
 
-  border:
-    1px solid
-    var(--line);
+  border: 1px solid var(--line);
 
   border-radius: 15px;
 
@@ -1740,7 +1624,6 @@ h2 {
   color: var(--muted);
 
   font-size: 9px;
-
   font-weight: 700;
 
   letter-spacing: .04em;
@@ -1765,9 +1648,7 @@ h2 {
 
   background: var(--panel);
 
-  border:
-    1px solid
-    var(--line);
+  border: 1px solid var(--line);
 
   border-radius: 17px;
 
@@ -1787,7 +1668,6 @@ h2 {
 
 .year-month:hover {
   border-color: #414750;
-
   background: var(--panel2);
 }
 
@@ -1799,7 +1679,6 @@ h2 {
   display: flex;
 
   justify-content: space-between;
-
   align-items: center;
 
   margin-bottom: 9px;
@@ -1807,13 +1686,11 @@ h2 {
 
 .year-month-name {
   font-size: 12px;
-
   font-weight: 800;
 }
 
 .year-month-count {
   color: var(--muted);
-
   font-size: 9px;
 }
 
@@ -1861,16 +1738,16 @@ h2 {
 }
 
 
-/* =========================
+/* =========================================================
    PROFILE
-========================= */
+========================================================= */
 
 .profile-view {
-  padding-bottom: 20px;
+  padding-bottom: 28px;
 }
 
 .profile-header {
-  margin: 34px 0 20px;
+  margin: 34px 0 24px;
 }
 
 .profile-header h2 {
@@ -1881,7 +1758,6 @@ h2 {
   color: var(--accent);
 
   font-size: 13px;
-
   font-weight: 800;
 
   margin-top: 7px;
@@ -1900,27 +1776,24 @@ h2 {
       #111419
     );
 
-  border:
-    1px solid
-    var(--line);
+  border: 1px solid var(--line);
 
   border-radius: 22px;
 
-  padding: 18px;
+  padding: 19px;
 
-  margin-bottom: 12px;
+  margin-bottom: 14px;
 }
 
 .profile-card-head {
   display: flex;
 
   align-items: center;
-
   justify-content: space-between;
 
   gap: 12px;
 
-  margin-bottom: 14px;
+  margin-bottom: 15px;
 }
 
 .profile-card-title {
@@ -1928,13 +1801,13 @@ h2 {
 }
 
 .profile-card-title .eyebrow {
-  margin-bottom: 4px;
+  margin-bottom: 5px;
 }
 
 .profile-card-title h3 {
   margin: 0;
 
-  font-size: 19px;
+  font-size: 20px;
 
   line-height: 1.1;
 }
@@ -1950,14 +1823,135 @@ h2 {
 
   border-radius: 12px;
 
-  background:
-    rgba(215,255,63,.08);
+  background: rgba(215,255,63,.08);
 
-  border:
-    1px solid
-    rgba(215,255,63,.18);
+  border: 1px solid rgba(215,255,63,.18);
 
   font-size: 18px;
+}
+
+
+/* =========================
+   PROFILE ACCOUNT
+========================= */
+
+/*
+ * Diese Regeln greifen auch für die
+ * dynamisch erzeugte Account-Card.
+ */
+
+.profile-account-card {
+  padding-bottom: 20px;
+}
+
+.profile-account-name {
+  margin: 0;
+
+  color: var(--text);
+
+  font-size: 25px;
+  font-weight: 800;
+
+  line-height: 1.1;
+
+  letter-spacing: -.035em;
+}
+
+.profile-account-email {
+  display: block;
+
+  margin-top: 12px;
+
+  color: var(--muted);
+
+  font-size: 14px;
+
+  line-height: 1.35;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.profile-account-actions {
+  display: flex;
+
+  align-items: center;
+
+  gap: 9px;
+
+  margin-top: 18px;
+}
+
+.profile-account-edit {
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  min-height: 42px;
+
+  padding: 0 16px;
+
+  border-radius: 13px;
+
+  border: 1px solid
+    rgba(215,255,63,.35);
+
+  background:
+    rgba(215,255,63,.07);
+
+  color: var(--accent);
+
+  font-size: 12px;
+  font-weight: 850;
+
+  white-space: nowrap;
+
+  transition:
+    background .15s ease,
+    border-color .15s ease,
+    transform .15s ease;
+}
+
+.profile-account-edit:hover {
+  background:
+    rgba(215,255,63,.12);
+
+  border-color:
+    rgba(215,255,63,.52);
+}
+
+.profile-account-edit:active {
+  transform: scale(.98);
+}
+
+
+/* =========================
+   PROFILE EDIT FORM
+========================= */
+
+.profile-account-edit-form {
+  margin-top: 17px;
+
+  padding-top: 17px;
+
+  border-top:
+    1px solid
+    var(--line);
+}
+
+.profile-account-edit-form label {
+  margin: 0 0 12px;
+}
+
+.profile-account-edit-actions {
+  display: grid;
+
+  grid-template-columns:
+    1fr 1fr;
+
+  gap: 8px;
 }
 
 
@@ -1966,6 +1960,8 @@ h2 {
 ========================= */
 
 .weekly-share-card {
+  position: relative;
+
   overflow: hidden;
 
   background:
@@ -1976,29 +1972,193 @@ h2 {
     );
 }
 
+
+/*
+ * Der obere Bereich der Share-Card
+ * soll nicht wie ein normaler
+ * Kalender aussehen.
+ */
+
+.weekly-share-card .profile-card-head {
+  margin-bottom: 12px;
+}
+
 .weekly-share-meta {
   color: var(--muted);
 
   font-size: 11px;
 
-  line-height: 1.4;
+  line-height: 1.45;
 
-  margin-bottom: 14px;
+  margin-bottom: 16px;
 }
+
+
+/* =========================
+   SHARE WEEK NAVIGATION
+========================= */
+
+.weekly-share-navigation,
+.weekly-share-card .period-navigation {
+  display: grid;
+
+  grid-template-columns:
+    36px
+    minmax(0, 1fr)
+    36px;
+
+  align-items: center;
+
+  gap: 9px;
+
+  width: 100%;
+
+  margin: 2px 0 16px;
+
+  padding: 0;
+}
+
+
+/*
+ * Verhindert die hässlichen weißen
+ * Browser-Button-Flächen.
+ */
+
+.weekly-share-navigation button,
+.weekly-share-card .period-navigation button {
+  appearance: none;
+  -webkit-appearance: none;
+
+  box-shadow: none;
+  outline: none;
+}
+
+
+/* Pfeile */
+
+.weekly-share-navigation .period-arrow,
+.weekly-share-card .period-navigation .period-arrow,
+.weekly-share-navigation .weekly-share-arrow {
+  width: 36px;
+  height: 36px;
+
+  min-width: 36px;
+  min-height: 36px;
+
+  padding: 0;
+
+  display: grid;
+  place-items: center;
+
+  border:
+    1px solid
+    var(--line);
+
+  border-radius: 11px;
+
+  background:
+    var(--panel);
+
+  color:
+    var(--text);
+
+  font-size: 18px;
+  font-weight: 500;
+
+  line-height: 1;
+
+  transition:
+    background .15s ease,
+    border-color .15s ease,
+    transform .15s ease;
+}
+
+.weekly-share-navigation .period-arrow:hover,
+.weekly-share-card .period-navigation .period-arrow:hover,
+.weekly-share-navigation .weekly-share-arrow:hover {
+  background:
+    var(--panel2);
+
+  border-color:
+    #414750;
+}
+
+.weekly-share-navigation .period-arrow:active,
+.weekly-share-card .period-navigation .period-arrow:active,
+.weekly-share-navigation .weekly-share-arrow:active {
+  transform: scale(.94);
+}
+
+
+/* Wochen-Titel */
+
+.weekly-share-navigation .period-title-button,
+.weekly-share-card .period-navigation .period-title-button,
+.weekly-share-week-title {
+  min-width: 0;
+
+  width: 100%;
+
+  padding: 9px 10px;
+
+  border:
+    1px solid
+    var(--line);
+
+  border-radius: 12px;
+
+  background:
+    rgba(255,255,255,.025);
+
+  color:
+    var(--text);
+
+  text-align: center;
+
+  font-size: 11px;
+  font-weight: 800;
+
+  line-height: 1.25;
+
+  white-space: normal;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  transition:
+    background .15s ease,
+    border-color .15s ease;
+}
+
+.weekly-share-navigation .period-title-button:hover,
+.weekly-share-card .period-navigation .period-title-button:hover {
+  background:
+    rgba(255,255,255,.045);
+
+  border-color:
+    #414750;
+}
+
+
+/* =========================
+   SHARE STATS
+========================= */
 
 .weekly-share-summary {
   display: grid;
 
   grid-template-columns:
-    repeat(2, 1fr);
+    repeat(2, minmax(0, 1fr));
 
-  gap: 8px;
+  gap: 9px;
 
-  margin-bottom: 12px;
+  margin-bottom: 14px;
 }
 
 .weekly-share-stat {
-  padding: 12px;
+  min-width: 0;
+
+  padding: 13px;
 
   border-radius: 14px;
 
@@ -2013,48 +2173,65 @@ h2 {
 .weekly-share-stat strong {
   display: block;
 
-  color: var(--text);
+  color: var(--accent);
 
-  font-size: 20px;
+  font-size: 23px;
 
-  letter-spacing: -.03em;
+  line-height: 1;
+
+  letter-spacing: -.035em;
 }
 
 .weekly-share-stat span {
   display: block;
 
-  margin-top: 3px;
+  margin-top: 6px;
 
   color: var(--muted);
 
   font-size: 9px;
-
   font-weight: 800;
 
   text-transform: uppercase;
 
-  letter-spacing: .05em;
+  letter-spacing: .06em;
 }
+
+
+/* =========================
+   SHARE DAYS
+========================= */
 
 .weekly-share-days {
   display: grid;
 
   grid-template-columns:
-    repeat(7, 1fr);
+    repeat(7, minmax(0, 1fr));
 
   gap: 5px;
+
+  width: 100%;
 
   margin-top: 10px;
 }
 
+
+/*
+ * Sehr wichtig:
+ * min-width: 0 verhindert,
+ * dass lange Trainingstitel
+ * die ganze Grid-Spalte sprengen.
+ */
+
 .weekly-share-day {
   min-width: 0;
+  width: 100%;
 
-  min-height: 62px;
+  min-height: 88px;
 
-  padding: 7px 3px;
+  padding: 8px 4px;
 
-  border-radius: 10px;
+  border-radius: 11px;
 
   border:
     1px solid
@@ -2064,6 +2241,8 @@ h2 {
     rgba(255,255,255,.018);
 
   text-align: center;
+
+  overflow: hidden;
 }
 
 .weekly-share-day-name {
@@ -2072,32 +2251,46 @@ h2 {
   color: var(--muted);
 
   font-size: 8px;
-
   font-weight: 800;
 
   text-transform: uppercase;
+
+  line-height: 1;
 }
 
 .weekly-share-day-number {
   display: block;
 
-  margin-top: 4px;
+  margin-top: 5px;
 
   color: var(--text);
 
-  font-size: 12px;
-
+  font-size: 13px;
   font-weight: 900;
+
+  line-height: 1;
 }
 
 .weekly-share-day-status {
   display: block;
 
-  margin-top: 7px;
+  margin-top: 8px;
 
   color: #59616b;
 
-  font-size: 11px;
+  font-size: 10px;
+
+  line-height: 1.2;
+
+  overflow: hidden;
+
+  /*
+   * Lange Trainingsnamen
+   * bleiben innerhalb ihrer Box.
+   */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
 }
 
 .weekly-share-day.completed {
@@ -2111,6 +2304,31 @@ h2 {
 .weekly-share-day.completed
 .weekly-share-day-status {
   color: var(--accent);
+}
+
+
+/*
+ * Falls app.js einen separaten
+ * Trainingstitel ausgibt.
+ */
+
+.weekly-share-day-title {
+  min-width: 0;
+
+  margin-top: 7px;
+
+  color: var(--text);
+
+  font-size: 9px;
+  font-weight: 700;
+
+  line-height: 1.2;
+
+  overflow: hidden;
+
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
 }
 
 .weekly-share-empty {
@@ -2131,33 +2349,28 @@ h2 {
   text-align: center;
 }
 
+
+/* =========================
+   SHARE ACTIONS
+========================= */
+
 .weekly-share-actions {
   display: grid;
 
   gap: 8px;
 
-  margin-top: 14px;
+  margin-top: 16px;
 }
 
-.share-week-btn {
-  width: 100%;
-
-  display: flex;
-
-  align-items: center;
-
-  justify-content: center;
-
-  gap: 8px;
-}
-
+.share-week-btn,
 .share-hype-btn {
   width: 100%;
 
+  min-height: 44px;
+
   display: flex;
 
   align-items: center;
-
   justify-content: center;
 
   gap: 8px;
@@ -2179,14 +2392,15 @@ h2 {
   background:
     rgba(215,255,63,.07);
 
-  color: var(--accent);
+  color:
+    var(--accent);
 
-  padding: 11px 14px;
+  padding:
+    11px 14px;
 
   border-radius: 13px;
 
   font-size: 11px;
-
   font-weight: 850;
 
   line-height: 1;
@@ -2216,7 +2430,8 @@ h2 {
   background:
     rgba(255,255,255,.035);
 
-  color: var(--text);
+  color:
+    var(--text);
 }
 
 .profile-share-hype:hover {
@@ -2246,7 +2461,6 @@ h2 {
   display: flex;
 
   align-items: center;
-
   justify-content: space-between;
 
   gap: 10px;
@@ -2310,7 +2524,6 @@ h2 {
     rgba(255,107,107,.85);
 
   font-size: 11px;
-
   font-weight: 800;
 
   transition:
@@ -2337,7 +2550,6 @@ h2 {
 
 .today-symbol {
   color: var(--accent);
-
   font-size: 28px;
 }
 
@@ -2357,7 +2569,6 @@ h2 {
 
 .today-session-list {
   display: grid;
-
   gap: 10px;
 }
 
@@ -2395,6 +2606,9 @@ h2 {
   backdrop-filter:
     blur(18px);
 
+  -webkit-backdrop-filter:
+    blur(18px);
+
   border:
     1px solid
     var(--line);
@@ -2424,7 +2638,8 @@ h2 {
   background:
     rgba(215,255,63,.10);
 
-  color: var(--accent);
+  color:
+    var(--accent);
 
   box-shadow:
     inset 0 0 0 1px
@@ -2433,14 +2648,15 @@ h2 {
 
 .nav-item.active .nav-icon {
   color: var(--accent);
-
   opacity: 1;
 }
 
 .nav-item:not(.active):hover {
-  background: var(--panel2);
+  background:
+    var(--panel2);
 
-  color: var(--text);
+  color:
+    var(--text);
 }
 
 .nav-item span {
@@ -2518,7 +2734,6 @@ label {
   color: #c8cbd0;
 
   font-size: 13px;
-
   font-weight: 650;
 
   margin: 15px 0;
@@ -2541,9 +2756,11 @@ textarea {
     1px solid
     var(--line);
 
-  background: var(--panel);
+  background:
+    var(--panel);
 
-  color: var(--text);
+  color:
+    var(--text);
 
   outline: none;
 }
@@ -2551,7 +2768,8 @@ textarea {
 input:focus,
 select:focus,
 textarea:focus {
-  border-color: var(--accent);
+  border-color:
+    var(--accent);
 }
 
 .two {
@@ -2566,11 +2784,13 @@ textarea:focus {
 .close {
   font-size: 25px;
 
-  background: transparent;
+  background:
+    transparent;
 
   border: 0;
 
-  color: var(--text);
+  color:
+    var(--text);
 }
 
 
@@ -2593,9 +2813,9 @@ textarea:focus {
 }
 
 
-/* =========================
+/* =========================================================
    RESPONSIVE
-========================= */
+========================================================= */
 
 @media (min-width: 700px) {
 
@@ -2614,6 +2834,25 @@ textarea:focus {
   .year-months {
     grid-template-columns:
       repeat(3, 1fr);
+  }
+
+}
+
+
+@media (max-width: 600px) {
+
+  .weekly-share-days {
+    gap: 4px;
+  }
+
+  .weekly-share-day {
+    min-height: 82px;
+    padding: 7px 3px;
+  }
+
+  .weekly-share-day-status,
+  .weekly-share-day-title {
+    font-size: 8px;
   }
 
 }
@@ -2675,17 +2914,60 @@ textarea:focus {
 
 
   .profile-card {
-    padding: 15px;
+    padding: 16px;
   }
 
 
   .profile-header {
     margin-top: 28px;
+    margin-bottom: 20px;
   }
 
 
   .profile-header h2 {
     font-size: 27px;
+  }
+
+
+  .profile-account-name {
+    font-size: 23px;
+  }
+
+
+  .profile-account-email {
+    margin-top: 11px;
+
+    font-size: 13px;
+  }
+
+
+  .profile-account-actions {
+    margin-top: 17px;
+  }
+
+
+  .profile-account-edit {
+    min-height: 40px;
+
+    padding:
+      0 15px;
+
+    font-size: 11px;
+  }
+
+
+  .weekly-share-summary {
+    gap: 7px;
+  }
+
+
+  .weekly-share-stat {
+    padding: 12px;
+  }
+
+
+  .weekly-share-stat strong {
+    font-size: 21px;
   }
 
 
@@ -2695,10 +2977,12 @@ textarea:focus {
 
 
   .weekly-share-day {
-    min-height: 57px;
+    min-height: 76px;
 
     padding:
-      6px 2px;
+      7px 2px;
+
+    border-radius: 9px;
   }
 
 
@@ -2712,8 +2996,49 @@ textarea:focus {
   }
 
 
-  .weekly-share-day-status {
-    font-size: 10px;
+  .weekly-share-day-status,
+  .weekly-share-day-title {
+    margin-top: 7px;
+
+    font-size: 7.5px;
+  }
+
+
+  .weekly-share-navigation,
+  .weekly-share-card .period-navigation {
+    grid-template-columns:
+      34px
+      minmax(0, 1fr)
+      34px;
+
+    gap: 7px;
+  }
+
+
+  .weekly-share-navigation .period-arrow,
+  .weekly-share-card .period-navigation .period-arrow,
+  .weekly-share-navigation .weekly-share-arrow {
+    width: 34px;
+    height: 34px;
+
+    min-width: 34px;
+    min-height: 34px;
+
+    border-radius: 10px;
+
+    font-size: 17px;
+  }
+
+
+  .weekly-share-navigation .period-title-button,
+  .weekly-share-card .period-navigation .period-title-button,
+  .weekly-share-week-title {
+    min-height: 34px;
+
+    padding:
+      7px 6px;
+
+    font-size: 9px;
   }
 
 
@@ -2735,27 +3060,27 @@ textarea:focus {
 
   .week-navigation {
     grid-template-columns:
-      38px
+      36px
       minmax(0, 1fr)
-      38px;
+      36px;
 
     gap: 6px;
   }
 
 
   .week-nav-arrow {
-    width: 38px;
-    height: 38px;
+    width: 36px;
+    height: 36px;
 
-    min-width: 38px;
-    min-height: 38px;
+    min-width: 36px;
+    min-height: 36px;
 
-    font-size: 20px;
+    font-size: 19px;
   }
 
 
   .week-title-area h2 {
-    font-size: 25px;
+    font-size: 24px;
   }
 
 
@@ -2766,7 +3091,8 @@ textarea:focus {
 
 
   .today-jump-btn {
-    padding: 8px 14px;
+    padding:
+      8px 14px;
 
     font-size: 9px;
   }
@@ -2778,14 +3104,16 @@ textarea:focus {
 
 
   .calendar-export-btn {
-    padding: 10px 12px;
+    padding:
+      10px 12px;
 
     font-size: 10px;
   }
 
 
   .primary {
-    padding: 11px 14px;
+    padding:
+      11px 14px;
   }
 
 
@@ -2805,6 +3133,57 @@ textarea:focus {
 
   .nav-item span {
     font-size: 9px;
+  }
+
+}
+
+
+@media (max-width: 360px) {
+
+  .app {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+
+
+  .profile-card {
+    padding: 14px;
+  }
+
+
+  .weekly-share-days {
+    gap: 2px;
+  }
+
+
+  .weekly-share-day {
+    min-height: 72px;
+  }
+
+
+  .weekly-share-day-name {
+    font-size: 6.5px;
+  }
+
+
+  .weekly-share-day-number {
+    font-size: 10px;
+  }
+
+
+  .weekly-share-day-status,
+  .weekly-share-day-title {
+    font-size: 7px;
+  }
+
+
+  .profile-account-edit {
+    width: 100%;
+  }
+
+
+  .profile-account-actions {
+    display: block;
   }
 
 }
