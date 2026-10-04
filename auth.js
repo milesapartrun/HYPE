@@ -14,6 +14,11 @@ const supabaseClient =
     SUPABASE_PUBLISHABLE_KEY
   );
 
+/*
+ * Für app.js verfügbar machen.
+ */
+window.supabaseClient = supabaseClient;
+
 
 /* =========================
    DOM
@@ -46,12 +51,6 @@ const authMessage =
 const authSubtitle =
   document.getElementById("authSubtitle");
 
-const authFirstNameField =
-  document.getElementById("authFirstNameField");
-
-const authFirstName =
-  document.getElementById("authFirstName");
-
 
 /* =========================
    STATE
@@ -75,7 +74,19 @@ const HYPE_SHARE_TEXT =
   "Check HYPE – meine Trainingsplanung für Hybrid Athletes.";
 
 const HYPE_SHARE_URL =
-  window.location.href;
+  window.location.origin +
+  window.location.pathname;
+
+
+/* =========================
+   SESSION STORAGE KEYS
+========================= */
+
+const GATE_INSTAGRAM_KEY =
+  "hype_registration_instagram";
+
+const GATE_SHARE_KEY =
+  "hype_registration_share";
 
 
 /* =========================
@@ -86,6 +97,24 @@ function getRegistrationGate() {
 
   return document.getElementById(
     "registrationGate"
+  );
+
+}
+
+
+function getFirstNameField() {
+
+  return document.getElementById(
+    "authFirstNameField"
+  );
+
+}
+
+
+function getFirstNameInput() {
+
+  return document.getElementById(
+    "authFirstName"
   );
 
 }
@@ -124,34 +153,268 @@ function clearAuthMessage() {
 }
 
 
+function saveGateProgress() {
+
+  try {
+
+    sessionStorage.setItem(
+      GATE_INSTAGRAM_KEY,
+      instagramCompleted
+        ? "true"
+        : "false"
+    );
+
+    sessionStorage.setItem(
+      GATE_SHARE_KEY,
+      shareCompleted
+        ? "true"
+        : "false"
+    );
+
+  } catch (error) {
+
+    console.warn(
+      "HYPE sessionStorage unavailable:",
+      error
+    );
+
+  }
+
+}
+
+
+function loadGateProgress() {
+
+  try {
+
+    instagramCompleted =
+      sessionStorage.getItem(
+        GATE_INSTAGRAM_KEY
+      ) === "true";
+
+    shareCompleted =
+      sessionStorage.getItem(
+        GATE_SHARE_KEY
+      ) === "true";
+
+  } catch (error) {
+
+    instagramCompleted = false;
+    shareCompleted = false;
+
+  }
+
+}
+
+
+function clearGateProgress() {
+
+  instagramCompleted =
+    false;
+
+  shareCompleted =
+    false;
+
+  try {
+
+    sessionStorage.removeItem(
+      GATE_INSTAGRAM_KEY
+    );
+
+    sessionStorage.removeItem(
+      GATE_SHARE_KEY
+    );
+
+  } catch (error) {
+
+    console.warn(
+      "HYPE sessionStorage unavailable:",
+      error
+    );
+
+  }
+
+}
+
+
 /* =========================
    FIRST NAME FIELD
 ========================= */
 
+function ensureFirstNameField() {
+
+  let field =
+    getFirstNameField();
+
+  let input =
+    getFirstNameInput();
+
+
+  if (
+    field &&
+    input
+  ) {
+
+    return {
+      field,
+      input
+    };
+
+  }
+
+
+  if (!authForm) {
+
+    return {
+      field: null,
+      input: null
+    };
+
+  }
+
+
+  /*
+   * Wir erzeugen das Feld automatisch,
+   * falls es im HTML noch nicht existiert.
+   */
+
+  field =
+    document.createElement(
+      "label"
+    );
+
+  field.id =
+    "authFirstNameField";
+
+  field.className =
+    "auth-first-name-field hidden";
+
+
+  const labelText =
+    document.createElement(
+      "span"
+    );
+
+  labelText.textContent =
+    "Vorname";
+
+
+  input =
+    document.createElement(
+      "input"
+    );
+
+  input.type =
+    "text";
+
+  input.id =
+    "authFirstName";
+
+  input.name =
+    "first_name";
+
+  input.placeholder =
+    "z. B. Tano";
+
+  input.autocomplete =
+    "given-name";
+
+  input.maxLength =
+    40;
+
+
+  field.appendChild(
+    labelText
+  );
+
+  field.appendChild(
+    input
+  );
+
+
+  /*
+   * Vorname vor das E-Mail-Feld setzen.
+   */
+
+  const emailContainer =
+    authEmail?.closest("label") ||
+    authEmail?.parentElement;
+
+
+  if (emailContainer) {
+
+    authForm.insertBefore(
+      field,
+      emailContainer
+    );
+
+  } else {
+
+    authForm.prepend(
+      field
+    );
+
+  }
+
+
+  return {
+    field,
+    input
+  };
+
+}
+
+
 function updateFirstNameField() {
 
-  if (!authFirstNameField) {
+  const {
+    field,
+    input
+  } =
+    ensureFirstNameField();
+
+
+  if (!field || !input) {
     return;
   }
+
 
   if (isRegisterMode) {
 
-    authFirstNameField.classList.remove(
+    if (
+      instagramCompleted &&
+      shareCompleted
+    ) {
+
+      field.classList.remove(
+        "hidden"
+      );
+
+      input.required =
+        true;
+
+      return;
+
+    }
+
+
+    field.classList.add(
       "hidden"
     );
 
-    authFirstName.required =
-      true;
+    input.required =
+      false;
 
     return;
 
   }
 
-  authFirstNameField.classList.add(
+
+  field.classList.add(
     "hidden"
   );
 
-  authFirstName.required =
+  input.required =
     false;
 
 }
@@ -159,11 +422,14 @@ function updateFirstNameField() {
 
 function getFirstName() {
 
-  if (!authFirstName) {
+  const input =
+    getFirstNameInput();
+
+  if (!input) {
     return "";
   }
 
-  return authFirstName.value.trim();
+  return input.value.trim();
 
 }
 
@@ -173,6 +439,11 @@ function getFirstName() {
 ========================= */
 
 function renderRegistrationGate() {
+
+  if (!authForm) {
+    return;
+  }
+
 
   if (!isRegisterMode) {
 
@@ -208,16 +479,35 @@ function renderRegistrationGate() {
       "registration-gate";
 
 
-    /*
-     * Wichtig:
-     * Das Gate steht VOR dem
-     * Vorname-Feld.
-     */
+    const firstNameField =
+      getFirstNameField();
 
-    authForm.insertBefore(
-      gate,
-      authFirstNameField
-    );
+    const emailContainer =
+      authEmail?.closest("label") ||
+      authEmail?.parentElement;
+
+
+    if (firstNameField) {
+
+      authForm.insertBefore(
+        gate,
+        firstNameField
+      );
+
+    } else if (emailContainer) {
+
+      authForm.insertBefore(
+        gate,
+        emailContainer
+      );
+
+    } else {
+
+      authForm.prepend(
+        gate
+      );
+
+    }
 
   }
 
@@ -340,6 +630,18 @@ function renderRegistrationGate() {
 
     </div>
 
+
+    ${
+      instagramCompleted &&
+      shareCompleted
+        ? `
+          <div class="registration-ready">
+            ✓ Perfekt. Jetzt kannst du deinen HYPE-Account erstellen.
+          </div>
+        `
+        : ""
+    }
+
   `;
 
 
@@ -385,9 +687,16 @@ function attachRegistrationGateEvents() {
         instagramCompleted =
           true;
 
+        saveGateProgress();
+
         clearAuthMessage();
 
         renderRegistrationGate();
+
+        showAuthMessage(
+          "Perfekt. Jetzt kannst du HYPE mit jemandem teilen.",
+          "success"
+        );
 
       }
     );
@@ -411,6 +720,10 @@ function attachRegistrationGateEvents() {
 
         try {
 
+          /*
+           * Native Share Sheet
+           */
+
           if (
             navigator.share
           ) {
@@ -430,7 +743,7 @@ function attachRegistrationGateEvents() {
 
 
             showAuthMessage(
-              "Perfekt – HYPE wurde geteilt. Bestätige den Schritt noch einmal.",
+              "Perfekt – HYPE wurde über die Teilen-Funktion geöffnet. Bestätige jetzt den Schritt.",
               "success"
             );
 
@@ -438,6 +751,10 @@ function attachRegistrationGateEvents() {
 
           }
 
+
+          /*
+           * Clipboard Fallback
+           */
 
           if (
             navigator.clipboard &&
@@ -459,17 +776,31 @@ function attachRegistrationGateEvents() {
           }
 
 
+          /*
+           * Letzter Fallback
+           */
+
           showAuthMessage(
-            "Bitte kopiere den HYPE-Link manuell und teile ihn mit jemandem.",
-            "error"
+            `Bitte teile diesen Link mit jemandem: ${HYPE_SHARE_URL}`,
+            "success"
           );
 
         } catch (error) {
+
+          /*
+           * User hat das native Share Sheet
+           * geschlossen.
+           */
 
           if (
             error?.name ===
             "AbortError"
           ) {
+
+            showAuthMessage(
+              "Teilen abgebrochen. Du kannst es jederzeit erneut versuchen.",
+              "error"
+            );
 
             return;
 
@@ -483,7 +814,7 @@ function attachRegistrationGateEvents() {
 
 
           showAuthMessage(
-            "Das Teilen konnte nicht geöffnet werden.",
+            "Das Teilen konnte nicht geöffnet werden. Du kannst den Link trotzdem kopieren und manuell teilen.",
             "error"
           );
 
@@ -509,9 +840,15 @@ function attachRegistrationGateEvents() {
         shareCompleted =
           true;
 
+        saveGateProgress();
+
         clearAuthMessage();
 
         renderRegistrationGate();
+
+        updateFirstNameField();
+
+        updateRegistrationSubmitState();
 
         showAuthMessage(
           "Perfekt – jetzt kannst du deinen HYPE-Account erstellen.",
@@ -559,21 +896,6 @@ function updateRegistrationSubmitState() {
 
 
 /* =========================
-   RESET REGISTRATION
-========================= */
-
-function resetRegistrationProgress() {
-
-  instagramCompleted =
-    false;
-
-  shareCompleted =
-    false;
-
-}
-
-
-/* =========================
    AUTH MODE
 ========================= */
 
@@ -582,11 +904,18 @@ function updateAuthMode() {
   clearAuthMessage();
 
 
-  authSubtitle.innerHTML = `
-    Deine Trainingsplanung.<br>
-    Dein Account.<br>
-    Dein HYPE.
-  `;
+  if (authSubtitle) {
+
+    authSubtitle.innerHTML = `
+      Deine Trainingsplanung.<br>
+      Dein Account.<br>
+      Dein HYPE.
+    `;
+
+  }
+
+
+  ensureFirstNameField();
 
 
   if (isRegisterMode) {
@@ -680,6 +1009,11 @@ function updateAuthMode() {
 function setAuthLoading(
   loading
 ) {
+
+  if (!authForm) {
+    return;
+  }
+
 
   authForm.classList.toggle(
     "auth-loading",
@@ -787,6 +1121,14 @@ async function signIn() {
 
 async function signUp() {
 
+  /*
+   * Sicherheits-/UX-Gate.
+   * Wichtig:
+   * Diese beiden Schritte können im Browser
+   * nicht technisch verifiziert werden.
+   * Sie werden vom Nutzer bestätigt.
+   */
+
   if (
     !instagramCompleted ||
     !shareCompleted
@@ -821,7 +1163,22 @@ async function signUp() {
       "error"
     );
 
-    authFirstName.focus();
+    const input =
+      getFirstNameInput();
+
+    input?.focus();
+
+    return;
+
+  }
+
+
+  if (firstName.length > 40) {
+
+    showAuthMessage(
+      "Der Vorname darf maximal 40 Zeichen haben.",
+      "error"
+    );
 
     return;
 
@@ -903,10 +1260,17 @@ async function signUp() {
   }
 
 
+  /*
+   * Falls Supabase direkt eine Session erzeugt,
+   * ist der Account sofort eingeloggt.
+   */
+
   if (
     data &&
     data.session
   ) {
+
+    clearGateProgress();
 
     showApp();
 
@@ -915,18 +1279,21 @@ async function signUp() {
   }
 
 
-  showAuthMessage(
-    "Account erstellt. Bitte bestätige deine E-Mail-Adresse.",
-    "success"
-  );
+  /*
+   * Falls E-Mail-Bestätigung aktiviert ist.
+   */
 
-
-  resetRegistrationProgress();
+  clearGateProgress();
 
   isRegisterMode =
     false;
 
   updateAuthMode();
+
+  showAuthMessage(
+    "Account erstellt. Bitte bestätige deine E-Mail-Adresse. Danach kannst du dich einloggen.",
+    "success"
+  );
 
 }
 
@@ -1008,10 +1375,6 @@ async function updateProfileFirstName(
 
 }
 
-
-/*
- * Für app.js verfügbar machen.
- */
 
 window.updateProfileFirstName =
   updateProfileFirstName;
@@ -1109,6 +1472,17 @@ function getAuthErrorMessage(
   }
 
 
+  if (
+    message.includes(
+      "rate limit"
+    )
+  ) {
+
+    return "Zu viele Versuche. Bitte kurz warten und erneut versuchen.";
+
+  }
+
+
   return (
     error?.message ||
     "Es ist ein Fehler aufgetreten."
@@ -1154,6 +1528,18 @@ function showApp() {
 
   }
 
+
+  /*
+   * app.js bekommt ein klares Signal,
+   * dass der Auth-Status fertig ist.
+   */
+
+  window.dispatchEvent(
+    new CustomEvent(
+      "hype-auth-ready"
+    )
+  );
+
 }
 
 
@@ -1195,11 +1581,12 @@ function showLogin() {
   }
 
 
-  authForm.reset();
+  if (authForm) {
+    authForm.reset();
+  }
 
 
-  resetRegistrationProgress();
-
+  clearGateProgress();
 
   isRegisterMode =
     false;
@@ -1253,86 +1640,112 @@ window.logout =
    FORM SUBMIT
 ========================= */
 
-authForm.addEventListener(
-  "submit",
-  async event => {
+if (authForm) {
 
-    event.preventDefault();
+  authForm.addEventListener(
+    "submit",
+    async event => {
+
+      event.preventDefault();
 
 
-    if (isRegisterMode) {
+      if (isRegisterMode) {
 
-      await signUp();
+        await signUp();
 
-      return;
+        return;
+
+      }
+
+
+      await signIn();
 
     }
+  );
 
-
-    await signIn();
-
-  }
-);
+}
 
 
 /* =========================
    LOGIN / REGISTER SWITCH
 ========================= */
 
-authSwitch.addEventListener(
-  "click",
-  event => {
+if (authSwitch) {
 
-    event.preventDefault();
-    event.stopPropagation();
+  authSwitch.addEventListener(
+    "click",
+    event => {
+
+      event.preventDefault();
+      event.stopPropagation();
 
 
-    if (authSwitch.disabled) {
-      return;
+      if (authSwitch.disabled) {
+        return;
+      }
+
+
+      isRegisterMode =
+        !isRegisterMode;
+
+
+      if (authPassword) {
+
+        authPassword.value =
+          "";
+
+      }
+
+
+      if (isRegisterMode) {
+
+        /*
+         * Bei jedem bewussten Wechsel
+         * in die Registrierung beginnen
+         * wir das Gate sauber neu.
+         */
+
+        loadGateProgress();
+
+      } else {
+
+        clearAuthMessage();
+
+      }
+
+
+      updateAuthMode();
+
+
+      setTimeout(
+        () => {
+
+          if (
+            isRegisterMode &&
+            instagramCompleted &&
+            shareCompleted
+          ) {
+
+            const firstNameInput =
+              getFirstNameInput();
+
+            firstNameInput?.focus();
+
+            return;
+
+          }
+
+
+          authEmail?.focus();
+
+        },
+        50
+      );
+
     }
+  );
 
-
-    isRegisterMode =
-      !isRegisterMode;
-
-
-    authPassword.value =
-      "";
-
-
-    if (isRegisterMode) {
-
-      resetRegistrationProgress();
-
-    }
-
-
-    updateAuthMode();
-
-
-    setTimeout(
-      () => {
-
-        if (
-          isRegisterMode &&
-          authFirstName
-        ) {
-
-          authFirstName.focus();
-
-          return;
-
-        }
-
-
-        authEmail.focus();
-
-      },
-      50
-    );
-
-  }
-);
+}
 
 
 /* =========================
@@ -1346,7 +1759,15 @@ supabaseClient.auth.onAuthStateChange(
 
       showApp();
 
-    } else {
+      return;
+
+    }
+
+
+    if (
+      event === "SIGNED_OUT" ||
+      event === "INITIAL_SESSION"
+    ) {
 
       showLogin();
 
@@ -1404,6 +1825,10 @@ async function initAuth() {
 /* =========================
    START
 ========================= */
+
+ensureFirstNameField();
+
+loadGateProgress();
 
 updateAuthMode();
 
