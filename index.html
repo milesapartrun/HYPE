@@ -92,6 +92,29 @@
           ></div>
 
 
+          <!--
+            Wird nur bei Registrierung
+            von auth.js eingeblendet.
+          -->
+
+          <label
+            id="authFirstNameField"
+            class="auth-first-name-field hidden"
+          >
+
+            Vorname
+
+            <input
+              id="authFirstName"
+              type="text"
+              autocomplete="given-name"
+              placeholder="z. B. Tano"
+              maxlength="40"
+            >
+
+          </label>
+
+
           <label>
 
             E-Mail
@@ -137,6 +160,7 @@
             class="auth-switch"
             type="button"
           >
+
             <span>
               Noch keinen Account?
             </span>
@@ -144,6 +168,7 @@
             <span>
               → Jetzt registrieren
             </span>
+
           </button>
 
         </form>
@@ -465,8 +490,13 @@
 
     <section
       id="profileView"
-      class="view hidden"
+      class="view hidden profile-view"
     >
+
+
+      <!-- =========================
+           PROFILE HEADER
+      ========================== -->
 
       <div class="profile-header">
 
@@ -487,14 +517,63 @@
 
 
       <!-- =========================
+           ACCOUNT
+      ========================== -->
+
+      <section class="profile-card profile-account-card">
+
+        <div class="profile-card-head">
+
+          <div class="profile-card-title">
+
+            <div class="eyebrow">
+              ACCOUNT
+            </div>
+
+            <h3 id="profileName">
+              Athlete
+            </h3>
+
+          </div>
+
+          <div
+            class="profile-card-icon"
+            aria-hidden="true"
+          >
+            ●
+          </div>
+
+        </div>
+
+
+        <div
+          id="profileEmail"
+          class="profile-email"
+        >
+          —
+        </div>
+
+
+        <button
+          id="editProfileBtn"
+          class="secondary-action profile-edit-btn"
+          type="button"
+        >
+          Profil bearbeiten
+        </button>
+
+      </section>
+
+
+      <!-- =========================
            LAST WEEK SHARE
       ========================== -->
 
-      <section class="profile-section">
+      <section class="profile-card weekly-share-section">
 
-        <div class="profile-section-head">
+        <div class="profile-card-head">
 
-          <div>
+          <div class="profile-card-title">
 
             <div class="eyebrow">
               LETZTE WOCHE
@@ -504,6 +583,13 @@
               Deine Woche teilen
             </h3>
 
+          </div>
+
+          <div
+            class="profile-card-icon"
+            aria-hidden="true"
+          >
+            📸
           </div>
 
         </div>
@@ -518,6 +604,7 @@
             HYPE
           </div>
 
+
           <div
             id="weeklyShareName"
             class="weekly-share-name"
@@ -525,10 +612,12 @@
             Deine Woche
           </div>
 
+
           <div
             id="weeklyShareDays"
             class="weekly-share-days"
           ></div>
+
 
           <div
             id="weeklyShareSummary"
@@ -553,11 +642,11 @@
            RECOMMEND HYPE
       ========================== -->
 
-      <section class="profile-section recommend-section">
+      <section class="profile-card recommend-section">
 
-        <div class="profile-section-head">
+        <div class="profile-card-head">
 
-          <div>
+          <div class="profile-card-title">
 
             <div class="eyebrow">
               HYPE WEITEREMPFEHLEN
@@ -568,6 +657,13 @@
               genauso wie du?
             </h3>
 
+          </div>
+
+          <div
+            class="profile-card-icon"
+            aria-hidden="true"
+          >
+            🚀
           </div>
 
         </div>
@@ -582,7 +678,7 @@
 
         <button
           id="shareHypeProfileBtn"
-          class="secondary-share-btn"
+          class="secondary-action profile-share-hype"
           type="button"
         >
           🚀 HYPE weiterempfehlen
@@ -592,14 +688,14 @@
 
 
       <!-- =========================
-           LOGOUT
+           ACCOUNT ACTIONS
       ========================== -->
 
-      <section class="profile-section profile-account-section">
+      <section class="profile-card profile-account-actions">
 
         <button
           id="logoutBtn"
-          class="profile-logout-btn"
+          class="profile-logout"
           type="button"
         >
           Ausloggen
@@ -709,6 +805,77 @@
     </button>
 
   </nav>
+
+
+  <!-- =========================
+       PROFILE EDIT DIALOG
+  ========================== -->
+
+  <dialog id="profileDialog">
+
+    <form id="profileForm">
+
+      <div class="dialog-head">
+
+        <div>
+
+          <div class="eyebrow">
+            PROFIL
+          </div>
+
+          <h3>
+            Dein Profil
+          </h3>
+
+        </div>
+
+
+        <button
+          type="button"
+          class="close"
+          id="closeProfileDialogBtn"
+          aria-label="Schließen"
+        >
+          ×
+        </button>
+
+      </div>
+
+
+      <label>
+
+        Vorname
+
+        <input
+          id="profileFirstNameInput"
+          type="text"
+          autocomplete="given-name"
+          placeholder="z. B. Tano"
+          maxlength="40"
+          required
+        >
+
+      </label>
+
+
+      <div
+        id="profileEmailEdit"
+        class="profile-dialog-email"
+      >
+        —
+      </div>
+
+
+      <button
+        type="submit"
+        class="primary full"
+      >
+        Profil speichern
+      </button>
+
+    </form>
+
+  </dialog>
 
 
   <!-- =========================
