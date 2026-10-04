@@ -646,6 +646,8 @@ function renderSessions() {
 
           <div class="session-actions">
 
+            <!-- TRAINING ABHAKEN -->
+
             <button
               class="complete-btn ${
                 s.completed
@@ -668,20 +670,25 @@ function renderSessions() {
             </button>
 
 
+            <!-- BEARBEITEN -->
+
             <button
               class="edit-btn"
               data-id="${s.id}"
               type="button"
+              aria-label="Training bearbeiten"
             >
-              Bearbeiten
+              ✎&nbsp; Bearbeiten
             </button>
 
+
+            <!-- LÖSCHEN -->
 
             <button
               class="icon-btn delete"
               data-id="${s.id}"
               type="button"
-              aria-label="Löschen"
+              aria-label="Training löschen"
             >
               ×
             </button>
@@ -790,6 +797,30 @@ function renderSessions() {
 
           const id =
             this.dataset.id;
+
+
+          const session =
+            sessions.find(
+              s =>
+                String(s.id) ===
+                String(id)
+            );
+
+
+          if (!session) {
+            return;
+          }
+
+
+          const confirmed =
+            window.confirm(
+              `Möchtest du diese Einheit wirklich löschen?\n\n${session.title}`
+            );
+
+
+          if (!confirmed) {
+            return;
+          }
 
 
           sessions =
@@ -1121,11 +1152,6 @@ document.getElementById(
         "notes"
       ).value.trim();
 
-
-    /*
-      Browser-seitige Prüfung.
-      Ohne Titel wird nichts gespeichert.
-    */
 
     if (!title) {
 
