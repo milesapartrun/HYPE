@@ -1,6 +1,5 @@
 const KEY = "hype_sessions_v1";
 
-
 const sportMeta = {
 
   running: {
@@ -47,7 +46,6 @@ const sportMeta = {
 
 };
 
-
 /* =========================
    STATE
 ========================= */
@@ -78,7 +76,6 @@ overviewDate.setHours(
   0
 );
 
-
 /* =========================
    DOM
 ========================= */
@@ -92,13 +89,11 @@ const overviewView =
 const todayView =
   document.getElementById("todayView");
 
-
 const weekTitle =
   document.getElementById("weekTitle");
 
 const heroYear =
   document.getElementById("heroYear");
-
 
 const weekPrevBtn =
   document.getElementById("weekPrevBtn");
@@ -106,10 +101,8 @@ const weekPrevBtn =
 const weekNextBtn =
   document.getElementById("weekNextBtn");
 
-
 const todayJumpBtn =
   document.getElementById("todayJumpBtn");
-
 
 const weekStrip =
   document.getElementById("weekStrip");
@@ -129,7 +122,6 @@ const addTrainingBtn =
 const calendarExportBtn =
   document.getElementById("calendarExportBtn");
 
-
 const overviewContent =
   document.getElementById("overviewContent");
 
@@ -145,13 +137,11 @@ const periodNextBtn =
 const periodTodayBtn =
   document.getElementById("periodTodayBtn");
 
-
 const todayTitle =
   document.getElementById("todayTitle");
 
 const todayContent =
   document.getElementById("todayContent");
-
 
 const trainingDialog =
   document.getElementById("trainingDialog");
@@ -159,13 +149,11 @@ const trainingDialog =
 const trainingForm =
   document.getElementById("trainingForm");
 
-
 const dialogTitle =
   document.getElementById("dialogTitle");
 
 const closeDialogBtn =
   document.getElementById("closeDialogBtn");
-
 
 const sportInput =
   document.getElementById("sportInput");
@@ -182,7 +170,6 @@ const intensityInput =
 const notesInput =
   document.getElementById("notesInput");
 
-
 /* =========================
    HELPERS
 ========================= */
@@ -194,7 +181,6 @@ function pad(value) {
 
 }
 
-
 function iso(date) {
 
   return [
@@ -204,7 +190,6 @@ function iso(date) {
   ].join("-");
 
 }
-
 
 function parseDate(value) {
 
@@ -227,7 +212,6 @@ function parseDate(value) {
   );
 
 }
-
 
 function startOfWeek(date) {
 
@@ -256,7 +240,6 @@ function startOfWeek(date) {
 
 }
 
-
 function endOfWeek(date) {
 
   const d =
@@ -270,7 +253,6 @@ function endOfWeek(date) {
 
 }
 
-
 function addDays(date, amount) {
 
   const d =
@@ -283,7 +265,6 @@ function addDays(date, amount) {
   return d;
 
 }
-
 
 function addMonths(date, amount) {
 
@@ -299,7 +280,6 @@ function addMonths(date, amount) {
   return d;
 
 }
-
 
 function addYears(date, amount) {
 
@@ -318,7 +298,6 @@ function addYears(date, amount) {
 
 }
 
-
 function esc(value) {
 
   return String(value ?? "")
@@ -329,7 +308,6 @@ function esc(value) {
     .replace(/'/g, "&#039;");
 
 }
-
 
 function formatLongDate(date) {
 
@@ -344,7 +322,6 @@ function formatLongDate(date) {
 
 }
 
-
 function formatShortDate(date) {
 
   return new Intl.DateTimeFormat(
@@ -356,7 +333,6 @@ function formatShortDate(date) {
   ).format(date);
 
 }
-
 
 function formatMonthYear(date) {
 
@@ -370,7 +346,6 @@ function formatMonthYear(date) {
 
 }
 
-
 function isToday(date) {
 
   return (
@@ -379,7 +354,6 @@ function isToday(date) {
   );
 
 }
-
 
 function isFutureDate(dateString) {
 
@@ -407,7 +381,6 @@ function isFutureDate(dateString) {
 
 }
 
-
 function getFutureMessage(dateString) {
 
   const date =
@@ -429,7 +402,6 @@ function getFutureMessage(dateString) {
   return `Diese Einheit kommt erst am ${formatLongDate(date)}. Du kannst sie noch nicht abhaken.`;
 
 }
-
 
 /* =========================
    STORAGE
@@ -485,7 +457,6 @@ function loadSessions() {
 
 }
 
-
 function save() {
 
   localStorage.setItem(
@@ -494,7 +465,6 @@ function save() {
   );
 
 }
-
 
 /* =========================
    SESSION QUERIES
@@ -514,7 +484,6 @@ function sessionsForDate(dateString) {
     );
 
 }
-
 
 function sessionsForWeek(date) {
 
@@ -537,7 +506,6 @@ function sessionsForWeek(date) {
   );
 
 }
-
 
 function sessionsForMonth(date) {
 
@@ -563,7 +531,6 @@ function sessionsForMonth(date) {
 
 }
 
-
 function sessionsForYear(year) {
 
   return sessions.filter(
@@ -575,7 +542,6 @@ function sessionsForYear(year) {
 
 }
 
-
 /* =========================
    CALENDAR EXPORT
 ========================= */
@@ -584,19 +550,10 @@ function sessionsForYear(year) {
  * Erstellt eine .ics-Datei für
  * die aktuell geöffnete HYPE-Woche.
  *
- * Auf iPhone/iPad wird die Datei
- * bevorzugt über die native Teilen-
- * funktion von iOS übergeben.
- *
- * Dadurch kann anschließend
- * "Kalender" ausgewählt werden.
- *
- * Fallback:
- * Wenn die Datei-Freigabe nicht
- * unterstützt wird, wird die
- * .ics-Datei normal heruntergeladen.
+ * Die Trainings werden als
+ * ganztägige Kalendereinträge
+ * exportiert.
  */
-
 
 function calendarEscape(value) {
 
@@ -608,7 +565,6 @@ function calendarEscape(value) {
 
 }
 
-
 function calendarDate(date) {
 
   return [
@@ -618,7 +574,6 @@ function calendarDate(date) {
   ].join("");
 
 }
-
 
 function calendarDateTimeUTC(date) {
 
@@ -635,8 +590,7 @@ function calendarDateTimeUTC(date) {
 
 }
 
-
-function buildCalendarContent() {
+function createCalendarFile() {
 
   const weekStart =
     startOfWeek(selected);
@@ -646,7 +600,6 @@ function buildCalendarContent() {
       weekStart,
       7
     );
-
 
   const weekSessions =
     sessions.filter(
@@ -671,19 +624,20 @@ function buildCalendarContent() {
       }
     );
 
-
   if (!weekSessions.length) {
 
-    return null;
+    alert(
+      "Für diese Woche sind noch keine Trainings geplant."
+    );
+
+    return;
 
   }
-
 
   const dtStamp =
     calendarDateTimeUTC(
       new Date()
     );
-
 
   const events =
     weekSessions.map(
@@ -695,10 +649,8 @@ function buildCalendarContent() {
           ] ||
           sportMeta.running;
 
-
         const title =
           `${meta.label} · ${session.title}`;
-
 
         let description =
           [
@@ -708,7 +660,6 @@ function buildCalendarContent() {
             `Intensität: ${session.intensity || 0}/5`
           ].join("\n");
 
-
         if (session.notes) {
 
           description +=
@@ -716,12 +667,10 @@ function buildCalendarContent() {
 
         }
 
-
         const start =
           parseDate(
             session.date
           );
-
 
         const end =
           addDays(
@@ -729,10 +678,8 @@ function buildCalendarContent() {
             1
           );
 
-
         const uid =
           `hype-${session.id}@hype`;
-
 
         return [
           "BEGIN:VEVENT",
@@ -748,194 +695,58 @@ function buildCalendarContent() {
       }
     );
 
-
-  return [
-    "BEGIN:VCALENDAR",
-    "VERSION:2.0",
-    "PRODID:-//HYPE//Training Planner//DE",
-    "CALSCALE:GREGORIAN",
-    "METHOD:PUBLISH",
-    ...events,
-    "END:VCALENDAR"
-  ].join("\r\n");
-
-}
-
-
-/*
- * Kalender öffnen
- */
-
-async function createCalendarFile() {
-
   const calendar =
-    buildCalendarContent();
+    [
+      "BEGIN:VCALENDAR",
+      "VERSION:2.0",
+      "PRODID:-//HYPE//Training Planner//DE",
+      "CALSCALE:GREGORIAN",
+      "METHOD:PUBLISH",
+      ...events,
+      "END:VCALENDAR"
+    ].join("\r\n");
 
-
-  if (!calendar) {
-
-    alert(
-      "Für diese Woche sind noch keine Trainings geplant."
+  const blob =
+    new Blob(
+      [calendar],
+      {
+        type:
+          "text/calendar;charset=utf-8"
+      }
     );
 
-    return;
+  const url =
+    URL.createObjectURL(blob);
 
-  }
+  const link =
+    document.createElement("a");
 
+  link.href =
+    url;
 
-  const weekStart =
-    startOfWeek(selected);
-
-
-  const fileName =
+  link.download =
     `HYPE-${calendarDate(weekStart)}.ics`;
 
+  document.body.appendChild(
+    link
+  );
 
-  /*
-   * iOS / moderne Browser:
-   *
-   * Die .ics-Datei wird direkt
-   * an die native Teilen-Funktion
-   * übergeben.
-   */
+  link.click();
 
-  try {
+  link.remove();
 
-    const file =
-      new File(
-        [calendar],
-        fileName,
-        {
-          type:
-            "text/calendar"
-        }
+  setTimeout(
+    () => {
+
+      URL.revokeObjectURL(
+        url
       );
 
-
-    if (
-      navigator.share &&
-      navigator.canShare &&
-      navigator.canShare({
-        files: [file]
-      })
-    ) {
-
-      await navigator.share({
-
-        files: [file],
-
-        title:
-          "HYPE Trainingsplan",
-
-        text:
-          `Trainingsplan ${formatShortDate(
-            weekStart
-          )} – ${formatShortDate(
-            endOfWeek(selected)
-          )}`
-
-      });
-
-
-      return;
-
-    }
-
-  } catch (error) {
-
-    /*
-     * Wenn der Nutzer das Teilen-Menü
-     * abbricht, soll keine Fehlermeldung
-     * erscheinen.
-     */
-
-    if (
-      error &&
-      error.name ===
-        "AbortError"
-    ) {
-
-      return;
-
-    }
-
-    console.warn(
-      "Native calendar sharing unavailable:",
-      error
-    );
-
-  }
-
-
-  /*
-   * Fallback für Browser ohne
-   * native Datei-Freigabe.
-   */
-
-  try {
-
-    const blob =
-      new Blob(
-        [calendar],
-        {
-          type:
-            "text/calendar;charset=utf-8"
-        }
-      );
-
-
-    const url =
-      URL.createObjectURL(blob);
-
-
-    const link =
-      document.createElement("a");
-
-
-    link.href =
-      url;
-
-    link.download =
-      fileName;
-
-
-    document.body.appendChild(
-      link
-    );
-
-
-    link.click();
-
-
-    link.remove();
-
-
-    setTimeout(
-      () => {
-
-        URL.revokeObjectURL(
-          url
-        );
-
-      },
-      1000
-    );
-
-  } catch (error) {
-
-    console.error(
-      "Calendar export failed:",
-      error
-    );
-
-    alert(
-      "Der Kalender konnte nicht geöffnet werden."
-    );
-
-  }
+    },
+    1000
+  );
 
 }
-
 
 /* =========================
    PLAN VIEW
@@ -949,7 +760,6 @@ function renderPlan() {
   const end =
     endOfWeek(selected);
 
-
   const startText =
     new Intl.DateTimeFormat(
       "de-DE",
@@ -958,7 +768,6 @@ function renderPlan() {
         month: "short"
       }
     ).format(start);
-
 
   const endText =
     new Intl.DateTimeFormat(
@@ -969,20 +778,16 @@ function renderPlan() {
       }
     ).format(end);
 
-
   weekTitle.textContent =
     `${startText} – ${endText}`;
 
-
   heroYear.textContent =
     start.getFullYear();
-
 
   const weekEyebrow =
     document.querySelector(
       ".week-navigation .eyebrow"
     );
-
 
   if (weekEyebrow) {
 
@@ -999,20 +804,16 @@ function renderPlan() {
 
   }
 
-
   renderWeekStrip();
-
 
   selectedDateLabel.textContent =
     formatLongDate(selected);
-
 
   renderSelectedDay();
 
   renderWeeklyInsight();
 
 }
-
 
 /* =========================
    WEEK STRIP
@@ -1025,7 +826,6 @@ function renderWeekStrip() {
   const start =
     startOfWeek(selected);
 
-
   const dayNames = [
     "Mo",
     "Di",
@@ -1035,7 +835,6 @@ function renderWeekStrip() {
     "Sa",
     "So"
   ];
-
 
   for (
     let i = 0;
@@ -1054,7 +853,6 @@ function renderWeekStrip() {
         dateString
       );
 
-
     const button =
       document.createElement(
         "button"
@@ -1072,12 +870,10 @@ function renderWeekStrip() {
     button.type =
       "button";
 
-
     const todayLabel =
       isToday(date)
         ? `<span class="today-label">HEUTE</span>`
         : `<span class="today-label">&nbsp;</span>`;
-
 
     button.innerHTML = `
       ${dayNames[i]}
@@ -1095,7 +891,6 @@ function renderWeekStrip() {
       }
     `;
 
-
     button.addEventListener(
       "click",
       () => {
@@ -1108,7 +903,6 @@ function renderWeekStrip() {
       }
     );
 
-
     weekStrip.appendChild(
       button
     );
@@ -1116,7 +910,6 @@ function renderWeekStrip() {
   }
 
 }
-
 
 /* =========================
    SELECTED DAY
@@ -1128,7 +921,6 @@ function renderSelectedDay() {
     sessionsForDate(
       iso(selected)
     );
-
 
   if (!list.length) {
 
@@ -1142,19 +934,16 @@ function renderSelectedDay() {
 
   }
 
-
   sessionsEl.innerHTML =
     list
       .map(renderSessionCard)
       .join("");
-
 
   attachSessionEvents(
     sessionsEl
   );
 
 }
-
 
 /* =========================
    SESSION CARD
@@ -1165,7 +954,6 @@ function renderSessionCard(session) {
   const meta =
     sportMeta[session.sport] ||
     sportMeta.running;
-
 
   const dots =
     Array.from({
@@ -1182,7 +970,6 @@ function renderSessionCard(session) {
       )
       .join("");
 
-
   const actualOptions = [
     [0, "entspannend"],
     [1, "sehr leicht"],
@@ -1191,7 +978,6 @@ function renderSessionCard(session) {
     [4, "hart"],
     [5, "sehr hart"]
   ];
-
 
   const actualSelect =
     actualOptions
@@ -1214,7 +1000,6 @@ function renderSessionCard(session) {
       )
       .join("");
 
-
   return `
     <article
       class="session ${
@@ -1228,7 +1013,6 @@ function renderSessionCard(session) {
       <div class="sport-icon">
         ${meta.icon}
       </div>
-
 
       <div class="session-content">
 
@@ -1250,17 +1034,14 @@ function renderSessionCard(session) {
 
         </div>
 
-
         <p>
           ${meta.label}
           · ${esc(session.duration)} min
         </p>
 
-
         <p>
           ${dots}
         </p>
-
 
         ${
           session.notes
@@ -1271,7 +1052,6 @@ function renderSessionCard(session) {
             `
             : ""
         }
-
 
         ${
           session.completed
@@ -1290,7 +1070,6 @@ function renderSessionCard(session) {
                 </select>
 
               </div>
-
 
               <div class="post-training-notes">
 
@@ -1315,7 +1094,6 @@ function renderSessionCard(session) {
 
       </div>
 
-
       <div class="session-actions">
 
         <button
@@ -1339,7 +1117,6 @@ function renderSessionCard(session) {
           }
         </button>
 
-
         <button
           type="button"
           class="edit-btn"
@@ -1347,7 +1124,6 @@ function renderSessionCard(session) {
         >
           ✎ Bearbeiten
         </button>
-
 
         <button
           type="button"
@@ -1364,7 +1140,6 @@ function renderSessionCard(session) {
 
 }
 
-
 /* =========================
    SESSION EVENTS
 ========================= */
@@ -1378,48 +1153,40 @@ function attachSessionEvents(container) {
       const id =
         card.dataset.id;
 
-
       const session =
         sessions.find(
           item =>
             item.id === id
         );
 
-
       if (!session) {
         return;
       }
-
 
       const completeButton =
         card.querySelector(
           '[data-action="complete"]'
         );
 
-
       const editButton =
         card.querySelector(
           '[data-action="edit"]'
         );
-
 
       const deleteButton =
         card.querySelector(
           '[data-action="delete"]'
         );
 
-
       const actualIntensity =
         card.querySelector(
           '[data-action="actual-intensity"]'
         );
 
-
       const postNotes =
         card.querySelector(
           '[data-action="post-notes"]'
         );
-
 
       completeButton.addEventListener(
         "click",
@@ -1442,10 +1209,8 @@ function attachSessionEvents(container) {
 
           }
 
-
           session.completed =
             !session.completed;
-
 
           if (!session.completed) {
 
@@ -1457,14 +1222,12 @@ function attachSessionEvents(container) {
 
           }
 
-
           save();
 
           renderAll();
 
         }
       );
-
 
       editButton.addEventListener(
         "click",
@@ -1477,7 +1240,6 @@ function attachSessionEvents(container) {
         }
       );
 
-
       deleteButton.addEventListener(
         "click",
         () => {
@@ -1488,11 +1250,9 @@ function attachSessionEvents(container) {
               session.title
             );
 
-
           if (!confirmed) {
             return;
           }
-
 
           sessions =
             sessions.filter(
@@ -1500,14 +1260,12 @@ function attachSessionEvents(container) {
                 item.id !== id
             );
 
-
           save();
 
           renderAll();
 
         }
       );
-
 
       if (actualIntensity) {
 
@@ -1526,7 +1284,6 @@ function attachSessionEvents(container) {
         );
 
       }
-
 
       if (postNotes) {
 
@@ -1548,7 +1305,6 @@ function attachSessionEvents(container) {
 
 }
 
-
 /* =========================
    WEEKLY INSIGHT
 ========================= */
@@ -1560,17 +1316,14 @@ function renderWeeklyInsight() {
       selected
     );
 
-
   const completed =
     weekSessions.filter(
       session =>
         session.completed
     ).length;
 
-
   const planned =
     weekSessions.length;
-
 
   if (!planned) {
 
@@ -1597,14 +1350,11 @@ function renderWeeklyInsight() {
 
   }
 
-
   const remaining =
     planned - completed;
 
-
   let text =
     `${completed} von ${planned} Einheiten erledigt.`;
-
 
   if (remaining > 0) {
 
@@ -1621,7 +1371,6 @@ function renderWeeklyInsight() {
       " Stark – deine Woche ist komplett.";
 
   }
-
 
   weeklyInsight.innerHTML = `
     <div class="insight-icon">
@@ -1643,7 +1392,6 @@ function renderWeeklyInsight() {
 
 }
 
-
 /* =========================
    OVERVIEW
 ========================= */
@@ -1654,7 +1402,6 @@ function renderOverview() {
 
   renderPeriodNavigation();
 
-
   if (
     overviewPeriod ===
     "week"
@@ -1664,7 +1411,6 @@ function renderOverview() {
 
   }
 
-
   if (
     overviewPeriod ===
     "month"
@@ -1673,7 +1419,6 @@ function renderOverview() {
     renderOverviewMonth();
 
   }
-
 
   if (
     overviewPeriod ===
@@ -1685,7 +1430,6 @@ function renderOverview() {
   }
 
 }
-
 
 function renderPeriodButtons() {
 
@@ -1702,7 +1446,6 @@ function renderPeriodButtons() {
     });
 
 }
-
 
 function renderPeriodNavigation() {
 
@@ -1721,7 +1464,6 @@ function renderPeriodNavigation() {
         overviewDate
       );
 
-
     const startText =
       new Intl.DateTimeFormat(
         "de-DE",
@@ -1730,7 +1472,6 @@ function renderPeriodNavigation() {
           month: "short"
         }
       ).format(start);
-
 
     const endText =
       new Intl.DateTimeFormat(
@@ -1741,14 +1482,12 @@ function renderPeriodNavigation() {
         }
       ).format(end);
 
-
     periodTitle.textContent =
       `${startText} – ${endText} ${start.getFullYear()}`;
 
     return;
 
   }
-
 
   if (
     overviewPeriod ===
@@ -1764,12 +1503,10 @@ function renderPeriodNavigation() {
 
   }
 
-
   periodTitle.textContent =
     overviewDate.getFullYear();
 
 }
-
 
 /* =========================
    OVERVIEW WEEK
@@ -1782,10 +1519,8 @@ function renderOverviewWeek() {
       overviewDate
     );
 
-
   let html =
     `<div class="overview-week">`;
-
 
   for (
     let i = 0;
@@ -1799,23 +1534,19 @@ function renderOverviewWeek() {
         i
       );
 
-
     const dateString =
       iso(date);
-
 
     const daySessions =
       sessionsForDate(
         dateString
       );
 
-
     const completed =
       daySessions.filter(
         session =>
           session.completed
       ).length;
-
 
     html += `
       <section
@@ -1853,7 +1584,6 @@ function renderOverviewWeek() {
 
           </div>
 
-
           <span
             class="overview-day-status ${
               daySessions.length &&
@@ -1872,10 +1602,8 @@ function renderOverviewWeek() {
 
         </div>
 
-
         <div class="overview-day-sessions">
     `;
-
 
     if (!daySessions.length) {
 
@@ -1896,7 +1624,6 @@ function renderOverviewWeek() {
             ] ||
             sportMeta.running;
 
-
           html += `
             <div
               class="overview-mini-session"
@@ -1908,7 +1635,6 @@ function renderOverviewWeek() {
               <div class="mini-icon">
                 ${meta.icon}
               </div>
-
 
               <div>
 
@@ -1926,7 +1652,6 @@ function renderOverviewWeek() {
                 </div>
 
               </div>
-
 
               <div
                 class="mini-status ${
@@ -1950,7 +1675,6 @@ function renderOverviewWeek() {
 
     }
 
-
     html += `
         </div>
 
@@ -1959,20 +1683,16 @@ function renderOverviewWeek() {
 
   }
 
-
   html += `
     </div>
   `;
 
-
   overviewContent.innerHTML =
     html;
-
 
   attachOverviewDayNavigation();
 
 }
-
 
 /* =========================
    OVERVIEW DAY NAVIGATION
@@ -1989,7 +1709,6 @@ function attachOverviewDayNavigation() {
 
         const dateString =
           dayElement.dataset.date;
-
 
         const openDay =
           () => {
@@ -2008,7 +1727,6 @@ function attachOverviewDayNavigation() {
 
           };
 
-
         dayElement.addEventListener(
           "click",
           event => {
@@ -2019,7 +1737,6 @@ function attachOverviewDayNavigation() {
 
           }
         );
-
 
         dayElement.addEventListener(
           "keydown",
@@ -2046,7 +1763,6 @@ function attachOverviewDayNavigation() {
 
 }
 
-
 /* =========================
    OVERVIEW MONTH
 ========================= */
@@ -2059,7 +1775,6 @@ function renderOverviewMonth() {
   const month =
     overviewDate.getMonth();
 
-
   const firstDay =
     new Date(
       year,
@@ -2067,7 +1782,6 @@ function renderOverviewMonth() {
       1,
       12
     );
-
 
   const lastDay =
     new Date(
@@ -2077,16 +1791,13 @@ function renderOverviewMonth() {
       12
     );
 
-
   const mondayOffset =
     firstDay.getDay() === 0
       ? 6
       : firstDay.getDay() - 1;
 
-
   const daysInMonth =
     lastDay.getDate();
-
 
   let html = `
     <div class="month-calendar">
@@ -2106,7 +1817,6 @@ function renderOverviewMonth() {
       <div class="month-grid">
   `;
 
-
   for (
     let i = 0;
     i < mondayOffset;
@@ -2123,7 +1833,6 @@ function renderOverviewMonth() {
         12
       );
 
-
     html +=
       renderMonthCell(
         previousDate,
@@ -2131,7 +1840,6 @@ function renderOverviewMonth() {
       );
 
   }
-
 
   for (
     let day = 1;
@@ -2147,7 +1855,6 @@ function renderOverviewMonth() {
         12
       );
 
-
     html +=
       renderMonthCell(
         date,
@@ -2156,18 +1863,15 @@ function renderOverviewMonth() {
 
   }
 
-
   const usedCells =
     mondayOffset +
     daysInMonth;
-
 
   const remaining =
     (
       7 -
       (usedCells % 7)
     ) % 7;
-
 
   for (
     let i = 1;
@@ -2183,7 +1887,6 @@ function renderOverviewMonth() {
         12
       );
 
-
     html +=
       renderMonthCell(
         nextDate,
@@ -2192,21 +1895,17 @@ function renderOverviewMonth() {
 
   }
 
-
   html += `
       </div>
     </div>
   `;
 
-
   overviewContent.innerHTML =
     html;
-
 
   attachMonthWeekNavigation();
 
 }
-
 
 function renderMonthCell(
   date,
@@ -2216,12 +1915,10 @@ function renderMonthCell(
   const dateString =
     iso(date);
 
-
   const daySessions =
     sessionsForDate(
       dateString
     );
-
 
   const completed =
     daySessions.filter(
@@ -2229,9 +1926,7 @@ function renderMonthCell(
         session.completed
     ).length;
 
-
   let dots = "";
-
 
   daySessions
     .slice(0, 5)
@@ -2250,7 +1945,6 @@ function renderMonthCell(
 
       }
     );
-
 
   return `
     <div
@@ -2289,7 +1983,6 @@ function renderMonthCell(
 
 }
 
-
 /* =========================
    MONTH WEEK NAVIGATION
 ========================= */
@@ -2301,11 +1994,9 @@ function attachMonthWeekNavigation() {
       ".month-grid"
     );
 
-
   if (!grid) {
     return;
   }
-
 
   const cells =
     Array.from(
@@ -2313,7 +2004,6 @@ function attachMonthWeekNavigation() {
         ".month-cell"
       )
     );
-
 
   for (
     let i = 0;
@@ -2327,18 +2017,15 @@ function attachMonthWeekNavigation() {
         i + 7
       );
 
-
     if (!weekCells.length) {
       continue;
     }
-
 
     const firstDate =
       parseDate(
         weekCells[0]
           .dataset.date
       );
-
 
     const lastDate =
       parseDate(
@@ -2347,20 +2034,16 @@ function attachMonthWeekNavigation() {
         ].dataset.date
       );
 
-
     const weekButton =
       document.createElement(
         "button"
       );
 
-
     weekButton.type =
       "button";
 
-
     weekButton.className =
       "month-week-hit-area";
-
 
     weekButton.setAttribute(
       "aria-label",
@@ -2371,29 +2054,23 @@ function attachMonthWeekNavigation() {
       )} öffnen`
     );
 
-
     const firstRect =
       weekCells[0]
         .getBoundingClientRect();
-
 
     const lastRect =
       weekCells[
         weekCells.length - 1
       ].getBoundingClientRect();
 
-
     const gridRect =
       grid.getBoundingClientRect();
-
 
     weekButton.style.top =
       `${firstRect.top - gridRect.top}px`;
 
-
     weekButton.style.height =
       `${lastRect.bottom - firstRect.top}px`;
-
 
     weekButton.addEventListener(
       "click",
@@ -2401,22 +2078,18 @@ function attachMonthWeekNavigation() {
 
         event.preventDefault();
 
-
         overviewDate =
           startOfWeek(
             firstDate
           );
 
-
         overviewPeriod =
           "week";
-
 
         renderOverview();
 
       }
     );
-
 
     grid.appendChild(
       weekButton
@@ -2425,7 +2098,6 @@ function attachMonthWeekNavigation() {
   }
 
 }
-
 
 /* =========================
    OVERVIEW YEAR
@@ -2436,12 +2108,10 @@ function renderOverviewYear() {
   const year =
     overviewDate.getFullYear();
 
-
   const yearSessions =
     sessionsForYear(
       year
     );
-
 
   const completed =
     yearSessions.filter(
@@ -2449,10 +2119,8 @@ function renderOverviewYear() {
         session.completed
     ).length;
 
-
   const planned =
     yearSessions.length;
-
 
   const trainingDays =
     new Set(
@@ -2461,7 +2129,6 @@ function renderOverviewYear() {
           session.date
       )
     ).size;
-
 
   let html = `
     <div class="year-overview">
@@ -2485,10 +2152,8 @@ function renderOverviewYear() {
 
       </div>
 
-
       <div class="year-months">
   `;
-
 
   for (
     let month = 0;
@@ -2504,21 +2169,17 @@ function renderOverviewYear() {
 
   }
 
-
   html += `
       </div>
     </div>
   `;
 
-
   overviewContent.innerHTML =
     html;
-
 
   attachYearMonthNavigation();
 
 }
-
 
 function renderYearMonth(
   year,
@@ -2533,7 +2194,6 @@ function renderYearMonth(
       12
     );
 
-
   const daysInMonth =
     new Date(
       year,
@@ -2542,12 +2202,10 @@ function renderYearMonth(
       12
     ).getDate();
 
-
   const mondayOffset =
     firstDay.getDay() === 0
       ? 6
       : firstDay.getDay() - 1;
-
 
   const monthSessions =
     sessions.filter(
@@ -2558,7 +2216,6 @@ function renderYearMonth(
             session.date
           );
 
-
         return (
           date.getFullYear() ===
             year &&
@@ -2568,7 +2225,6 @@ function renderYearMonth(
 
       }
     );
-
 
   let html = `
     <button
@@ -2591,7 +2247,6 @@ function renderYearMonth(
           }
         </span>
 
-
         <span class="year-month-count">
 
           ${monthSessions.length}
@@ -2606,7 +2261,6 @@ function renderYearMonth(
 
       </div>
 
-
       <div class="year-month-grid">
 
         <div class="year-weekday">M</div>
@@ -2617,7 +2271,6 @@ function renderYearMonth(
         <div class="year-weekday">S</div>
         <div class="year-weekday">S</div>
   `;
-
 
   for (
     let i = 0;
@@ -2630,7 +2283,6 @@ function renderYearMonth(
     `;
 
   }
-
 
   for (
     let day = 1;
@@ -2646,20 +2298,16 @@ function renderYearMonth(
         12
       );
 
-
     const dateString =
       iso(date);
-
 
     const daySessions =
       sessionsForDate(
         dateString
       );
 
-
     const hasTraining =
       daySessions.length > 0;
-
 
     const allCompleted =
       hasTraining &&
@@ -2667,7 +2315,6 @@ function renderYearMonth(
         session =>
           session.completed
       );
-
 
     html += `
       <div
@@ -2689,17 +2336,14 @@ function renderYearMonth(
 
   }
 
-
   html += `
       </div>
     </button>
   `;
 
-
   return html;
 
 }
-
 
 function attachYearMonthNavigation() {
 
@@ -2719,12 +2363,10 @@ function attachYearMonthNavigation() {
                 monthButton.dataset.year
               );
 
-
             const month =
               Number(
                 monthButton.dataset.month
               );
-
 
             overviewDate =
               new Date(
@@ -2734,10 +2376,8 @@ function attachYearMonthNavigation() {
                 12
               );
 
-
             overviewPeriod =
               "month";
-
 
             renderOverview();
 
@@ -2749,7 +2389,6 @@ function attachYearMonthNavigation() {
 
 }
 
-
 /* =========================
    TODAY VIEW
 ========================= */
@@ -2759,18 +2398,15 @@ function renderToday() {
   const today =
     new Date();
 
-
   todayTitle.textContent =
     formatLongDate(
       today
     );
 
-
   const todaySessions =
     sessionsForDate(
       iso(today)
     );
-
 
   if (!todaySessions.length) {
 
@@ -2797,7 +2433,6 @@ function renderToday() {
       </div>
     `;
 
-
     document
       .getElementById(
         "todayAddBtn"
@@ -2808,11 +2443,9 @@ function renderToday() {
           openNewDialog()
       );
 
-
     return;
 
   }
-
 
   todayContent.innerHTML = `
     <div class="today-session-list">
@@ -2826,13 +2459,11 @@ function renderToday() {
     </div>
   `;
 
-
   attachSessionEvents(
     todayContent
   );
 
 }
-
 
 /* =========================
    VIEW SWITCHING
@@ -2843,24 +2474,20 @@ function setView(view) {
   currentView =
     view;
 
-
   planView.classList.toggle(
     "hidden",
     view !== "plan"
   );
-
 
   overviewView.classList.toggle(
     "hidden",
     view !== "overview"
   );
 
-
   todayView.classList.toggle(
     "hidden",
     view !== "today"
   );
-
 
   document
     .querySelectorAll(
@@ -2878,7 +2505,6 @@ function setView(view) {
       }
     );
 
-
   if (
     view ===
     "plan"
@@ -2888,7 +2514,6 @@ function setView(view) {
 
   }
 
-
   if (
     view ===
     "overview"
@@ -2897,7 +2522,6 @@ function setView(view) {
     renderOverview();
 
   }
-
 
   if (
     view ===
@@ -2910,7 +2534,6 @@ function setView(view) {
 
 }
 
-
 /* =========================
    DIALOG
 ========================= */
@@ -2920,31 +2543,23 @@ function openNewDialog() {
   editingId =
     null;
 
-
   dialogTitle.textContent =
     "Training hinzufügen";
 
-
   trainingForm.reset();
-
 
   sportInput.value =
     "running";
 
-
   durationInput.value =
     45;
-
 
   intensityInput.value =
     3;
 
-
   updateTitlePlaceholder();
 
-
   trainingDialog.showModal();
-
 
   setTimeout(
     () => {
@@ -2954,7 +2569,6 @@ function openNewDialog() {
   );
 
 }
-
 
 function openEditDialog(
   session
@@ -2963,36 +2577,27 @@ function openEditDialog(
   editingId =
     session.id;
 
-
   dialogTitle.textContent =
     "Training bearbeiten";
-
 
   sportInput.value =
     session.sport;
 
-
   titleInput.value =
     session.title;
-
 
   durationInput.value =
     session.duration;
 
-
   intensityInput.value =
     session.intensity;
-
 
   notesInput.value =
     session.notes || "";
 
-
   updateTitlePlaceholder();
 
-
   trainingDialog.showModal();
-
 
   setTimeout(
     () => {
@@ -3002,7 +2607,6 @@ function openEditDialog(
   );
 
 }
-
 
 function closeDialog() {
 
@@ -3013,7 +2617,6 @@ function closeDialog() {
 
 }
 
-
 function updateTitlePlaceholder() {
 
   const meta =
@@ -3022,12 +2625,10 @@ function updateTitlePlaceholder() {
     ] ||
     sportMeta.running;
 
-
   titleInput.placeholder =
     meta.placeholder;
 
 }
-
 
 /* =========================
    FORM
@@ -3039,35 +2640,28 @@ trainingForm.addEventListener(
 
     event.preventDefault();
 
-
     const sport =
       sportInput.value;
 
-
     const title =
       titleInput.value.trim();
-
 
     const duration =
       Number(
         durationInput.value
       );
 
-
     const intensity =
       Number(
         intensityInput.value
       );
 
-
     const notes =
       notesInput.value.trim();
-
 
     if (!title) {
       return;
     }
-
 
     if (
       !duration ||
@@ -3078,7 +2672,6 @@ trainingForm.addEventListener(
 
     }
 
-
     if (editingId) {
 
       const session =
@@ -3087,7 +2680,6 @@ trainingForm.addEventListener(
             item.id ===
             editingId
         );
-
 
       if (session) {
 
@@ -3146,7 +2738,6 @@ trainingForm.addEventListener(
 
     }
 
-
     save();
 
     closeDialog();
@@ -3156,18 +2747,15 @@ trainingForm.addEventListener(
   }
 );
 
-
 sportInput.addEventListener(
   "change",
   updateTitlePlaceholder
 );
 
-
 closeDialogBtn.addEventListener(
   "click",
   closeDialog
 );
-
 
 trainingDialog.addEventListener(
   "click",
@@ -3184,7 +2772,6 @@ trainingDialog.addEventListener(
 
   }
 );
-
 
 /* =========================
    NAVIGATION
@@ -3211,7 +2798,6 @@ document
     }
   );
 
-
 /* =========================
    WEEK NAVIGATION
 ========================= */
@@ -3231,7 +2817,6 @@ weekPrevBtn.addEventListener(
   }
 );
 
-
 weekNextBtn.addEventListener(
   "click",
   () => {
@@ -3246,7 +2831,6 @@ weekNextBtn.addEventListener(
 
   }
 );
-
 
 /* =========================
    TODAY JUMP
@@ -3270,7 +2854,6 @@ todayJumpBtn.addEventListener(
 
   }
 );
-
 
 /* =========================
    OVERVIEW PERIOD BUTTONS
@@ -3298,7 +2881,6 @@ document
     }
   );
 
-
 /* =========================
    OVERVIEW PERIOD NAVIGATION
 ========================= */
@@ -3320,7 +2902,6 @@ periodPrevBtn.addEventListener(
 
     }
 
-
     if (
       overviewPeriod ===
       "month"
@@ -3333,7 +2914,6 @@ periodPrevBtn.addEventListener(
         );
 
     }
-
 
     if (
       overviewPeriod ===
@@ -3348,12 +2928,10 @@ periodPrevBtn.addEventListener(
 
     }
 
-
     renderOverview();
 
   }
 );
-
 
 periodNextBtn.addEventListener(
   "click",
@@ -3372,7 +2950,6 @@ periodNextBtn.addEventListener(
 
     }
 
-
     if (
       overviewPeriod ===
       "month"
@@ -3385,7 +2962,6 @@ periodNextBtn.addEventListener(
         );
 
     }
-
 
     if (
       overviewPeriod ===
@@ -3400,12 +2976,10 @@ periodNextBtn.addEventListener(
 
     }
 
-
     renderOverview();
 
   }
 );
-
 
 periodTodayBtn.addEventListener(
   "click",
@@ -3426,7 +3000,6 @@ periodTodayBtn.addEventListener(
   }
 );
 
-
 /* =========================
    ADD TRAINING
 ========================= */
@@ -3439,7 +3012,6 @@ addTrainingBtn.addEventListener(
 
   }
 );
-
 
 /* =========================
    CALENDAR BUTTON
@@ -3454,7 +3026,6 @@ if (calendarExportBtn) {
 
 }
 
-
 /* =========================
    GLOBAL RENDER
 ========================= */
@@ -3462,7 +3033,6 @@ if (calendarExportBtn) {
 function renderAll() {
 
   renderPlan();
-
 
   if (
     currentView ===
@@ -3472,7 +3042,6 @@ function renderAll() {
     renderOverview();
 
   }
-
 
   if (
     currentView ===
@@ -3484,7 +3053,6 @@ function renderAll() {
   }
 
 }
-
 
 /* =========================
    PWA
@@ -3516,7 +3084,6 @@ if (
   );
 
 }
-
 
 /* =========================
    INITIAL RENDER
