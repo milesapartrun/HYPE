@@ -226,13 +226,6 @@ function formatMonthYear(date) {
 }
 
 
-function formatMonth(date) {
-  return new Intl.DateTimeFormat("de-DE", {
-    month: "long"
-  }).format(date);
-}
-
-
 function isToday(date) {
   return iso(date) === iso(new Date());
 }
@@ -257,11 +250,6 @@ function getFutureMessage(dateString) {
   }
 
   return `Diese Einheit kommt erst am ${formatLongDate(date)}. Du kannst sie noch nicht abhaken.`;
-}
-
-
-function escapeForAttribute(value) {
-  return esc(value).replace(/\n/g, " ");
 }
 
 
@@ -364,7 +352,6 @@ function sessionsForYear(year) {
 
 function renderPlan() {
   const start = startOfWeek(selected);
-
   const end = endOfWeek(selected);
 
   const startText = new Intl.DateTimeFormat("de-DE", {
@@ -382,7 +369,6 @@ function renderPlan() {
 
   heroYear.textContent =
     start.getFullYear();
-
 
   renderWeekStrip();
 
@@ -449,7 +435,6 @@ function renderWeekStrip() {
 
     button.addEventListener("click", () => {
       selected = date;
-
       renderPlan();
     });
 
@@ -523,7 +508,6 @@ function renderSessionCard(session) {
     })
     .join("");
 
-
   return `
     <article
       class="session ${session.completed ? "completed" : ""}"
@@ -533,7 +517,6 @@ function renderSessionCard(session) {
       <div class="sport-icon">
         ${meta.icon}
       </div>
-
 
       <div class="session-content">
 
@@ -549,24 +532,20 @@ function renderSessionCard(session) {
 
         </div>
 
-
         <p>
           ${meta.label}
           · ${esc(session.duration)} min
         </p>
 
-
         <p>
           ${dots}
         </p>
-
 
         ${
           session.notes
             ? `<p>${esc(session.notes)}</p>`
             : ""
         }
-
 
         ${
           session.completed
@@ -583,7 +562,6 @@ function renderSessionCard(session) {
                 </select>
 
               </div>
-
 
               <div class="post-training-notes">
 
@@ -604,7 +582,6 @@ function renderSessionCard(session) {
         }
 
       </div>
-
 
       <div class="session-actions">
 
@@ -629,7 +606,6 @@ function renderSessionCard(session) {
           }
         </button>
 
-
         <button
           type="button"
           class="edit-btn"
@@ -637,7 +613,6 @@ function renderSessionCard(session) {
         >
           ✎ Bearbeiten
         </button>
-
 
         <button
           type="button"
@@ -671,7 +646,6 @@ function attachSessionEvents(container) {
       if (!session) {
         return;
       }
-
 
       const completeButton =
         card.querySelector(
@@ -731,9 +705,7 @@ function attachSessionEvents(container) {
       editButton.addEventListener(
         "click",
         () => {
-
           openEditDialog(session);
-
         }
       );
 
@@ -773,7 +745,6 @@ function attachSessionEvents(container) {
               Number(actualIntensity.value);
 
             save();
-
           }
         );
       }
@@ -788,7 +759,6 @@ function attachSessionEvents(container) {
               postNotes.value;
 
             save();
-
           }
         );
       }
@@ -830,10 +800,8 @@ function renderWeeklyInsight() {
     return;
   }
 
-
   const remaining =
     planned - completed;
-
 
   let text =
     `${completed} von ${planned} Einheiten erledigt.`;
@@ -847,7 +815,6 @@ function renderWeeklyInsight() {
   } else {
     text += " Stark – deine Woche ist komplett.";
   }
-
 
   weeklyInsight.innerHTML = `
     <div class="insight-icon">✦</div>
@@ -869,7 +836,6 @@ function renderWeeklyInsight() {
 
 function renderOverview() {
   renderPeriodButtons();
-
   renderPeriodNavigation();
 
   if (overviewPeriod === "week") {
@@ -924,7 +890,6 @@ function renderPeriodNavigation() {
     return;
   }
 
-
   if (overviewPeriod === "month") {
 
     periodTitle.textContent =
@@ -932,7 +897,6 @@ function renderPeriodNavigation() {
 
     return;
   }
-
 
   periodTitle.textContent =
     overviewDate.getFullYear();
@@ -949,7 +913,6 @@ function renderOverviewWeek() {
 
   let html =
     `<div class="overview-week">`;
-
 
   for (let i = 0; i < 7; i++) {
 
@@ -1085,14 +1048,12 @@ function renderOverviewWeek() {
 
       </section>
     `;
-
   }
 
 
   html += `
     </div>
   `;
-
 
   overviewContent.innerHTML = html;
 }
@@ -1125,7 +1086,6 @@ function renderOverviewMonth() {
       12
     );
 
-
   const mondayOffset =
     firstDay.getDay() === 0
       ? 6
@@ -1154,6 +1114,9 @@ function renderOverviewMonth() {
   `;
 
 
+  /*
+   * Leere Felder vor dem Monat
+   */
   for (let i = 0; i < mondayOffset; i++) {
 
     const previousDate =
@@ -1171,6 +1134,9 @@ function renderOverviewMonth() {
   }
 
 
+  /*
+   * Monatstage
+   */
   for (let day = 1; day <= daysInMonth; day++) {
 
     const date =
@@ -1188,6 +1154,9 @@ function renderOverviewMonth() {
   }
 
 
+  /*
+   * Restliche Felder
+   */
   const usedCells =
     mondayOffset + daysInMonth;
 
@@ -1219,6 +1188,11 @@ function renderOverviewMonth() {
 
 
   overviewContent.innerHTML = html;
+
+  /*
+   * Klick auf eine Kalenderwoche
+   */
+  attachMonthWeekNavigation();
 }
 
 
@@ -1264,6 +1238,7 @@ function renderMonthCell(date, otherMonth) {
           ? "today"
           : ""
       }"
+      data-date="${dateString}"
     >
 
       <div class="month-date">
@@ -1289,6 +1264,120 @@ function renderMonthCell(date, otherMonth) {
 }
 
 
+/*
+ * Wir machen die einzelnen Kalenderwochen
+ * als klickbare Bereiche.
+ *
+ * Dadurch ist es egal, ob man auf eine Zahl,
+ * einen freien Bereich oder einen Trainingspunkt
+ * dieser Woche klickt.
+ */
+function attachMonthWeekNavigation() {
+  const grid =
+    overviewContent.querySelector(".month-grid");
+
+  if (!grid) {
+    return;
+  }
+
+
+  const cells =
+    Array.from(
+      grid.querySelectorAll(".month-cell")
+    );
+
+
+  /*
+   * 7 Tage ergeben jeweils eine Woche.
+   */
+  for (let i = 0; i < cells.length; i += 7) {
+
+    const weekCells =
+      cells.slice(i, i + 7);
+
+    if (!weekCells.length) {
+      continue;
+    }
+
+
+    const firstDate =
+      parseDate(
+        weekCells[0].dataset.date
+      );
+
+
+    const lastDate =
+      parseDate(
+        weekCells[weekCells.length - 1]
+          .dataset.date
+      );
+
+
+    /*
+     * Unsichtbarer klickbarer Bereich
+     * über der kompletten Woche.
+     */
+    const weekButton =
+      document.createElement("button");
+
+    weekButton.type = "button";
+
+    weekButton.className =
+      "month-week-hit-area";
+
+    weekButton.setAttribute(
+      "aria-label",
+      `Woche vom ${formatShortDate(firstDate)} bis ${formatShortDate(lastDate)} öffnen`
+    );
+
+
+    /*
+     * Positionierung relativ zum Kalender.
+     */
+    const firstRect =
+      weekCells[0].getBoundingClientRect();
+
+    const lastRect =
+      weekCells[weekCells.length - 1]
+        .getBoundingClientRect();
+
+    const gridRect =
+      grid.getBoundingClientRect();
+
+
+    weekButton.style.top =
+      `${firstRect.top - gridRect.top}px`;
+
+    weekButton.style.height =
+      `${lastRect.bottom - firstRect.top}px`;
+
+
+    weekButton.addEventListener(
+      "click",
+      event => {
+
+        event.preventDefault();
+
+        /*
+         * Wir nehmen den Montag der angeklickten Woche.
+         */
+        overviewDate =
+          startOfWeek(firstDate);
+
+        overviewPeriod =
+          "week";
+
+        renderOverview();
+
+      }
+    );
+
+
+    grid.appendChild(weekButton);
+  }
+}
+
+
 /* =========================
    OVERVIEW YEAR
 ========================= */
@@ -1307,7 +1396,6 @@ function renderOverviewYear() {
 
   const planned =
     yearSessions.length;
-
 
   const trainingDays =
     new Set(
@@ -1362,6 +1450,11 @@ function renderOverviewYear() {
 
 
   overviewContent.innerHTML = html;
+
+  /*
+   * Monate klickbar machen
+   */
+  attachYearMonthNavigation();
 }
 
 
@@ -1381,7 +1474,6 @@ function renderYearMonth(year, month) {
       0,
       12
     ).getDate();
-
 
   const mondayOffset =
     firstDay.getDay() === 0
@@ -1404,7 +1496,12 @@ function renderYearMonth(year, month) {
 
 
   let html = `
-    <div class="year-month">
+    <button
+      type="button"
+      class="year-month"
+      data-year="${year}"
+      data-month="${month}"
+    >
 
       <div class="year-month-head">
 
@@ -1490,11 +1587,6 @@ function renderYearMonth(year, month) {
             ? "today"
             : ""
         }"
-        title="${
-          hasTraining
-            ? `${formatShortDate(date)} · ${daySessions.length} Training`
-            : formatShortDate(date)
-        }"
       ></div>
     `;
   }
@@ -1502,11 +1594,50 @@ function renderYearMonth(year, month) {
 
   html += `
       </div>
-    </div>
+    </button>
   `;
 
 
   return html;
+}
+
+
+function attachYearMonthNavigation() {
+  overviewContent
+    .querySelectorAll(".year-month")
+    .forEach(monthButton => {
+
+      monthButton.addEventListener(
+        "click",
+        () => {
+
+          const year =
+            Number(
+              monthButton.dataset.year
+            );
+
+          const month =
+            Number(
+              monthButton.dataset.month
+            );
+
+          overviewDate =
+            new Date(
+              year,
+              month,
+              1,
+              12
+            );
+
+          overviewPeriod =
+            "month";
+
+          renderOverview();
+
+        }
+      );
+
+    });
 }
 
 
@@ -1625,7 +1756,7 @@ function setView(view) {
    DIALOG
 ========================= */
 
-function openNewDialog(date = selected) {
+function openNewDialog() {
   editingId = null;
 
   dialogTitle.textContent =
@@ -1639,8 +1770,7 @@ function openNewDialog(date = selected) {
 
   intensityInput.value = 3;
 
-  titleInput.placeholder =
-    sportMeta.running.placeholder;
+  updateTitlePlaceholder();
 
   trainingDialog.showModal();
 
@@ -1708,7 +1838,6 @@ trainingForm.addEventListener(
 
     event.preventDefault();
 
-
     const sport =
       sportInput.value;
 
@@ -1728,7 +1857,6 @@ trainingForm.addEventListener(
     if (!title) {
       return;
     }
-
 
     if (!duration || duration < 1) {
       return;
@@ -1979,7 +2107,7 @@ addTrainingBtn.addEventListener(
   "click",
   () => {
 
-    openNewDialog(selected);
+    openNewDialog();
 
   }
 );
