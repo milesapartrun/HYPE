@@ -33,7 +33,137 @@
 
 <body>
 
-  <main class="app">
+
+  <!-- =========================
+       AUTH SCREEN
+  ========================== -->
+
+  <section
+    id="authScreen"
+    class="auth-screen"
+  >
+
+    <div class="auth-container">
+
+      <div class="auth-card">
+
+        <div class="auth-brand">
+
+          <div class="eyebrow">
+            ATHLETE PLANNER
+          </div>
+
+          <div class="brand-row auth-brand-row">
+
+            <h1>
+              HYPE
+            </h1>
+
+            <img
+              src="hype-symbol.png"
+              class="hype-logo"
+              alt=""
+              aria-hidden="true"
+            >
+
+          </div>
+
+          <div
+            id="authSubtitle"
+            class="auth-subtitle"
+          >
+            Deine Trainingsplanung.<br>
+            Dein Account.<br>
+            Dein HYPE.
+          </div>
+
+        </div>
+
+
+        <form
+          id="authForm"
+          class="auth-form"
+        >
+
+          <div
+            id="authMessage"
+            class="auth-message"
+            aria-live="polite"
+          ></div>
+
+
+          <label>
+
+            E-Mail
+
+            <input
+              id="authEmail"
+              type="email"
+              autocomplete="email"
+              placeholder="deine@email.de"
+              required
+            >
+
+          </label>
+
+
+          <label>
+
+            Passwort
+
+            <input
+              id="authPassword"
+              type="password"
+              autocomplete="current-password"
+              placeholder="••••••••"
+              minlength="6"
+              required
+            >
+
+          </label>
+
+
+          <button
+            id="authSubmit"
+            class="primary auth-submit"
+            type="submit"
+          >
+            Einloggen
+          </button>
+
+
+          <button
+            id="authSwitch"
+            class="auth-switch"
+            type="button"
+          >
+            <span>
+              Noch keinen Account?
+            </span>
+
+            <span>
+              → Jetzt registrieren
+            </span>
+          </button>
+
+        </form>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- =========================
+       APP
+  ========================== -->
+
+  <main
+    id="appContent"
+    class="app hidden"
+  >
+
 
     <!-- =========================
          HEADER
@@ -49,7 +179,9 @@
 
         <div class="brand-row">
 
-          <h1>HYPE</h1>
+          <h1>
+            HYPE
+          </h1>
 
           <img
             src="hype-symbol.png"
@@ -62,13 +194,16 @@
 
       </div>
 
+
       <div
         class="sport-markers"
         aria-hidden="true"
       >
+
         <span>🏃</span>
         <span>⚡</span>
         <span>🏋️</span>
+
       </div>
 
     </header>
@@ -295,9 +430,11 @@
           class="period-title-button"
           type="button"
         >
+
           <span id="periodTitle">
             Diese Woche
           </span>
+
         </button>
 
 
@@ -318,6 +455,157 @@
       <div
         id="overviewContent"
       ></div>
+
+    </section>
+
+
+    <!-- =========================
+         PROFILE VIEW
+    ========================== -->
+
+    <section
+      id="profileView"
+      class="view hidden"
+    >
+
+      <div class="profile-header">
+
+        <div class="eyebrow">
+          DEIN HYPE
+        </div>
+
+        <h2 id="profileGreeting">
+          Hallo 👋
+        </h2>
+
+        <p class="profile-intro">
+          Deine Woche. Dein Fortschritt.
+          Dein HYPE.
+        </p>
+
+      </div>
+
+
+      <!-- =========================
+           LAST WEEK SHARE
+      ========================== -->
+
+      <section class="profile-section">
+
+        <div class="profile-section-head">
+
+          <div>
+
+            <div class="eyebrow">
+              LETZTE WOCHE
+            </div>
+
+            <h3>
+              Deine Woche teilen
+            </h3>
+
+          </div>
+
+        </div>
+
+
+        <div
+          id="weeklyShareCard"
+          class="weekly-share-card"
+        >
+
+          <div class="weekly-share-brand">
+            HYPE
+          </div>
+
+          <div
+            id="weeklyShareName"
+            class="weekly-share-name"
+          >
+            Deine Woche
+          </div>
+
+          <div
+            id="weeklyShareDays"
+            class="weekly-share-days"
+          ></div>
+
+          <div
+            id="weeklyShareSummary"
+            class="weekly-share-summary"
+          ></div>
+
+        </div>
+
+
+        <button
+          id="shareWeekBtn"
+          class="primary full profile-share-btn"
+          type="button"
+        >
+          📸 Woche auf Instagram teilen
+        </button>
+
+      </section>
+
+
+      <!-- =========================
+           RECOMMEND HYPE
+      ========================== -->
+
+      <section class="profile-section recommend-section">
+
+        <div class="profile-section-head">
+
+          <div>
+
+            <div class="eyebrow">
+              HYPE WEITEREMPFEHLEN
+            </div>
+
+            <h3>
+              Trainiert jemand
+              genauso wie du?
+            </h3>
+
+          </div>
+
+        </div>
+
+
+        <p class="profile-description">
+          Schick HYPE an einen Freund,
+          Trainingspartner oder deine
+          Crew.
+        </p>
+
+
+        <button
+          id="shareHypeProfileBtn"
+          class="secondary-share-btn"
+          type="button"
+        >
+          🚀 HYPE weiterempfehlen
+        </button>
+
+      </section>
+
+
+      <!-- =========================
+           LOGOUT
+      ========================== -->
+
+      <section class="profile-section profile-account-section">
+
+        <button
+          id="logoutBtn"
+          class="profile-logout-btn"
+          type="button"
+        >
+          Ausloggen
+        </button>
+
+      </section>
 
     </section>
 
@@ -365,7 +653,10 @@
        BOTTOM NAVIGATION
   ========================== -->
 
-  <nav class="bottom-nav">
+  <nav
+    id="bottomNav"
+    class="bottom-nav hidden"
+  >
 
     <button
       class="nav-item active"
@@ -396,6 +687,23 @@
 
       <span>
         Übersicht
+      </span>
+
+    </button>
+
+
+    <button
+      class="nav-item"
+      data-view="profile"
+      type="button"
+    >
+
+      <span class="nav-icon">
+        ●
+      </span>
+
+      <span>
+        Profil
       </span>
 
     </button>
@@ -578,10 +886,24 @@
 
 
   <!-- =========================
+       SUPABASE
+  ========================== -->
+
+  <script
+    src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+  ></script>
+
+
+  <!-- =========================
        SCRIPTS
   ========================== -->
 
+  <script src="auth.js"></script>
+
+  <script src="calendar.js"></script>
+
   <script src="app.js"></script>
+
 
 </body>
 </html>
