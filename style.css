@@ -65,6 +65,25 @@ button {
   gap: 8px;
 }
 
+.sport-markers {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+
+  margin-top: 2px;
+
+  font-size: 17px;
+
+  opacity: .72;
+
+  filter: saturate(.8);
+}
+
+.sport-markers span {
+  display: block;
+  line-height: 1;
+}
+
 .eyebrow,
 .muted {
   font-size: 11px;
@@ -1064,7 +1083,6 @@ h2 {
 
   display: grid;
 
-  /* Nur noch Woche + Übersicht */
   grid-template-columns: repeat(2, 1fr);
 
   padding: 7px;
