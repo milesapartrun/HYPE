@@ -58,6 +58,8 @@ const authSubtitle =
 
 let isRegisterMode = false;
 
+let isResetMode = false;
+
 let instagramCompleted = false;
 
 let shareCompleted = false;
@@ -76,6 +78,16 @@ const HYPE_SHARE_TEXT =
 const HYPE_SHARE_URL =
   window.location.origin +
   window.location.pathname;
+
+const PASSWORD_RESET_REDIRECT =
+  window.location.origin +
+  window.location.pathname;
+
+const AVATAR_BUCKET =
+  "avatars";
+
+const MAX_AVATAR_SIZE =
+  5 * 1024 * 1024;
 
 
 /* =========================
@@ -273,11 +285,6 @@ function ensureFirstNameField() {
   }
 
 
-  /*
-   * Wir erzeugen das Feld automatisch,
-   * falls es im HTML noch nicht existiert.
-   */
-
   field =
     document.createElement(
       "label"
@@ -331,10 +338,6 @@ function ensureFirstNameField() {
     input
   );
 
-
-  /*
-   * Vorname vor das E-Mail-Feld setzen.
-   */
 
   const emailContainer =
     authEmail?.closest("label") ||
@@ -430,6 +433,663 @@ function getFirstName() {
   }
 
   return input.value.trim();
+
+}
+
+
+/* =========================
+   PASSWORD RESET UI
+========================= */
+
+function ensureForgotPasswordLink() {
+
+  if (!authForm || !authPassword) {
+    return;
+  }
+
+
+  let link =
+    document.getElementById(
+      "forgotPasswordLink"
+    );
+
+
+  if (link) {
+    return link;
+  }
+
+
+  link =
+    document.createElement(
+      "button"
+    );
+
+  link.type =
+    "button";
+
+  link.id =
+    "forgotPasswordLink";
+
+  link.textContent =
+    "Passwort vergessen?";
+
+
+  link.style.cssText = `
+    display:block;
+    width:100%;
+    margin:8px 0 0;
+    padding:4px 0;
+    border:0;
+    background:transparent;
+    color:#d7ff3f;
+    font-size:13px;
+    font-weight:800;
+    text-align:right;
+    cursor:pointer;
+  `;
+
+
+  authPassword.insertAdjacentElement(
+    "afterend",
+    link
+  );
+
+
+  link.addEventListener(
+    "click",
+    () => {
+
+      enterForgotPasswordMode();
+
+    }
+  );
+
+
+  return link;
+
+}
+
+
+function ensureResetConfirmField() {
+
+  if (!authForm) {
+    return null;
+  }
+
+
+  let field =
+    document.getElementById(
+      "authResetConfirmField"
+    );
+
+
+  if (field) {
+    return field;
+  }
+
+
+  field =
+    document.createElement(
+      "label"
+    );
+
+  field.id =
+    "authResetConfirmField";
+
+  field.className =
+    "auth-reset-confirm-field hidden";
+
+
+  const label =
+    document.createElement(
+      "span"
+    );
+
+  label.textContent =
+    "Passwort wiederholen";
+
+
+  const input =
+    document.createElement(
+      "input"
+    );
+
+  input.type =
+    "password";
+
+  input.id =
+    "authResetConfirm";
+
+  input.name =
+    "password_confirmation";
+
+  input.placeholder =
+    "Passwort wiederholen";
+
+  input.autocomplete =
+    "new-password";
+
+
+  field.appendChild(
+    label
+  );
+
+  field.appendChild(
+    input
+  );
+
+
+  authPassword.insertAdjacentElement(
+    "afterend",
+    field
+  );
+
+
+  return field;
+
+}
+
+
+function getResetConfirmInput() {
+
+  return document.getElementById(
+    "authResetConfirm"
+  );
+
+}
+
+
+function updateForgotPasswordLink() {
+
+  const link =
+    document.getElementById(
+      "forgotPasswordLink"
+    );
+
+
+  if (!link) {
+    return;
+  }
+
+
+  link.classList.toggle(
+    "hidden",
+    isRegisterMode ||
+    isResetMode
+  );
+
+}
+
+
+function enterForgotPasswordMode() {
+
+  isRegisterMode =
+    false;
+
+  isResetMode =
+    true;
+
+
+  clearAuthMessage();
+
+
+  const resetField =
+    ensureResetConfirmField();
+
+
+  if (resetField) {
+
+    resetField.classList.remove(
+      "hidden"
+    );
+
+  }
+
+
+  if (authEmail) {
+
+    authEmail.closest("label")?.classList.remove(
+      "hidden"
+    );
+
+    authEmail.required =
+      true;
+
+  }
+
+
+  if (authPassword) {
+
+    authPassword.value =
+      "";
+
+    authPassword.placeholder =
+      "Neues Passwort";
+
+    authPassword.autocomplete =
+      "new-password";
+
+    authPassword.required =
+      true;
+
+  }
+
+
+  if (authSubtitle) {
+
+    authSubtitle.innerHTML = `
+      Neues Passwort.<br>
+      Neuer Start.<br>
+      Dein HYPE.
+    `;
+
+  }
+
+
+  if (authSubmit) {
+
+    authSubmit.textContent =
+      "Passwort ändern";
+
+    authSubmit.disabled =
+      false;
+
+  }
+
+
+  if (authSwitch) {
+
+    authSwitch.disabled =
+      false;
+
+    authSwitch.innerHTML = `
+      <span style="
+        display:block;
+        color:#f5f6f7;
+        font-size:13px;
+        font-weight:800;
+        margin-bottom:4px;
+      ">
+        Doch nicht?
+      </span>
+
+      <span style="
+        display:block;
+        color:#d7ff3f;
+        font-size:13px;
+        font-weight:900;
+      ">
+        → Zurück zum Login
+      </span>
+    `;
+
+  }
+
+
+  getRegistrationGate()?.remove();
+
+  updateFirstNameField();
+
+  updateForgotPasswordLink();
+
+
+  setTimeout(
+    () => {
+
+      authPassword?.focus();
+
+    },
+    50
+  );
+
+}
+
+
+function enterResetRequestMode() {
+
+  isRegisterMode =
+    false;
+
+  isResetMode =
+    false;
+
+
+  clearAuthMessage();
+
+
+  if (authSubtitle) {
+
+    authSubtitle.innerHTML = `
+      Passwort vergessen?<br>
+      Wir schicken dir einen<br>
+      Link zum Zurücksetzen.
+    `;
+
+  }
+
+
+  if (authEmail) {
+
+    authEmail.value =
+      "";
+
+    authEmail.required =
+      true;
+
+    authEmail.focus();
+
+  }
+
+
+  if (authPassword) {
+
+    authPassword.value =
+      "";
+
+    authPassword.required =
+      false;
+
+  }
+
+
+  const resetField =
+    document.getElementById(
+      "authResetConfirmField"
+    );
+
+  resetField?.classList.add(
+    "hidden"
+  );
+
+
+  if (authSubmit) {
+
+    authSubmit.textContent =
+      "Reset-Link senden";
+
+    authSubmit.disabled =
+      false;
+
+  }
+
+
+  if (authSwitch) {
+
+    authSwitch.disabled =
+      false;
+
+    authSwitch.innerHTML = `
+      <span style="
+        display:block;
+        color:#f5f6f7;
+        font-size:13px;
+        font-weight:800;
+        margin-bottom:4px;
+      ">
+        Wieder eingefallen?
+      </span>
+
+      <span style="
+        display:block;
+        color:#d7ff3f;
+        font-size:13px;
+        font-weight:900;
+      ">
+        → Zurück zum Login
+      </span>
+    `;
+
+  }
+
+
+  getRegistrationGate()?.remove();
+
+  updateFirstNameField();
+
+  updateForgotPasswordLink();
+
+}
+
+
+function enterLoginMode() {
+
+  isRegisterMode =
+    false;
+
+  isResetMode =
+    false;
+
+
+  clearAuthMessage();
+
+
+  const resetField =
+    document.getElementById(
+      "authResetConfirmField"
+    );
+
+  resetField?.classList.add(
+    "hidden"
+  );
+
+
+  if (authEmail) {
+
+    authEmail.value =
+      "";
+
+    authEmail.required =
+      true;
+
+  }
+
+
+  if (authPassword) {
+
+    authPassword.value =
+      "";
+
+    authPassword.placeholder =
+      "";
+
+    authPassword.autocomplete =
+      "current-password";
+
+    authPassword.required =
+      true;
+
+  }
+
+
+  updateAuthMode();
+
+  updateForgotPasswordLink();
+
+}
+
+
+async function requestPasswordReset() {
+
+  const email =
+    authEmail?.value.trim();
+
+
+  if (!email) {
+
+    showAuthMessage(
+      "Bitte gib zuerst deine E-Mail-Adresse ein.",
+      "error"
+    );
+
+    authEmail?.focus();
+
+    return;
+
+  }
+
+
+  setAuthLoading(true);
+
+  clearAuthMessage();
+
+
+  const {
+    error
+  } =
+    await supabaseClient.auth.resetPasswordForEmail(
+      email,
+      {
+        redirectTo:
+          PASSWORD_RESET_REDIRECT
+      }
+    );
+
+
+  setAuthLoading(false);
+
+
+  if (error) {
+
+    console.error(
+      "HYPE password reset request error:",
+      error
+    );
+
+
+    showAuthMessage(
+      getAuthErrorMessage(error),
+      "error"
+    );
+
+    return;
+
+  }
+
+
+  showAuthMessage(
+    "Reset-Link gesendet. Prüfe jetzt deine E-Mails.",
+    "success"
+  );
+
+}
+
+
+async function updatePassword() {
+
+  const password =
+    authPassword?.value || "";
+
+  const confirm =
+    getResetConfirmInput()?.value || "";
+
+
+  if (!password) {
+
+    showAuthMessage(
+      "Bitte gib ein neues Passwort ein.",
+      "error"
+    );
+
+    authPassword?.focus();
+
+    return;
+
+  }
+
+
+  if (password.length < 6) {
+
+    showAuthMessage(
+      "Das Passwort muss mindestens 6 Zeichen haben.",
+      "error"
+    );
+
+    return;
+
+  }
+
+
+  if (password !== confirm) {
+
+    showAuthMessage(
+      "Die Passwörter stimmen nicht überein.",
+      "error"
+    );
+
+    getResetConfirmInput()?.focus();
+
+    return;
+
+  }
+
+
+  setAuthLoading(true);
+
+  clearAuthMessage();
+
+
+  const {
+    error
+  } =
+    await supabaseClient.auth.updateUser({
+      password
+    });
+
+
+  setAuthLoading(false);
+
+
+  if (error) {
+
+    console.error(
+      "HYPE password update error:",
+      error
+    );
+
+
+    showAuthMessage(
+      getAuthErrorMessage(error),
+      "error"
+    );
+
+    return;
+
+  }
+
+
+  isResetMode =
+    false;
+
+  isRegisterMode =
+    false;
+
+
+  if (authPassword) {
+
+    authPassword.value =
+      "";
+
+    authPassword.placeholder =
+      "";
+
+  }
+
+
+  if (getResetConfirmInput()) {
+
+    getResetConfirmInput().value =
+      "";
+
+  }
+
+
+  showAuthMessage(
+    "Passwort erfolgreich geändert. Du kannst dich jetzt einloggen.",
+    "success"
+  );
+
+
+  updateAuthMode();
 
 }
 
@@ -720,10 +1380,6 @@ function attachRegistrationGateEvents() {
 
         try {
 
-          /*
-           * Native Share Sheet
-           */
-
           if (
             navigator.share
           ) {
@@ -752,10 +1408,6 @@ function attachRegistrationGateEvents() {
           }
 
 
-          /*
-           * Clipboard Fallback
-           */
-
           if (
             navigator.clipboard &&
             navigator.clipboard.writeText
@@ -776,21 +1428,12 @@ function attachRegistrationGateEvents() {
           }
 
 
-          /*
-           * Letzter Fallback
-           */
-
           showAuthMessage(
             `Bitte teile diesen Link mit jemandem: ${HYPE_SHARE_URL}`,
             "success"
           );
 
         } catch (error) {
-
-          /*
-           * User hat das native Share Sheet
-           * geschlossen.
-           */
 
           if (
             error?.name ===
@@ -901,6 +1544,11 @@ function updateRegistrationSubmitState() {
 
 function updateAuthMode() {
 
+  if (isResetMode) {
+    return;
+  }
+
+
   clearAuthMessage();
 
 
@@ -916,6 +1564,8 @@ function updateAuthMode() {
 
 
   ensureFirstNameField();
+
+  ensureForgotPasswordLink();
 
 
   if (isRegisterMode) {
@@ -955,6 +1605,8 @@ function updateAuthMode() {
     updateFirstNameField();
 
     updateRegistrationSubmitState();
+
+    updateForgotPasswordLink();
 
     return;
 
@@ -999,6 +1651,8 @@ function updateAuthMode() {
 
   updateFirstNameField();
 
+  updateForgotPasswordLink();
+
 }
 
 
@@ -1021,8 +1675,12 @@ function setAuthLoading(
   );
 
 
-  authSwitch.disabled =
-    loading;
+  if (authSwitch) {
+
+    authSwitch.disabled =
+      loading;
+
+  }
 
 
   if (loading) {
@@ -1032,6 +1690,19 @@ function setAuthLoading(
 
     authSubmit.disabled =
       true;
+
+    return;
+
+  }
+
+
+  if (isResetMode) {
+
+    authSubmit.textContent =
+      "Passwort ändern";
+
+    authSubmit.disabled =
+      false;
 
     return;
 
@@ -1120,14 +1791,6 @@ async function signIn() {
 ========================= */
 
 async function signUp() {
-
-  /*
-   * Sicherheits-/UX-Gate.
-   * Wichtig:
-   * Diese beiden Schritte können im Browser
-   * nicht technisch verifiziert werden.
-   * Sie werden vom Nutzer bestätigt.
-   */
 
   if (
     !instagramCompleted ||
@@ -1260,11 +1923,6 @@ async function signUp() {
   }
 
 
-  /*
-   * Falls Supabase direkt eine Session erzeugt,
-   * ist der Account sofort eingeloggt.
-   */
-
   if (
     data &&
     data.session
@@ -1278,10 +1936,6 @@ async function signUp() {
 
   }
 
-
-  /*
-   * Falls E-Mail-Bestätigung aktiviert ist.
-   */
 
   clearGateProgress();
 
@@ -1299,7 +1953,7 @@ async function signUp() {
 
 
 /* =========================
-   UPDATE PROFILE
+   UPDATE PROFILE FIRST NAME
 ========================= */
 
 async function updateProfileFirstName(
@@ -1378,6 +2032,244 @@ async function updateProfileFirstName(
 
 window.updateProfileFirstName =
   updateProfileFirstName;
+
+
+/* =========================
+   PROFILE AVATAR UPLOAD
+========================= */
+
+function getAvatarExtension(
+  file
+) {
+
+  const type =
+    String(
+      file?.type || ""
+    ).toLowerCase();
+
+
+  if (
+    type === "image/jpeg"
+  ) {
+    return "jpg";
+  }
+
+
+  if (
+    type === "image/png"
+  ) {
+    return "png";
+  }
+
+
+  if (
+    type === "image/webp"
+  ) {
+    return "webp";
+  }
+
+
+  return null;
+
+}
+
+
+async function uploadProfileAvatar(
+  file
+) {
+
+  if (!file) {
+
+    return {
+      success: false,
+      error:
+        "Bitte wähle ein Bild aus."
+    };
+
+  }
+
+
+  const extension =
+    getAvatarExtension(file);
+
+
+  if (!extension) {
+
+    return {
+      success: false,
+      error:
+        "Bitte verwende JPG, PNG oder WebP."
+    };
+
+  }
+
+
+  if (
+    file.size >
+    MAX_AVATAR_SIZE
+  ) {
+
+    return {
+      success: false,
+      error:
+        "Das Profilbild darf maximal 5 MB groß sein."
+    };
+
+  }
+
+
+  const {
+    data: userData,
+    error: userError
+  } =
+    await supabaseClient.auth.getUser();
+
+
+  if (
+    userError ||
+    !userData?.user
+  ) {
+
+    return {
+      success: false,
+      error:
+        "Du musst eingeloggt sein, um ein Profilbild hochzuladen."
+    };
+
+  }
+
+
+  const user =
+    userData.user;
+
+
+  const path =
+    `${user.id}/avatar-${Date.now()}.${extension}`;
+
+
+  try {
+
+    const {
+      error: uploadError
+    } =
+      await supabaseClient.storage
+        .from(AVATAR_BUCKET)
+        .upload(
+          path,
+          file,
+          {
+            cacheControl:
+              "3600",
+            upsert:
+              false,
+            contentType:
+              file.type
+          }
+        );
+
+
+    if (uploadError) {
+
+      console.error(
+        "HYPE avatar upload error:",
+        uploadError
+      );
+
+
+      return {
+        success: false,
+        error:
+          "Das Profilbild konnte nicht hochgeladen werden."
+      };
+
+    }
+
+
+    const {
+      data: publicUrlData
+    } =
+      supabaseClient.storage
+        .from(AVATAR_BUCKET)
+        .getPublicUrl(path);
+
+
+    const publicUrl =
+      publicUrlData?.publicUrl;
+
+
+    if (!publicUrl) {
+
+      return {
+        success: false,
+        error:
+          "Die URL des Profilbilds konnte nicht erstellt werden."
+      };
+
+    }
+
+
+    const {
+      data: updatedUserData,
+      error: updateError
+    } =
+      await supabaseClient.auth.updateUser({
+
+        data: {
+
+          avatar_url:
+            publicUrl
+
+        }
+
+      });
+
+
+    if (updateError) {
+
+      console.error(
+        "HYPE avatar profile update error:",
+        updateError
+      );
+
+
+      return {
+        success: false,
+        error:
+          "Das Bild wurde hochgeladen, konnte aber nicht im Profil gespeichert werden."
+      };
+
+    }
+
+
+    return {
+      success: true,
+      url:
+        publicUrl,
+      user:
+        updatedUserData?.user || null
+    };
+
+  } catch (error) {
+
+    console.error(
+      "HYPE avatar error:",
+      error
+    );
+
+
+    return {
+      success: false,
+      error:
+        "Beim Hochladen des Profilbilds ist ein Fehler aufgetreten."
+    };
+
+  }
+
+}
+
+
+window.uploadProfileAvatar =
+  uploadProfileAvatar;
 
 
 /* =========================
@@ -1483,6 +2375,20 @@ function getAuthErrorMessage(
   }
 
 
+  if (
+    message.includes(
+      "redirect"
+    ) &&
+    message.includes(
+      "not allowed"
+    )
+  ) {
+
+    return "Der Passwort-Reset ist noch nicht korrekt konfiguriert. Bitte prüfe die Redirect-URL in Supabase.";
+
+  }
+
+
   return (
     error?.message ||
     "Es ist ein Fehler aufgetreten."
@@ -1528,11 +2434,6 @@ function showApp() {
 
   }
 
-
-  /*
-   * app.js bekommt ein klares Signal,
-   * dass der Auth-Status fertig ist.
-   */
 
   window.dispatchEvent(
     new CustomEvent(
@@ -1582,7 +2483,9 @@ function showLogin() {
 
 
   if (authForm) {
+
     authForm.reset();
+
   }
 
 
@@ -1590,6 +2493,19 @@ function showLogin() {
 
   isRegisterMode =
     false;
+
+  isResetMode =
+    false;
+
+
+  const resetField =
+    document.getElementById(
+      "authResetConfirmField"
+    );
+
+  resetField?.classList.add(
+    "hidden"
+  );
 
 
   updateAuthMode();
@@ -1649,9 +2565,35 @@ if (authForm) {
       event.preventDefault();
 
 
+      if (isResetMode) {
+
+        await updatePassword();
+
+        return;
+
+      }
+
+
       if (isRegisterMode) {
 
         await signUp();
+
+        return;
+
+      }
+
+
+      /*
+       * Falls wir uns auf dem
+       * "Passwort vergessen"-Request
+       * Bildschirm befinden.
+       */
+      if (
+        authSubmit?.textContent ===
+        "Reset-Link senden"
+      ) {
+
+        await requestPasswordReset();
 
         return;
 
@@ -1685,6 +2627,38 @@ if (authSwitch) {
       }
 
 
+      /*
+       * Passwort-Reset-Modus:
+       * zurück zum normalen Login.
+       */
+
+      if (isResetMode) {
+
+        enterLoginMode();
+
+        return;
+
+      }
+
+
+      /*
+       * Passwort-Reset-Anfrage:
+       * zurück zum normalen Login.
+       */
+
+      if (
+        !isRegisterMode &&
+        authSubmit?.textContent ===
+        "Reset-Link senden"
+      ) {
+
+        enterLoginMode();
+
+        return;
+
+      }
+
+
       isRegisterMode =
         !isRegisterMode;
 
@@ -1698,12 +2672,6 @@ if (authSwitch) {
 
 
       if (isRegisterMode) {
-
-        /*
-         * Bei jedem bewussten Wechsel
-         * in die Registrierung beginnen
-         * wir das Gate sauber neu.
-         */
 
         loadGateProgress();
 
@@ -1754,6 +2722,24 @@ if (authSwitch) {
 
 supabaseClient.auth.onAuthStateChange(
   (event, session) => {
+
+    /*
+     * Supabase löst PASSWORD_RECOVERY aus,
+     * wenn der Nutzer über den Reset-Link
+     * zurück zu HYPE kommt.
+     */
+
+    if (
+      event ===
+      "PASSWORD_RECOVERY"
+    ) {
+
+      enterForgotPasswordMode();
+
+      return;
+
+    }
+
 
     if (session) {
 
@@ -1828,8 +2814,14 @@ async function initAuth() {
 
 ensureFirstNameField();
 
+ensureForgotPasswordLink();
+
+ensureResetConfirmField();
+
 loadGateProgress();
 
 updateAuthMode();
+
+updateForgotPasswordLink();
 
 initAuth();
