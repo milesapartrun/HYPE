@@ -85,7 +85,11 @@ sessions =
 
     actualIntensity:
       session.actualIntensity ??
-      null
+      null,
+
+    postNotes:
+      session.postNotes ??
+      ""
 
   }));
 
@@ -702,6 +706,26 @@ function renderSessions() {
                     </select>
 
                   </div>
+
+
+                  <div class="post-training-notes">
+
+                    <label
+                      for="postNotes-${s.id}"
+                    >
+                      Wie war das Training?
+
+                      <textarea
+                        id="postNotes-${s.id}"
+                        class="post-training-notes-input"
+                        data-id="${s.id}"
+                        rows="3"
+                        placeholder="z. B. Hat sich heute sehr gut angefühlt …"
+                      >${esc(s.postNotes)}</textarea>
+
+                    </label>
+
+                  </div>
                 `
                 : ""
             }
@@ -824,6 +848,9 @@ function renderSessions() {
 
             session.actualIntensity =
               null;
+
+            session.postNotes =
+              "";
 
           }
 
@@ -962,6 +989,46 @@ function renderSessions() {
           save();
 
           render();
+
+        }
+      );
+
+    });
+
+
+  /* -------------------------------- */
+  /* TRAININGS-NOTIZ NACH ABSCHLUSS  */
+  /* -------------------------------- */
+
+  el
+    .querySelectorAll(
+      ".post-training-notes-input"
+    )
+    .forEach(textarea => {
+
+      textarea.addEventListener(
+        "input",
+        function () {
+
+          const session =
+            sessions.find(
+              s =>
+                String(s.id) ===
+                String(
+                  this.dataset.id
+                )
+            );
+
+
+          if (!session) {
+            return;
+          }
+
+
+          session.postNotes =
+            this.value;
+
+          save();
 
         }
       );
@@ -1311,6 +1378,9 @@ document.getElementById(
 
         actualIntensity:
           null,
+
+        postNotes:
+          "",
 
         created:
           Date.now()
