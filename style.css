@@ -481,6 +481,73 @@ h2 {
 
 
 /* =========================
+   CALENDAR BUTTON
+========================= */
+
+.calendar-button {
+  appearance: none;
+  -webkit-appearance: none;
+
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 7px;
+
+  border:
+    1px solid
+    rgba(215,255,63,.35);
+
+  background:
+    rgba(215,255,63,.08);
+
+  color: var(--accent);
+
+  padding: 10px 13px;
+
+  border-radius: 12px;
+
+  font-size: 11px;
+
+  font-weight: 850;
+
+  line-height: 1;
+
+  white-space: nowrap;
+
+  transition:
+    background .15s ease,
+    border-color .15s ease,
+    transform .15s ease;
+}
+
+.calendar-button:hover {
+  background:
+    rgba(215,255,63,.14);
+
+  border-color:
+    rgba(215,255,63,.55);
+}
+
+.calendar-button:active {
+  transform: scale(.96);
+}
+
+.calendar-button:focus,
+.calendar-button:focus-visible {
+  outline: none;
+}
+
+.calendar-button .calendar-icon {
+  font-size: 14px;
+
+  line-height: 1;
+}
+
+
+/* =========================
    SESSION CARDS
 ========================= */
 
@@ -1704,6 +1771,19 @@ textarea:focus {
     padding: 8px 14px;
 
     font-size: 9px;
+  }
+
+
+  .calendar-button {
+    padding: 9px 11px;
+
+    font-size: 10px;
+
+    gap: 5px;
+  }
+
+  .calendar-button .calendar-icon {
+    font-size: 13px;
   }
 
 }
