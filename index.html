@@ -1,51 +1,33 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="utf-8">
-
+  <meta charset="UTF-8">
   <meta
     name="viewport"
     content="width=device-width, initial-scale=1, viewport-fit=cover"
   >
-
+  <meta name="theme-color" content="#0b0d10">
   <meta
-    name="theme-color"
-    content="#0b0d10"
-  >
-
-  <meta
-    name="apple-mobile-web-app-capable"
-    content="yes"
-  >
-
-  <meta
-    name="apple-mobile-web-app-status-bar-style"
-    content="black-translucent"
+    name="description"
+    content="HYPE – HYbrid Plan & Execution"
   >
 
   <link rel="manifest" href="manifest.json">
 
-  <link rel="stylesheet" href="style.css">
+  <title>HYPE</title>
 
-  <title>HYPE — Training Planner</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-
   <main class="app">
 
     <!-- HEADER -->
-
     <header class="topbar">
-
-      <div class="brand">
-
-        <div class="eyebrow">
-          ATHLETE PLANNER
-        </div>
+      <div>
+        <div class="eyebrow">ATHLETE PLANNER</div>
 
         <div class="brand-row">
-
           <h1>HYPE</h1>
 
           <img
@@ -54,180 +36,203 @@
             alt=""
             aria-hidden="true"
           >
-
         </div>
-
       </div>
-
     </header>
 
 
-    <!-- WEEK HERO -->
+    <!-- =========================
+         PLAN VIEW
+    ========================== -->
+    <section id="planView" class="view">
 
-    <section class="hero">
+      <div class="hero">
+        <div>
+          <div class="eyebrow">DIESE WOCHE</div>
+          <h2 id="weekTitle">Diese Woche</h2>
+        </div>
 
-      <div>
+        <div id="heroYear" class="hero-year">2026</div>
+      </div>
 
-        <span class="muted">
-          Diese Woche
-        </span>
 
-        <h2 id="weekTitle">
+      <!-- WEEK STRIP -->
+      <div id="weekStrip" class="week-strip"></div>
+
+
+      <!-- TRAINING PLAN -->
+      <section>
+        <div class="section-head">
+          <div>
+            <div class="eyebrow">TRAININGSPLAN</div>
+            <div id="selectedDateLabel" class="selected-date"></div>
+          </div>
+
+          <button id="addTrainingBtn" class="primary">
+            + Training
+          </button>
+        </div>
+
+        <div id="sessions" class="sessions"></div>
+      </section>
+
+
+      <!-- WEEKLY INSIGHT -->
+      <div id="weeklyInsight" class="insight"></div>
+
+    </section>
+
+
+    <!-- =========================
+         OVERVIEW VIEW
+    ========================== -->
+    <section id="overviewView" class="view hidden">
+
+      <div class="overview-header">
+        <div>
+          <div class="eyebrow">TRAININGSÜBERSICHT</div>
+          <h2>Übersicht</h2>
+        </div>
+      </div>
+
+
+      <!-- PERIOD SWITCH -->
+      <div class="period-switch">
+        <button
+          class="period-btn active"
+          data-period="week"
+        >
           Woche
-        </h2>
+        </button>
+
+        <button
+          class="period-btn"
+          data-period="month"
+        >
+          Monat
+        </button>
+
+        <button
+          class="period-btn"
+          data-period="year"
+        >
+          Jahr
+        </button>
+      </div>
+
+
+      <!-- PERIOD NAVIGATION -->
+      <div class="period-navigation">
+
+        <button
+          id="periodPrevBtn"
+          class="period-arrow"
+          aria-label="Vorheriger Zeitraum"
+        >
+          ‹
+        </button>
+
+        <button
+          id="periodTodayBtn"
+          class="period-title-button"
+        >
+          <span id="periodTitle">Diese Woche</span>
+        </button>
+
+        <button
+          id="periodNextBtn"
+          class="period-arrow"
+          aria-label="Nächster Zeitraum"
+        >
+          ›
+        </button>
 
       </div>
 
-      <div class="hero-year">
-        2026
-      </div>
+
+      <!-- OVERVIEW CONTENT -->
+      <div id="overviewContent"></div>
 
     </section>
 
 
-    <!-- WEEK DAYS -->
+    <!-- =========================
+         TODAY VIEW
+    ========================== -->
+    <section id="todayView" class="view hidden">
 
-    <section
-      class="week-strip"
-      id="weekStrip"
-    ></section>
+      <div class="hero today-hero">
+        <div>
+          <div class="eyebrow">HEUTE</div>
+          <h2 id="todayTitle">Heute</h2>
+        </div>
 
-
-    <!-- TRAINING PLAN -->
-
-    <section class="section-head">
-
-      <div>
-
-        <span class="muted">
-          TRAININGSPLAN
-        </span>
-
-        <h3 id="selectedDateLabel">
-          Heute
-        </h3>
-
+        <div class="today-symbol">●</div>
       </div>
 
-      <button
-        class="primary"
-        id="addBtn"
-        type="button"
-      >
-        + Training
-      </button>
+      <div id="todayContent"></div>
 
     </section>
-
-
-    <!-- SESSIONS -->
-
-    <section
-      id="sessions"
-      class="sessions"
-    ></section>
-
-
-    <!-- WEEKLY INSIGHT -->
-
-    <section class="insight">
-
-      <div class="insight-icon">
-        ✦
-      </div>
-
-      <div>
-
-        <strong>
-          Wochen-Check
-        </strong>
-
-        <p id="insightText">
-          Füge Trainings hinzu, um deine Woche zu planen.
-        </p>
-
-      </div>
-
-    </section>
-
-
-    <!-- BOTTOM NAVIGATION -->
-
-    <nav class="bottom-nav">
-
-      <button
-        class="nav-item active"
-        type="button"
-      >
-
-        ▦
-
-        <span>
-          Plan
-        </span>
-
-      </button>
-
-      <button
-        class="nav-item"
-        id="todayBtn"
-        type="button"
-      >
-
-        ◉
-
-        <span>
-          Heute
-        </span>
-
-      </button>
-
-      <button
-        class="nav-item"
-        id="allBtn"
-        type="button"
-      >
-
-        ◫
-
-        <span>
-          Alle
-        </span>
-
-      </button>
-
-    </nav>
 
   </main>
 
 
-  <!-- NEW / EDIT TRAINING DIALOG -->
+  <!-- =========================
+       BOTTOM NAVIGATION
+  ========================== -->
+  <nav class="bottom-nav">
 
-  <dialog id="sessionDialog">
+    <button
+      class="nav-item active"
+      data-view="plan"
+    >
+      <span class="nav-icon">▣</span>
+      <span>Plan</span>
+    </button>
 
-    <form id="sessionForm">
+    <button
+      class="nav-item"
+      data-view="overview"
+    >
+      <span class="nav-icon">▦</span>
+      <span>Übersicht</span>
+    </button>
+
+    <button
+      class="nav-item"
+      data-view="today"
+    >
+      <span class="nav-icon">●</span>
+      <span>Heute</span>
+    </button>
+
+  </nav>
+
+
+  <!-- =========================
+       TRAINING DIALOG
+  ========================== -->
+  <dialog id="trainingDialog">
+
+    <form id="trainingForm">
 
       <div class="dialog-head">
 
         <div>
-
-          <span
-            class="muted"
-            id="dialogEyebrow"
-          >
-            NEUES TRAINING
-          </span>
+          <div class="eyebrow">
+            TRAINING
+          </div>
 
           <h3 id="dialogTitle">
-            Einheit planen
+            Training hinzufügen
           </h3>
-
         </div>
 
         <button
           type="button"
           class="close"
-          id="closeDialog"
+          id="closeDialogBtn"
+          aria-label="Schließen"
         >
           ×
         </button>
@@ -235,137 +240,79 @@
       </div>
 
 
-      <!-- SPORT -->
-
       <label>
+        Sport
 
-        Sportart
-
-        <select id="sport">
-
-          <option value="running">
-            🏃 Laufen
-          </option>
-
-          <option value="strength">
-            🏋️ Gym
-          </option>
-
-          <option value="hyrox">
-            🔥 HYROX
-          </option>
-
-          <option value="cycling">
-            🚴 Rad
-          </option>
-
-          <option value="swimming">
-            🏊 Schwimmen
-          </option>
-
-          <option value="mobility">
-            🧘 Mobility
-          </option>
-
-          <option value="rest">
-            😴 Recovery
-          </option>
-
+        <select id="sportInput" required>
+          <option value="running">🏃 Laufen</option>
+          <option value="strength">🏋️ Krafttraining</option>
+          <option value="hyrox">⚡ HYROX</option>
+          <option value="cycling">🚴 Rad</option>
+          <option value="swimming">🏊 Schwimmen</option>
+          <option value="mobility">🧘 Mobility</option>
+          <option value="rest">😴 Erholung</option>
         </select>
-
       </label>
 
 
-      <!-- TITLE -->
-
       <label>
-
         Titel
 
         <input
-          id="title"
+          id="titleInput"
+          type="text"
+          placeholder="z. B. Easy Run"
           required
-          placeholder="z. B. Easy Run 45 min"
         >
-
       </label>
 
-
-      <!-- DURATION + INTENSITY -->
 
       <div class="two">
 
         <label>
-
-          Dauer (min)
+          Dauer
 
           <input
-            id="duration"
+            id="durationInput"
             type="number"
             min="1"
-            value="60"
+            step="1"
+            value="45"
+            required
           >
-
         </label>
 
 
         <label>
+          Intensität
 
-          Geplante Intensität
-
-          <select id="intensity">
-
-            <option value="1">
-              1 — sehr leicht
-            </option>
-
-            <option value="2">
-              2 — locker
-            </option>
-
-            <option
-              value="3"
-              selected
-            >
-              3 — moderat
-            </option>
-
-            <option value="4">
-              4 — hart
-            </option>
-
-            <option value="5">
-              5 — sehr hart
-            </option>
-
+          <select id="intensityInput">
+            <option value="0">0 · entspannend</option>
+            <option value="1">1 · sehr leicht</option>
+            <option value="2">2 · leicht</option>
+            <option value="3" selected>3 · moderat</option>
+            <option value="4">4 · hart</option>
+            <option value="5">5 · sehr hart</option>
           </select>
-
         </label>
 
       </div>
 
 
-      <!-- NOTES -->
-
       <label>
-
-        Notiz
+        Notizen
 
         <textarea
-          id="notes"
-          rows="3"
-          placeholder="Pace, Distanz, Laufgefühl …"
+          id="notesInput"
+          rows="4"
+          placeholder="z. B. 5 × 1 km @ 4:30/km"
         ></textarea>
-
       </label>
 
 
-      <!-- SAVE -->
-
       <button
+        type="submit"
         class="primary full"
-        type="button"
-        id="saveSessionBtn"
       >
         Training speichern
       </button>
