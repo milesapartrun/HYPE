@@ -582,7 +582,6 @@ function renderSessions() {
               ${m.label}
               ·
               ${s.duration} min
-              · geplant
               ${
                 "●".repeat(
                   plannedIntensity
@@ -798,12 +797,6 @@ function renderSessions() {
             return;
           }
 
-
-          /*
-            ZUKÜNFTIGE EINHEITEN
-            KÖNNEN NOCH NICHT
-            ABGEHAKT WERDEN.
-          */
 
           if (
             !session.completed &&
@@ -1388,24 +1381,6 @@ document.getElementById(
       new Date(s);
 
     render();
-
-  }
-);
-
-
-/* -------------------------------- */
-/* SETTINGS                          */
-/* -------------------------------- */
-
-document.getElementById(
-  "settingsBtn"
-).addEventListener(
-  "click",
-  () => {
-
-    alert(
-      "V1: Trainings werden lokal auf diesem Gerät gespeichert."
-    );
 
   }
 );
