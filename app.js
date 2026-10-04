@@ -44,7 +44,6 @@ const sportMeta = {
   }
 };
 
-
 /* =========================
    STATE
 ========================= */
@@ -64,15 +63,14 @@ let overviewDate = new Date();
 overviewDate.setHours(12, 0, 0, 0);
 
 /*
-  Separate Woche für die Profil-Share-Karte.
-  Standardmäßig: aktuelle Woche.
+  Profil-Share:
+  Immer mit der aktuell laufenden Woche starten.
 */
 let shareWeekStart = startOfWeek(
   new Date()
 );
 
 let profileDisplayName = "";
-
 
 /* =========================
    DOM
@@ -174,7 +172,6 @@ const intensityInput =
 const notesInput =
   document.getElementById("notesInput");
 
-
 /* =========================
    PROFILE DOM
 ========================= */
@@ -263,6 +260,70 @@ const shareHypeProfileBtn =
 const logoutBtn =
   document.getElementById("logoutBtn");
 
+/* =========================
+   PROFILE CLEANUP
+========================= */
+
+/*
+  Entfernt ausschließlich die unerwünschten
+  Profil-Überschriften/Labels.
+
+  Wichtig:
+  Das globale HYPE-Branding bleibt unangetastet.
+*/
+
+function cleanupProfileHeadings() {
+  if (!profileView) {
+    return;
+  }
+
+  const elements =
+    profileView.querySelectorAll(
+      "h1, h2, h3, h4, .eyebrow, .section-label, .section-title"
+    );
+
+  elements.forEach(
+    element => {
+      const text =
+        element.textContent
+          .replace(/\s+/g, " ")
+          .trim()
+          .toUpperCase();
+
+      /*
+        "DEIN HYPE" vollständig entfernen.
+      */
+
+      if (
+        text === "DEIN HYPE"
+      ) {
+        element.remove();
+
+        return;
+      }
+
+      /*
+        Falls im Share-Bereich noch ein
+        zusätzliches einzelnes HYPE-Label
+        vorhanden ist, entfernen.
+
+        Nicht betroffen:
+        HYPE-Buttons, HYPE-Branding außerhalb
+        dieses Bereichs und der Produktname.
+      */
+
+      if (
+        weeklyShareCard &&
+        weeklyShareCard.contains(
+          element
+        ) &&
+        text === "HYPE"
+      ) {
+        element.remove();
+      }
+    }
+  );
+}
 
 /* =========================
    PROFILE / SHARE STYLES
@@ -321,7 +382,7 @@ function ensureProfileShareStyles() {
     }
 
     /* =========================
-       NEUE WOCHEN-NAVIGATION
+       WOCHEN-NAVIGATION
     ========================= */
 
     #profileView .hype-share-week-navigation {
@@ -616,29 +677,11 @@ function ensureProfileShareStyles() {
     }
 
     /* =========================
-       FOOTER / CTA
+       FOOTER
     ========================= */
 
     #profileView #weeklyShareFooter {
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-      margin-top: 18px;
-      padding-top: 17px;
-      border-top: 1px solid rgba(255,255,255,.08);
-    }
-
-    #profileView #weeklyShareFooter strong {
-      color: #f5f6f7;
-      font-size: 13px;
-      line-height: 1.35;
-      font-weight: 800;
-    }
-
-    #profileView #weeklyShareFooter span {
-      color: #8d949e;
-      font-size: 12px;
-      line-height: 1.45;
+      display: none !important;
     }
 
     #profileView #shareWeekBtn {
@@ -749,7 +792,6 @@ function ensureProfileShareStyles() {
 
   document.head.appendChild(style);
 }
-
 
 /* =========================
    NEUE SHARE-WOCHEN-NAVIGATION
@@ -941,7 +983,6 @@ function ensureShareWeekNavigation() {
   }
 }
 
-
 /* =========================
    HELPERS
 ========================= */
@@ -950,7 +991,6 @@ function pad(value) {
   return String(value).padStart(2, "0");
 }
 
-
 function iso(date) {
   return [
     date.getFullYear(),
@@ -958,7 +998,6 @@ function iso(date) {
     pad(date.getDate())
   ].join("-");
 }
-
 
 function parseDate(value) {
   const [
@@ -978,7 +1017,6 @@ function parseDate(value) {
   );
 }
 
-
 function startOfWeek(date) {
   const d = new Date(date);
 
@@ -996,7 +1034,6 @@ function startOfWeek(date) {
   return d;
 }
 
-
 function endOfWeek(date) {
   const d = startOfWeek(date);
 
@@ -1004,7 +1041,6 @@ function endOfWeek(date) {
 
   return d;
 }
-
 
 function addDays(date, amount) {
   const d = new Date(date);
@@ -1015,7 +1051,6 @@ function addDays(date, amount) {
 
   return d;
 }
-
 
 function addMonths(date, amount) {
   const d = new Date(date);
@@ -1028,7 +1063,6 @@ function addMonths(date, amount) {
 
   return d;
 }
-
 
 function addYears(date, amount) {
   const d = new Date(date);
@@ -1043,7 +1077,6 @@ function addYears(date, amount) {
   return d;
 }
 
-
 function esc(value) {
   return String(value ?? "")
     .replace(/&/g, "&amp;")
@@ -1052,7 +1085,6 @@ function esc(value) {
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#039;");
 }
-
 
 function formatLongDate(date) {
   return new Intl.DateTimeFormat(
@@ -1065,7 +1097,6 @@ function formatLongDate(date) {
   ).format(date);
 }
 
-
 function formatShortDate(date) {
   return new Intl.DateTimeFormat(
     "de-DE",
@@ -1076,7 +1107,6 @@ function formatShortDate(date) {
   ).format(date);
 }
 
-
 function formatMonthYear(date) {
   return new Intl.DateTimeFormat(
     "de-DE",
@@ -1086,7 +1116,6 @@ function formatMonthYear(date) {
     }
   ).format(date);
 }
-
 
 function formatShareWeek(date) {
   const start =
@@ -1116,14 +1145,12 @@ function formatShareWeek(date) {
   return `${startText} – ${endText}`;
 }
 
-
 function isToday(date) {
   return (
     iso(date) ===
     iso(new Date())
   );
 }
-
 
 function isFutureDate(dateString) {
   const today = new Date();
@@ -1148,7 +1175,6 @@ function isFutureDate(dateString) {
   return target > today;
 }
 
-
 function getFutureMessage(dateString) {
   const date =
     parseDate(dateString);
@@ -1166,7 +1192,6 @@ function getFutureMessage(dateString) {
 
   return `Diese Einheit kommt erst am ${formatLongDate(date)}. Du kannst sie noch nicht abhaken.`;
 }
-
 
 /* =========================
    USER / PROFILE
@@ -1208,7 +1233,6 @@ async function getProfileUser() {
   }
 }
 
-
 async function getUserFirstName() {
   const user =
     await getProfileUser();
@@ -1221,7 +1245,6 @@ async function getUserFirstName() {
     : "";
 }
 
-
 /* =========================
    PROFILE
 ========================= */
@@ -1233,6 +1256,18 @@ async function renderProfile() {
   if (!user) {
     return;
   }
+
+  /*
+    Jedes erneute Öffnen der Profilseite
+    startet mit der aktuell laufenden Woche.
+  */
+
+  shareWeekStart =
+    startOfWeek(
+      new Date()
+    );
+
+  cleanupProfileHeadings();
 
   const firstName =
     user?.user_metadata?.first_name
@@ -1291,7 +1326,6 @@ async function renderProfile() {
   );
 }
 
-
 /* =========================
    PROFILE EDIT
 ========================= */
@@ -1337,7 +1371,6 @@ function openProfileDialog(
   }
 }
 
-
 function closeProfileDialog() {
   if (!profileDialog) {
     return;
@@ -1354,7 +1387,6 @@ function closeProfileDialog() {
     );
   }
 }
-
 
 async function saveProfileName() {
   if (!profileFirstNameInput) {
@@ -1445,7 +1477,6 @@ async function saveProfileName() {
   }
 }
 
-
 /* =========================
    STORAGE
 ========================= */
@@ -1496,14 +1527,12 @@ function loadSessions() {
   }
 }
 
-
 function save() {
   localStorage.setItem(
     KEY,
     JSON.stringify(sessions)
   );
 }
-
 
 /* =========================
    SESSION QUERIES
@@ -1526,7 +1555,6 @@ function sessionsForDate(dateString) {
     );
 }
 
-
 function sessionsForWeek(date) {
   const start =
     startOfWeek(date);
@@ -1546,7 +1574,6 @@ function sessionsForWeek(date) {
       session.date <= endIso
   );
 }
-
 
 function sessionsForMonth(date) {
   const year =
@@ -1568,7 +1595,6 @@ function sessionsForMonth(date) {
   );
 }
 
-
 function sessionsForYear(year) {
   return sessions.filter(
     session =>
@@ -1577,7 +1603,6 @@ function sessionsForYear(year) {
       ).getFullYear() === year
   );
 }
-
 
 /* =========================
    SHARE WEEK
@@ -1592,7 +1617,6 @@ function setShareWeek(
   renderWeeklySharePreview();
 }
 
-
 function moveShareWeek(
   amount
 ) {
@@ -1605,12 +1629,12 @@ function moveShareWeek(
   renderWeeklySharePreview();
 }
 
-
 function renderWeeklySharePreview(
   displayName
 ) {
   ensureProfileShareStyles();
   ensureShareWeekNavigation();
+  cleanupProfileHeadings();
 
   const weekStart =
     startOfWeek(
@@ -1882,16 +1906,19 @@ function renderWeeklySharePreview(
   }
 
   /*
-    Kein zusätzlicher CTA mehr.
-    Die Share-Karte endet bei den eigentlichen
-    Wocheninformationen bzw. dem Share-Button.
+    Die Share-Karte endet ab jetzt
+    ausschließlich mit dem bestehenden
+    TRAIN SMART. STAY HYPE.-Bereich.
   */
 
   if (weeklyShareFooter) {
-    weeklyShareFooter.innerHTML = "";
+    weeklyShareFooter.innerHTML =
+      "";
+
+    weeklyShareFooter.style.display =
+      "none";
   }
 }
-
 
 function firstNameForPossessive(
   name
@@ -1913,7 +1940,6 @@ function firstNameForPossessive(
 
   return `${clean}s Woche`;
 }
-
 
 /* =========================
    SHARE HYPE
@@ -1967,7 +1993,6 @@ async function shareHype() {
   }
 }
 
-
 async function copyHypeLink() {
   const text =
     `HYPE – HYbrid Plan & Execution\n${window.location.href}`;
@@ -1983,7 +2008,6 @@ async function copyHypeLink() {
     );
   }
 }
-
 
 /* =========================
    WEEK SHARE IMAGE
@@ -2393,8 +2417,9 @@ async function createWeeklyShareImage() {
   }
 
   /*
-    Abschluss der Instagram-Story.
-    Keine zusätzliche Trainingspartner-Werbung mehr.
+    Die Instagram-Grafik endet ab hier
+    direkt mit TRAIN SMART. STAY HYPE.
+    Kein Trainingspartner-Werbetext mehr.
   */
 
   ctx.fillStyle =
@@ -2432,7 +2457,6 @@ async function createWeeklyShareImage() {
   );
 }
 
-
 function fitCanvasText(
   ctx,
   text,
@@ -2466,7 +2490,6 @@ function fitCanvasText(
 
   return `${result}…`;
 }
-
 
 function drawShareStat(
   ctx,
@@ -2513,7 +2536,6 @@ function drawShareStat(
     y + 110
   );
 }
-
 
 function roundRect(
   ctx,
@@ -2580,7 +2602,6 @@ function roundRect(
 
   ctx.closePath();
 }
-
 
 /* =========================
    SHARE WEEK ACTION
@@ -2686,7 +2707,6 @@ async function shareLastWeek() {
     }
   }
 }
-
 
 /* =========================
    SHARE IMAGE PREVIEW
@@ -2797,7 +2817,6 @@ function showShareImagePreview(
   }
 }
 
-
 /* =========================
    CALENDAR EXPORT
 ========================= */
@@ -2810,7 +2829,6 @@ function calendarEscape(value) {
     .replace(/,/g, "\\,");
 }
 
-
 function calendarDate(date) {
   return [
     date.getFullYear(),
@@ -2818,7 +2836,6 @@ function calendarDate(date) {
     pad(date.getDate())
   ].join("");
 }
-
 
 function calendarDateTimeUTC(date) {
   return (
@@ -2832,7 +2849,6 @@ function calendarDateTimeUTC(date) {
     "Z"
   );
 }
-
 
 function createCalendarFile() {
   const weekStart =
@@ -2984,7 +3000,6 @@ function createCalendarFile() {
   );
 }
 
-
 /* =========================
    PLAN
 ========================= */
@@ -3045,7 +3060,6 @@ function renderPlan() {
 
   renderWeeklyInsight();
 }
-
 
 function renderWeekStrip() {
   weekStrip.innerHTML = "";
@@ -3132,7 +3146,6 @@ function renderWeekStrip() {
   }
 }
 
-
 function renderSelectedDay() {
   const list =
     sessionsForDate(
@@ -3160,7 +3173,6 @@ function renderSelectedDay() {
     sessionsEl
   );
 }
-
 
 /* =========================
    SESSION CARD
@@ -3354,7 +3366,6 @@ function renderSessionCard(
   `;
 }
 
-
 function attachSessionEvents(
   container
 ) {
@@ -3498,7 +3509,6 @@ function attachSessionEvents(
     );
 }
 
-
 /* =========================
    WEEKLY INSIGHT
 ========================= */
@@ -3578,7 +3588,6 @@ function renderWeeklyInsight() {
   `;
 }
 
-
 /* =========================
    OVERVIEW
 ========================= */
@@ -3610,7 +3619,6 @@ function renderOverview() {
   }
 }
 
-
 function renderPeriodButtons() {
   document
     .querySelectorAll(
@@ -3626,7 +3634,6 @@ function renderPeriodButtons() {
       }
     );
 }
-
 
 function renderPeriodNavigation() {
   if (
@@ -3682,7 +3689,6 @@ function renderPeriodNavigation() {
   periodTitle.textContent =
     overviewDate.getFullYear();
 }
-
 
 function renderOverviewWeek() {
   const start =
@@ -3849,7 +3855,6 @@ function renderOverviewWeek() {
   attachOverviewDayNavigation();
 }
 
-
 function attachOverviewDayNavigation() {
   overviewContent
     .querySelectorAll(
@@ -3878,7 +3883,6 @@ function attachOverviewDayNavigation() {
       }
     );
 }
-
 
 /* =========================
    OVERVIEW MONTH
@@ -4016,7 +4020,6 @@ function renderOverviewMonth() {
   attachMonthWeekNavigation();
 }
 
-
 function renderMonthCell(
   date,
   otherMonth
@@ -4088,7 +4091,6 @@ function renderMonthCell(
     </div>
   `;
 }
-
 
 function attachMonthWeekNavigation() {
   const grid =
@@ -4196,7 +4198,6 @@ function attachMonthWeekNavigation() {
   }
 }
 
-
 /* =========================
    OVERVIEW YEAR
 ========================= */
@@ -4272,7 +4273,6 @@ function renderOverviewYear() {
 
   attachYearMonthNavigation();
 }
-
 
 function renderYearMonth(
   year,
@@ -4425,7 +4425,6 @@ function renderYearMonth(
   return html;
 }
 
-
 function attachYearMonthNavigation() {
   overviewContent
     .querySelectorAll(
@@ -4463,7 +4462,6 @@ function attachYearMonthNavigation() {
       }
     );
 }
-
 
 /* =========================
    TODAY
@@ -4534,7 +4532,6 @@ function renderToday() {
   );
 }
 
-
 /* =========================
    VIEW SWITCHING
 ========================= */
@@ -4600,7 +4597,6 @@ function setView(view) {
   }
 }
 
-
 /* =========================
    DIALOG
 ========================= */
@@ -4633,7 +4629,6 @@ function openNewDialog() {
     50
   );
 }
-
 
 function openEditDialog(
   session
@@ -4671,13 +4666,11 @@ function openEditDialog(
   );
 }
 
-
 function closeDialog() {
   trainingDialog.close();
 
   editingId = null;
 }
-
 
 function updateTitlePlaceholder() {
   const meta =
@@ -4689,7 +4682,6 @@ function updateTitlePlaceholder() {
   titleInput.placeholder =
     meta.placeholder;
 }
-
 
 /* =========================
    TRAINING FORM
@@ -4797,18 +4789,15 @@ trainingForm.addEventListener(
   }
 );
 
-
 sportInput.addEventListener(
   "change",
   updateTitlePlaceholder
 );
 
-
 closeDialogBtn.addEventListener(
   "click",
   closeDialog
 );
-
 
 trainingDialog.addEventListener(
   "click",
@@ -4821,7 +4810,6 @@ trainingDialog.addEventListener(
     }
   }
 );
-
 
 /* =========================
    PROFILE EVENTS
@@ -4838,14 +4826,12 @@ if (editProfileBtn) {
   );
 }
 
-
 if (closeProfileDialogBtn) {
   closeProfileDialogBtn.addEventListener(
     "click",
     closeProfileDialog
   );
 }
-
 
 if (profileForm) {
   profileForm.addEventListener(
@@ -4857,7 +4843,6 @@ if (profileForm) {
     }
   );
 }
-
 
 if (profileDialog) {
   profileDialog.addEventListener(
@@ -4873,7 +4858,6 @@ if (profileDialog) {
   );
 }
 
-
 /* =========================
    PROFILE WEEK EVENTS
 ========================= */
@@ -4887,7 +4871,6 @@ if (shareWeekPrevBtn) {
   );
 }
 
-
 if (shareWeekNextBtn) {
   shareWeekNextBtn.addEventListener(
     "click",
@@ -4896,7 +4879,6 @@ if (shareWeekNextBtn) {
     }
   );
 }
-
 
 if (shareWeekCurrentBtn) {
   shareWeekCurrentBtn.addEventListener(
@@ -4911,7 +4893,6 @@ if (shareWeekCurrentBtn) {
     }
   );
 }
-
 
 /* =========================
    NAVIGATION
@@ -4932,7 +4913,6 @@ document
     }
   );
 
-
 /* =========================
    WEEK NAVIGATION
 ========================= */
@@ -4950,7 +4930,6 @@ weekPrevBtn.addEventListener(
   }
 );
 
-
 weekNextBtn.addEventListener(
   "click",
   () => {
@@ -4963,7 +4942,6 @@ weekNextBtn.addEventListener(
     renderPlan();
   }
 );
-
 
 /* =========================
    TODAY
@@ -4986,7 +4964,6 @@ todayJumpBtn.addEventListener(
   }
 );
 
-
 /* =========================
    OVERVIEW PERIOD
 ========================= */
@@ -5006,7 +4983,6 @@ document
       );
     }
   );
-
 
 periodPrevBtn.addEventListener(
   "click",
@@ -5048,7 +5024,6 @@ periodPrevBtn.addEventListener(
   }
 );
 
-
 periodNextBtn.addEventListener(
   "click",
   () => {
@@ -5089,7 +5064,6 @@ periodNextBtn.addEventListener(
   }
 );
 
-
 periodTodayBtn.addEventListener(
   "click",
   () => {
@@ -5107,7 +5081,6 @@ periodTodayBtn.addEventListener(
   }
 );
 
-
 /* =========================
    ACTION BUTTONS
 ========================= */
@@ -5119,14 +5092,12 @@ addTrainingBtn.addEventListener(
   }
 );
 
-
 if (calendarExportBtn) {
   calendarExportBtn.addEventListener(
     "click",
     createCalendarFile
   );
 }
-
 
 if (shareWeekBtn) {
   shareWeekBtn.addEventListener(
@@ -5135,14 +5106,12 @@ if (shareWeekBtn) {
   );
 }
 
-
 if (shareHypeProfileBtn) {
   shareHypeProfileBtn.addEventListener(
     "click",
     shareHype
   );
 }
-
 
 if (logoutBtn) {
   logoutBtn.addEventListener(
@@ -5157,7 +5126,6 @@ if (logoutBtn) {
     }
   );
 }
-
 
 /* =========================
    GLOBAL RENDER
@@ -5187,7 +5155,6 @@ function renderAll() {
     renderToday();
   }
 }
-
 
 /* =========================
    AUTH STATE
@@ -5220,7 +5187,6 @@ if (
     );
 }
 
-
 /* =========================
    PWA
 ========================= */
@@ -5246,7 +5212,6 @@ if (
   );
 }
 
-
 /* =========================
    INITIAL RENDER
 ========================= */
@@ -5254,6 +5219,13 @@ if (
 ensureProfileShareStyles();
 
 ensureShareWeekNavigation();
+
+cleanupProfileHeadings();
+
+shareWeekStart =
+  startOfWeek(
+    new Date()
+  );
 
 renderPlan();
 
