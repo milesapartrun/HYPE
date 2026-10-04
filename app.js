@@ -2,6 +2,7 @@ const KEY = "hype_sessions_v1";
 
 
 const sportMeta = {
+
   running: {
     icon: "🏃",
     label: "Laufen"
@@ -36,17 +37,25 @@ const sportMeta = {
     icon: "😴",
     label: "Recovery"
   }
+
 };
 
 
-let sessions = JSON.parse(
-  localStorage.getItem(KEY) || "[]"
+let sessions =
+  JSON.parse(
+    localStorage.getItem(KEY) || "[]"
+  );
+
+
+let selected =
+  new Date();
+
+selected.setHours(
+  12,
+  0,
+  0,
+  0
 );
-
-
-let selected = new Date();
-
-selected.setHours(12, 0, 0, 0);
 
 
 const pad = n =>
@@ -54,83 +63,118 @@ const pad = n =>
 
 
 const iso = d =>
-  `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  `${d.getFullYear()}-${pad(
+    d.getMonth() + 1
+  )}-${pad(
+    d.getDate()
+  )}`;
 
 
 const startOfWeek = d => {
 
-  let x = new Date(d);
+  const x =
+    new Date(d);
 
-  let day = (x.getDay() + 6) % 7;
+  const day =
+    (x.getDay() + 6) % 7;
 
-  x.setDate(x.getDate() - day);
+  x.setDate(
+    x.getDate() - day
+  );
 
-  x.setHours(12, 0, 0, 0);
+  x.setHours(
+    12,
+    0,
+    0,
+    0
+  );
 
   return x;
+
 };
 
 
 const esc = s =>
-  String(s || "").replace(
-    /[&<>"']/g,
-    c => ({
-      "&": "&amp;",
-      "<": "&lt;",
-      ">": "&gt;",
-      '"': "&quot;",
-      "'": "&#39;"
-    }[c])
-  );
+  String(s || "")
+    .replace(
+      /[&<>"']/g,
+      c => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+      }[c])
+    );
 
 
 function weekDays() {
 
-  const s = startOfWeek(selected);
+  const s =
+    startOfWeek(selected);
 
   return Array.from(
     { length: 7 },
     (_, i) => {
 
-      let d = new Date(s);
+      const d =
+        new Date(s);
 
-      d.setDate(s.getDate() + i);
+      d.setDate(
+        s.getDate() + i
+      );
 
       return d;
 
     }
   );
+
 }
 
 
 function render() {
 
-  const days = weekDays();
+  const days =
+    weekDays();
 
-  const today = iso(new Date());
+
+  const today =
+    iso(new Date());
 
 
   /* WEEK TITLE */
 
-  const end = new Date(days[6]);
+  const end =
+    new Date(days[6]);
+
 
   document.getElementById(
     "weekTitle"
   ).textContent =
-    `${days[0].toLocaleDateString("de-DE", {
-      day: "2-digit",
-      month: "short"
-    })} – ${end.toLocaleDateString("de-DE", {
-      day: "2-digit",
-      month: "short"
-    })}`;
+    `${days[0].toLocaleDateString(
+      "de-DE",
+      {
+        day: "2-digit",
+        month: "short"
+      }
+    )} – ${end.toLocaleDateString(
+      "de-DE",
+      {
+        day: "2-digit",
+        month: "short"
+      }
+    )}`;
 
 
   /* SELECTED DATE */
 
-  document.getElementById(
-    "selectedDateLabel"
-  ).textContent =
+  const selectedLabel =
+    document.getElementById(
+      "selectedDateLabel"
+    );
+
+
+  selectedLabel.textContent =
     selected.toLocaleDateString(
       "de-DE",
       {
@@ -141,66 +185,97 @@ function render() {
     );
 
 
+  /*
+    Markierung für das
+    aktuell ausgewählte Datum.
+  */
+
+  selectedLabel.classList.add(
+    "selected-date"
+  );
+
+
   /* LARGE WEEK STRIP */
 
   const strip =
-    document.getElementById("weekStrip");
+    document.getElementById(
+      "weekStrip"
+    );
 
 
-  strip.innerHTML = days.map(d => {
+  strip.innerHTML =
+    days.map(d => {
 
-    const date = iso(d);
-
-    const list =
-      sessions.filter(
-        s => s.date === date
-      );
+      const date =
+        iso(d);
 
 
-    const isToday =
-      date === today;
+      const list =
+        sessions.filter(
+          s =>
+            s.date === date
+        );
 
 
-    const isSelected =
-      date === iso(selected);
+      const isToday =
+        date === today;
 
 
-    return `
-      <button
-        class="day ${isSelected ? "active" : ""}"
-        data-date="${date}"
-      >
+      const isSelected =
+        date === iso(selected);
 
-        ${d.toLocaleDateString(
-          "de-DE",
-          {
-            weekday: "short"
+
+      return `
+
+        <button
+          class="day ${
+            isSelected
+              ? "active"
+              : ""
+          }"
+          data-date="${date}"
+        >
+
+          ${d.toLocaleDateString(
+            "de-DE",
+            {
+              weekday: "short"
+            }
+          ).slice(0, 2).toUpperCase()}
+
+
+          <strong>
+            ${d.getDate()}
+          </strong>
+
+
+          ${
+            isToday
+              ? `
+                <span class="today-label">
+                  HEUTE
+                </span>
+              `
+              : ""
           }
-        ).slice(0, 2).toUpperCase()}
-
-        <strong>
-          ${d.getDate()}
-        </strong>
-
-        ${
-          isToday
-            ? '<span class="today-label">HEUTE</span>'
-            : ""
-        }
-
-        ${
-          list.length
-            ? '<span class="dot"></span>'
-            : ""
-        }
-
-      </button>
-    `;
-
-  }).join("");
 
 
-  /* CLICK ON LARGE DAY */
+          ${
+            list.length
+              ? `
+                <span class="dot"></span>
+              `
+              : ""
+          }
+
+        </button>
+
+      `;
+
+    }).join("");
+
+
+  /* DAY CLICK */
 
   strip
     .querySelectorAll(".day")
@@ -221,14 +296,6 @@ function render() {
     });
 
 
-  /* SMALL WEEK OVERVIEW */
-
-  renderWeekOverview(
-    days,
-    today
-  );
-
-
   /* TRAININGS */
 
   renderSessions();
@@ -240,21 +307,30 @@ function render() {
     sessions
       .filter(s =>
         days.some(
-          d => iso(d) === s.date
+          d =>
+            iso(d) === s.date
         )
       )
       .reduce(
-        (total, s) =>
+        (
+          total,
+          s
+        ) =>
           total +
-          Number(s.duration || 0) *
-          Number(s.intensity || 0),
+          Number(
+            s.duration || 0
+          ) *
+          Number(
+            s.intensity || 0
+          ),
         0
       );
 
 
   document.getElementById(
     "loadScore"
-  ).textContent = weekLoad;
+  ).textContent =
+    weekLoad;
 
 
   /* WEEKLY INSIGHT */
@@ -262,7 +338,8 @@ function render() {
   const count =
     sessions.filter(s =>
       days.some(
-        d => iso(d) === s.date
+        d =>
+          iso(d) === s.date
       )
     ).length;
 
@@ -277,151 +354,19 @@ function render() {
 }
 
 
-function renderWeekOverview(
-  days,
-  today
-) {
-
-  const el =
-    document.getElementById(
-      "weekOverview"
-    );
-
-
-  el.innerHTML =
-    days.map(d => {
-
-      const date = iso(d);
-
-
-      const list =
-        sessions.filter(
-          s => s.date === date
-        );
-
-
-      const isToday =
-        date === today;
-
-
-      const isPast =
-        date < today;
-
-
-      const state =
-        isToday
-          ? "today"
-          : isPast
-            ? "past"
-            : "future";
-
-
-      let sessionText;
-
-
-      if (list.length === 0) {
-
-        sessionText =
-          "Kein Training";
-
-      } else if (list.length === 1) {
-
-        sessionText =
-          "1 Training";
-
-      } else {
-
-        sessionText =
-          `${list.length} Trainings`;
-
-      }
-
-
-      return `
-        <button
-          class="overview-day ${state} ${
-            date === iso(selected)
-              ? "selected"
-              : ""
-          }"
-          data-date="${date}"
-        >
-
-          <span class="overview-weekday">
-            ${d.toLocaleDateString(
-              "de-DE",
-              {
-                weekday: "short"
-              }
-            )}
-          </span>
-
-
-          <strong>
-            ${d.getDate()}
-          </strong>
-
-
-          ${
-            isToday
-              ? '<span class="overview-today">HEUTE</span>'
-              : `
-                <span class="overview-state">
-                  ${isPast ? "VORBEI" : "KOMMT"}
-                </span>
-              `
-          }
-
-
-          <span
-            class="overview-training ${
-              list.length
-                ? "has-training"
-                : ""
-            }"
-          >
-            ${sessionText}
-          </span>
-
-        </button>
-      `;
-
-    }).join("");
-
-
-  /* CLICK ON SMALL DAY */
-
-  el
-    .querySelectorAll(".overview-day")
-    .forEach(button => {
-
-      button.onclick = () => {
-
-        selected =
-          new Date(
-            button.dataset.date +
-            "T12:00:00"
-          );
-
-        render();
-
-      };
-
-    });
-
-}
-
-
 function renderSessions() {
 
   const list =
     sessions
       .filter(
-        s => s.date === iso(selected)
+        s =>
+          s.date ===
+          iso(selected)
       )
       .sort(
         (a, b) =>
-          a.created - b.created
+          a.created -
+          b.created
       );
 
 
@@ -436,6 +381,7 @@ function renderSessions() {
   if (!list.length) {
 
     el.innerHTML = `
+
       <div class="empty">
 
         Noch kein Training geplant.
@@ -451,12 +397,14 @@ function renderSessions() {
         </button>
 
       </div>
+
     `;
 
 
     document.getElementById(
       "emptyAdd"
-    ).onclick = openDialog;
+    ).onclick =
+      openDialog;
 
 
     return;
@@ -475,6 +423,7 @@ function renderSessions() {
 
 
       return `
+
         <article class="session">
 
           <div class="sport-icon">
@@ -496,12 +445,16 @@ function renderSessions() {
               ·
               ${
                 "●".repeat(
-                  Number(s.intensity)
+                  Number(
+                    s.intensity
+                  )
                 )
               }${
                 "○".repeat(
                   5 -
-                  Number(s.intensity)
+                  Number(
+                    s.intensity
+                  )
                 )
               }
             </p>
@@ -509,7 +462,13 @@ function renderSessions() {
 
             ${
               s.notes
-                ? `<p>${esc(s.notes)}</p>`
+                ? `
+                  <p>
+                    ${esc(
+                      s.notes
+                    )}
+                  </p>
+                `
                 : ""
             }
 
@@ -525,12 +484,13 @@ function renderSessions() {
           </button>
 
         </article>
+
       `;
 
     }).join("");
 
 
-  /* DELETE BUTTONS */
+  /* DELETE */
 
   el
     .querySelectorAll(".delete")
@@ -561,7 +521,9 @@ function save() {
 
   localStorage.setItem(
     KEY,
-    JSON.stringify(sessions)
+    JSON.stringify(
+      sessions
+    )
   );
 
 }
@@ -576,7 +538,9 @@ const dialog =
 function openDialog() {
 
   document
-    .getElementById("sessionForm")
+    .getElementById(
+      "sessionForm"
+    )
     .reset();
 
 
@@ -595,25 +559,29 @@ function openDialog() {
 }
 
 
-/* ADD TRAINING */
+/* ADD */
 
 document.getElementById(
   "addBtn"
-).onclick = openDialog;
+).onclick =
+  openDialog;
 
 
-/* CLOSE DIALOG */
+/* CLOSE */
 
 document.getElementById(
   "closeDialog"
-).onclick = () =>
-  dialog.close();
+).onclick =
+  () =>
+    dialog.close();
 
 
-/* SAVE TRAINING */
+/* SAVE */
 
 document
-  .getElementById("sessionForm")
+  .getElementById(
+    "sessionForm"
+  )
   .addEventListener(
     "submit",
     e => {
@@ -623,9 +591,11 @@ document
 
       sessions.push({
 
-        id: crypto.randomUUID(),
+        id:
+          crypto.randomUUID(),
 
-        date: iso(selected),
+        date:
+          iso(selected),
 
         sport:
           document.getElementById(
@@ -652,7 +622,8 @@ document
             "notes"
           ).value,
 
-        created: Date.now()
+        created:
+          Date.now()
 
       });
 
@@ -667,54 +638,60 @@ document
   );
 
 
-/* TODAY BUTTON */
+/* TODAY */
 
 document.getElementById(
   "todayBtn"
-).onclick = () => {
+).onclick =
+  () => {
 
-  selected = new Date();
+    selected =
+      new Date();
 
-  selected.setHours(
-    12,
-    0,
-    0,
-    0
-  );
+    selected.setHours(
+      12,
+      0,
+      0,
+      0
+    );
 
-  render();
+    render();
 
-};
+  };
 
 
-/* ALL BUTTON */
+/* ALL */
 
 document.getElementById(
   "allBtn"
-).onclick = () => {
+).onclick =
+  () => {
 
-  const s =
-    startOfWeek(selected);
+    const s =
+      startOfWeek(
+        selected
+      );
 
-  selected =
-    new Date(s);
+    selected =
+      new Date(s);
 
-  render();
+    render();
 
-};
+  };
 
 
 /* SETTINGS */
 
 document.getElementById(
   "settingsBtn"
-).onclick = () => {
+).onclick =
+  () => {
 
-  alert(
-    "V1: Trainings werden lokal auf diesem Gerät gespeichert. Als Nächstes kommen Profil, Ziele, Apple Health und KI-Plananpassung."
-  );
+    alert(
+      "V1: Trainings werden lokal auf diesem Gerät gespeichert. Als Nächstes kommen Profil, Ziele, Apple Health und KI-Plananpassung."
+    );
 
-};
+  };
 
 
 /* SERVICE WORKER */
@@ -730,6 +707,6 @@ if (
 }
 
 
-/* INITIAL RENDER */
+/* INITIAL */
 
 render();
