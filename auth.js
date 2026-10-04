@@ -19,6 +19,7 @@ const supabaseClient =
  */
 window.supabaseClient = supabaseClient;
 
+
 /* =========================
    DOM
 ========================= */
@@ -50,14 +51,18 @@ const authMessage =
 const authSubtitle =
   document.getElementById("authSubtitle");
 
+
 /* =========================
    STATE
 ========================= */
 
 let isRegisterMode = false;
 let isResetMode = false;
+let isPasswordRecovery = false;
+
 let instagramCompleted = false;
 let shareCompleted = false;
+
 
 /* =========================
    CONSTANTS
@@ -83,6 +88,7 @@ const AVATAR_BUCKET =
 const MAX_AVATAR_SIZE =
   5 * 1024 * 1024;
 
+
 /* =========================
    SESSION STORAGE KEYS
 ========================= */
@@ -92,6 +98,7 @@ const GATE_INSTAGRAM_KEY =
 
 const GATE_SHARE_KEY =
   "hype_registration_share";
+
 
 /* =========================
    HELPERS
@@ -199,6 +206,7 @@ function clearGateProgress() {
     );
   }
 }
+
 
 /* =========================
    FIRST NAME FIELD
@@ -351,6 +359,7 @@ function getFirstName() {
   return input.value.trim();
 }
 
+
 /* =========================
    PASSWORD RESET UI
 ========================= */
@@ -402,13 +411,6 @@ function ensureForgotPasswordLink() {
     link
   );
 
-  /*
-   * WICHTIG:
-   * Beim ersten Klick wird nur die
-   * Reset-Link-Anfrage geöffnet.
-   * enterForgotPasswordMode() kommt
-   * erst nach PASSWORD_RECOVERY.
-   */
   link.addEventListener(
     "click",
     () => {
@@ -511,12 +513,15 @@ function updateForgotPasswordLink() {
   );
 }
 
-function enterForgotPasswordMode() {
-  isRegisterMode =
-    false;
 
-  isResetMode =
-    true;
+/* =========================
+   ENTER PASSWORD RESET MODE
+========================= */
+
+function enterForgotPasswordMode() {
+  isRegisterMode = false;
+  isResetMode = true;
+  isPasswordRecovery = true;
 
   clearAuthMessage();
 
@@ -607,12 +612,15 @@ function enterForgotPasswordMode() {
   );
 }
 
-function enterResetRequestMode() {
-  isRegisterMode =
-    false;
 
-  isResetMode =
-    false;
+/* =========================
+   RESET REQUEST MODE
+========================= */
+
+function enterResetRequestMode() {
+  isRegisterMode = false;
+  isResetMode = false;
+  isPasswordRecovery = false;
 
   clearAuthMessage();
 
@@ -693,12 +701,15 @@ function enterResetRequestMode() {
   );
 }
 
-function enterLoginMode() {
-  isRegisterMode =
-    false;
 
-  isResetMode =
-    false;
+/* =========================
+   LOGIN MODE
+========================= */
+
+function enterLoginMode() {
+  isRegisterMode = false;
+  isResetMode = false;
+  isPasswordRecovery = false;
 
   clearAuthMessage();
 
@@ -736,6 +747,11 @@ function enterLoginMode() {
   updateAuthMode();
   updateForgotPasswordLink();
 }
+
+
+/* =========================
+   REQUEST PASSWORD RESET
+========================= */
 
 async function requestPasswordReset() {
   const email =
@@ -788,6 +804,11 @@ async function requestPasswordReset() {
   );
 }
 
+
+/* =========================
+   UPDATE PASSWORD
+========================= */
+
 async function updatePassword() {
   const password =
     authPassword?.value || "";
@@ -836,9 +857,9 @@ async function updatePassword() {
       password
     });
 
-  setAuthLoading(false);
-
   if (error) {
+    setAuthLoading(false);
+
     console.error(
       "HYPE password update error:",
       error
@@ -852,32 +873,51 @@ async function updatePassword() {
     return;
   }
 
-  isResetMode =
-    false;
+  /*
+   * Passwort wurde erfolgreich geändert.
+   *
+   * Recovery-Status beenden.
+   */
+  isPasswordRecovery = false;
 
-  isRegisterMode =
-    false;
+  setAuthLoading(false);
 
-  if (authPassword) {
-    authPassword.value =
-      "";
+  /*
+   * Recovery-Session beenden.
+   *
+   * Dadurch wird verhindert, dass der Nutzer
+   * nach dem Passwort-Reset automatisch
+   * eingeloggt bleibt.
+   */
+  const {
+    error: signOutError
+  } =
+    await supabaseClient.auth.signOut();
 
-    authPassword.placeholder =
-      "";
+  if (signOutError) {
+    console.error(
+      "HYPE recovery signout error:",
+      signOutError
+    );
   }
 
-  if (getResetConfirmInput()) {
-    getResetConfirmInput().value =
-      "";
-  }
+  /*
+   * Zur normalen Login-Ansicht.
+   */
+  showLogin();
 
+  /*
+   * Erfolgsmeldung nach showLogin,
+   * weil showLogin die Oberfläche zurücksetzt.
+   */
   showAuthMessage(
-    "Passwort erfolgreich geändert. Du kannst dich jetzt einloggen.",
+    "Passwort erfolgreich geändert. Du kannst dich jetzt mit deinem neuen Passwort einloggen.",
     "success"
   );
 
-  updateAuthMode();
+  authEmail?.focus();
 }
+
 
 /* =========================
    REGISTRATION GATE
@@ -1205,6 +1245,7 @@ function attachRegistrationGateEvents() {
   }
 }
 
+
 /* =========================
    SUBMIT STATE
 ========================= */
@@ -1228,6 +1269,7 @@ function updateRegistrationSubmitState() {
   authSubmit.disabled =
     !requirementsComplete;
 }
+
 
 /* =========================
    AUTH MODE
@@ -1322,6 +1364,7 @@ function updateAuthMode() {
   updateForgotPasswordLink();
 }
 
+
 /* =========================
    LOADING
 ========================= */
@@ -1371,6 +1414,7 @@ function setAuthLoading(
   updateRegistrationSubmitState();
 }
 
+
 /* =========================
    LOGIN
 ========================= */
@@ -1418,8 +1462,11 @@ async function signIn() {
     return;
   }
 
+  isPasswordRecovery = false;
+
   showApp();
 }
+
 
 /* =========================
    REGISTER
@@ -1546,6 +1593,7 @@ async function signUp() {
   );
 }
 
+
 /* =========================
    UPDATE PROFILE FIRST NAME
 ========================= */
@@ -1607,6 +1655,7 @@ async function updateProfileFirstName(
 
 window.updateProfileFirstName =
   updateProfileFirstName;
+
 
 /* =========================
    PROFILE AVATAR UPLOAD
@@ -1795,6 +1844,7 @@ async function uploadProfileAvatar(
 window.uploadProfileAvatar =
   uploadProfileAvatar;
 
+
 /* =========================
    GET CURRENT USER
 ========================= */
@@ -1820,6 +1870,7 @@ async function getCurrentUser() {
 
 window.getCurrentUser =
   getCurrentUser;
+
 
 /* =========================
    AUTH ERRORS
@@ -1890,11 +1941,24 @@ function getAuthErrorMessage(
   );
 }
 
+
 /* =========================
    SHOW APP
 ========================= */
 
 function showApp() {
+  /*
+   * Sicherheitscheck:
+   * Während eines Passwort-Resets darf die App
+   * niemals automatisch geöffnet werden.
+   */
+  if (
+    isPasswordRecovery ||
+    isResetMode
+  ) {
+    return;
+  }
+
   if (authScreen) {
     authScreen.classList.add(
       "hidden"
@@ -1924,6 +1988,7 @@ function showApp() {
     )
   );
 }
+
 
 /* =========================
    SHOW LOGIN
@@ -1959,11 +2024,9 @@ function showLogin() {
 
   clearGateProgress();
 
-  isRegisterMode =
-    false;
-
-  isResetMode =
-    false;
+  isRegisterMode = false;
+  isResetMode = false;
+  isPasswordRecovery = false;
 
   const resetField =
     document.getElementById(
@@ -1976,6 +2039,7 @@ function showLogin() {
 
   updateAuthMode();
 }
+
 
 /* =========================
    LOGOUT
@@ -2006,6 +2070,7 @@ async function logout() {
 
 window.logout =
   logout;
+
 
 /* =========================
    FORM SUBMIT
@@ -2039,6 +2104,7 @@ if (authForm) {
     }
   );
 }
+
 
 /* =========================
    LOGIN / REGISTER SWITCH
@@ -2108,20 +2174,43 @@ if (authSwitch) {
   );
 }
 
+
 /* =========================
    AUTH STATE
 ========================= */
 
 supabaseClient.auth.onAuthStateChange(
   (event, session) => {
+
+    /*
+     * Passwort-Reset-Link wurde geöffnet.
+     */
     if (
       event ===
       "PASSWORD_RECOVERY"
     ) {
+      isPasswordRecovery =
+        true;
+
       enterForgotPasswordMode();
+
       return;
     }
 
+    /*
+     * Während des Passwort-Resets darf
+     * KEIN anderer Auth-Event die App öffnen.
+     */
+    if (
+      isPasswordRecovery ||
+      isResetMode
+    ) {
+      return;
+    }
+
+    /*
+     * Normaler Login.
+     */
     if (session) {
       showApp();
       return;
@@ -2136,11 +2225,61 @@ supabaseClient.auth.onAuthStateChange(
   }
 );
 
+
 /* =========================
    INITIAL AUTH CHECK
 ========================= */
 
 async function initAuth() {
+
+  /*
+   * Prüfen, ob die URL gerade von einem
+   * Passwort-Reset kommt.
+   *
+   * Supabase kann je nach Auth-Konfiguration
+   * entweder ?code=... oder
+   * #type=recovery verwenden.
+   */
+
+  const searchParams =
+    new URLSearchParams(
+      window.location.search
+    );
+
+  const hash =
+    window.location.hash || "";
+
+  const isRecoveryUrl =
+    searchParams.has("code") ||
+    hash.includes(
+      "type=recovery"
+    ) ||
+    hash.includes(
+      "access_token="
+    );
+
+  if (isRecoveryUrl) {
+    /*
+     * Nicht die normale App öffnen.
+     * Der PASSWORD_RECOVERY-Event von Supabase
+     * übernimmt anschließend den Rest.
+     */
+    isPasswordRecovery =
+      true;
+
+    /*
+     * Falls der Event bereits angekommen ist,
+     * wird die Reset-Oberfläche direkt geöffnet.
+     */
+    if (
+      hash.includes(
+        "type=recovery"
+      )
+    ) {
+      enterForgotPasswordMode();
+    }
+  }
+
   const {
     data,
     error
@@ -2161,6 +2300,21 @@ async function initAuth() {
     return;
   }
 
+  /*
+   * Recovery-Link:
+   * Niemals direkt die App öffnen.
+   */
+  if (
+    isPasswordRecovery ||
+    isResetMode ||
+    isRecoveryUrl
+  ) {
+    return;
+  }
+
+  /*
+   * Normaler eingeloggter Benutzer.
+   */
   if (data.session) {
     showApp();
   } else {
@@ -2168,17 +2322,21 @@ async function initAuth() {
   }
 }
 
+
 /* =========================
    START
 ========================= */
 
 ensureFirstNameField();
+
 ensureForgotPasswordLink();
+
 ensureResetConfirmField();
 
 loadGateProgress();
 
 updateAuthMode();
+
 updateForgotPasswordLink();
 
 initAuth();
