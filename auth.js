@@ -19,6 +19,7 @@ const supabaseClient =
  */
 window.supabaseClient = supabaseClient;
 
+
 /* =========================
    DOM
 ========================= */
@@ -50,14 +51,17 @@ const authMessage =
 const authSubtitle =
   document.getElementById("authSubtitle");
 
+
 /* =========================
    STATE
 ========================= */
 
 let isRegisterMode = false;
-let isResetMode = false;
+
 let instagramCompleted = false;
+
 let shareCompleted = false;
+
 
 /* =========================
    CONSTANTS
@@ -73,15 +77,6 @@ const HYPE_SHARE_URL =
   window.location.origin +
   window.location.pathname;
 
-const PASSWORD_RESET_REDIRECT =
-  window.location.origin +
-  window.location.pathname;
-
-const AVATAR_BUCKET =
-  "avatars";
-
-const MAX_AVATAR_SIZE =
-  5 * 1024 * 1024;
 
 /* =========================
    SESSION STORAGE KEYS
@@ -93,32 +88,43 @@ const GATE_INSTAGRAM_KEY =
 const GATE_SHARE_KEY =
   "hype_registration_share";
 
+
 /* =========================
    HELPERS
 ========================= */
 
 function getRegistrationGate() {
+
   return document.getElementById(
     "registrationGate"
   );
+
 }
 
+
 function getFirstNameField() {
+
   return document.getElementById(
     "authFirstNameField"
   );
+
 }
 
+
 function getFirstNameInput() {
+
   return document.getElementById(
     "authFirstName"
   );
+
 }
+
 
 function showAuthMessage(
   message,
   type = ""
 ) {
+
   if (!authMessage) {
     return;
   }
@@ -130,18 +136,27 @@ function showAuthMessage(
     "auth-message";
 
   if (type) {
+
     authMessage.classList.add(
       type
     );
+
   }
+
 }
+
 
 function clearAuthMessage() {
+
   showAuthMessage("");
+
 }
 
+
 function saveGateProgress() {
+
   try {
+
     sessionStorage.setItem(
       GATE_INSTAGRAM_KEY,
       instagramCompleted
@@ -155,16 +170,23 @@ function saveGateProgress() {
         ? "true"
         : "false"
     );
+
   } catch (error) {
+
     console.warn(
       "HYPE sessionStorage unavailable:",
       error
     );
+
   }
+
 }
 
+
 function loadGateProgress() {
+
   try {
+
     instagramCompleted =
       sessionStorage.getItem(
         GATE_INSTAGRAM_KEY
@@ -174,17 +196,27 @@ function loadGateProgress() {
       sessionStorage.getItem(
         GATE_SHARE_KEY
       ) === "true";
+
   } catch (error) {
+
     instagramCompleted = false;
     shareCompleted = false;
+
   }
+
 }
 
+
 function clearGateProgress() {
-  instagramCompleted = false;
-  shareCompleted = false;
+
+  instagramCompleted =
+    false;
+
+  shareCompleted =
+    false;
 
   try {
+
     sessionStorage.removeItem(
       GATE_INSTAGRAM_KEY
     );
@@ -192,38 +224,59 @@ function clearGateProgress() {
     sessionStorage.removeItem(
       GATE_SHARE_KEY
     );
+
   } catch (error) {
+
     console.warn(
       "HYPE sessionStorage unavailable:",
       error
     );
+
   }
+
 }
+
 
 /* =========================
    FIRST NAME FIELD
 ========================= */
 
 function ensureFirstNameField() {
+
   let field =
     getFirstNameField();
 
   let input =
     getFirstNameInput();
 
-  if (field && input) {
+
+  if (
+    field &&
+    input
+  ) {
+
     return {
       field,
       input
     };
+
   }
 
+
   if (!authForm) {
+
     return {
       field: null,
       input: null
     };
+
   }
+
+
+  /*
+   * Wir erzeugen das Feld automatisch,
+   * falls es im HTML noch nicht existiert.
+   */
 
   field =
     document.createElement(
@@ -236,6 +289,7 @@ function ensureFirstNameField() {
   field.className =
     "auth-first-name-field hidden";
 
+
   const labelText =
     document.createElement(
       "span"
@@ -243,6 +297,7 @@ function ensureFirstNameField() {
 
   labelText.textContent =
     "Vorname";
+
 
   input =
     document.createElement(
@@ -267,6 +322,7 @@ function ensureFirstNameField() {
   input.maxLength =
     40;
 
+
   field.appendChild(
     labelText
   );
@@ -275,43 +331,61 @@ function ensureFirstNameField() {
     input
   );
 
+
+  /*
+   * Vorname vor das E-Mail-Feld setzen.
+   */
+
   const emailContainer =
     authEmail?.closest("label") ||
     authEmail?.parentElement;
 
+
   if (emailContainer) {
+
     authForm.insertBefore(
       field,
       emailContainer
     );
+
   } else {
+
     authForm.prepend(
       field
     );
+
   }
+
 
   return {
     field,
     input
   };
+
 }
 
+
 function updateFirstNameField() {
+
   const {
     field,
     input
   } =
     ensureFirstNameField();
 
+
   if (!field || !input) {
     return;
   }
 
+
   if (isRegisterMode) {
+
     if (
       instagramCompleted &&
       shareCompleted
     ) {
+
       field.classList.remove(
         "hidden"
       );
@@ -320,7 +394,9 @@ function updateFirstNameField() {
         true;
 
       return;
+
     }
+
 
     field.classList.add(
       "hidden"
@@ -330,7 +406,9 @@ function updateFirstNameField() {
       false;
 
     return;
+
   }
+
 
   field.classList.add(
     "hidden"
@@ -338,9 +416,12 @@ function updateFirstNameField() {
 
   input.required =
     false;
+
 }
 
+
 function getFirstName() {
+
   const input =
     getFirstNameInput();
 
@@ -349,546 +430,23 @@ function getFirstName() {
   }
 
   return input.value.trim();
+
 }
 
-/* =========================
-   PASSWORD RESET UI
-========================= */
-
-function ensureForgotPasswordLink() {
-  if (!authForm || !authPassword) {
-    return;
-  }
-
-  let link =
-    document.getElementById(
-      "forgotPasswordLink"
-    );
-
-  if (link) {
-    return link;
-  }
-
-  link =
-    document.createElement(
-      "button"
-    );
-
-  link.type =
-    "button";
-
-  link.id =
-    "forgotPasswordLink";
-
-  link.textContent =
-    "Passwort vergessen?";
-
-  link.style.cssText = `
-    display:block;
-    width:100%;
-    margin:8px 0 0;
-    padding:4px 0;
-    border:0;
-    background:transparent;
-    color:#d7ff3f;
-    font-size:13px;
-    font-weight:800;
-    text-align:right;
-    cursor:pointer;
-  `;
-
-  authPassword.insertAdjacentElement(
-    "afterend",
-    link
-  );
-
-  /*
-   * WICHTIG:
-   * Beim ersten Klick wird nur die
-   * Reset-Link-Anfrage geöffnet.
-   * enterForgotPasswordMode() kommt
-   * erst nach PASSWORD_RECOVERY.
-   */
-  link.addEventListener(
-    "click",
-    () => {
-      enterResetRequestMode();
-    }
-  );
-
-  return link;
-}
-
-function ensureResetConfirmField() {
-  if (!authForm) {
-    return null;
-  }
-
-  let field =
-    document.getElementById(
-      "authResetConfirmField"
-    );
-
-  if (field) {
-    return field;
-  }
-
-  field =
-    document.createElement(
-      "label"
-    );
-
-  field.id =
-    "authResetConfirmField";
-
-  field.className =
-    "auth-reset-confirm-field hidden";
-
-  const label =
-    document.createElement(
-      "span"
-    );
-
-  label.textContent =
-    "Passwort wiederholen";
-
-  const input =
-    document.createElement(
-      "input"
-    );
-
-  input.type =
-    "password";
-
-  input.id =
-    "authResetConfirm";
-
-  input.name =
-    "password_confirmation";
-
-  input.placeholder =
-    "Passwort wiederholen";
-
-  input.autocomplete =
-    "new-password";
-
-  field.appendChild(
-    label
-  );
-
-  field.appendChild(
-    input
-  );
-
-  authPassword.insertAdjacentElement(
-    "afterend",
-    field
-  );
-
-  return field;
-}
-
-function getResetConfirmInput() {
-  return document.getElementById(
-    "authResetConfirm"
-  );
-}
-
-function updateForgotPasswordLink() {
-  const link =
-    document.getElementById(
-      "forgotPasswordLink"
-    );
-
-  if (!link) {
-    return;
-  }
-
-  link.classList.toggle(
-    "hidden",
-    isRegisterMode ||
-    isResetMode
-  );
-}
-
-function enterForgotPasswordMode() {
-  isRegisterMode =
-    false;
-
-  isResetMode =
-    true;
-
-  clearAuthMessage();
-
-  const resetField =
-    ensureResetConfirmField();
-
-  if (resetField) {
-    resetField.classList.remove(
-      "hidden"
-    );
-  }
-
-  if (authEmail) {
-    authEmail.closest("label")?.classList.remove(
-      "hidden"
-    );
-
-    authEmail.required =
-      true;
-  }
-
-  if (authPassword) {
-    authPassword.value =
-      "";
-
-    authPassword.placeholder =
-      "Neues Passwort";
-
-    authPassword.autocomplete =
-      "new-password";
-
-    authPassword.required =
-      true;
-  }
-
-  if (authSubtitle) {
-    authSubtitle.innerHTML = `
-      Neues Passwort.<br>
-      Neuer Start.<br>
-      Dein HYPE.
-    `;
-  }
-
-  if (authSubmit) {
-    authSubmit.textContent =
-      "Passwort ändern";
-
-    authSubmit.disabled =
-      false;
-  }
-
-  if (authSwitch) {
-    authSwitch.disabled =
-      false;
-
-    authSwitch.innerHTML = `
-      <span style="
-        display:block;
-        color:#f5f6f7;
-        font-size:13px;
-        font-weight:800;
-        margin-bottom:4px;
-      ">
-        Doch nicht?
-      </span>
-
-      <span style="
-        display:block;
-        color:#d7ff3f;
-        font-size:13px;
-        font-weight:900;
-      ">
-        → Zurück zum Login
-      </span>
-    `;
-  }
-
-  getRegistrationGate()?.remove();
-
-  updateFirstNameField();
-  updateForgotPasswordLink();
-
-  setTimeout(
-    () => {
-      authPassword?.focus();
-    },
-    50
-  );
-}
-
-function enterResetRequestMode() {
-  isRegisterMode =
-    false;
-
-  isResetMode =
-    false;
-
-  clearAuthMessage();
-
-  if (authSubtitle) {
-    authSubtitle.innerHTML = `
-      Passwort vergessen?<br>
-      Wir schicken dir einen<br>
-      Link zum Zurücksetzen.
-    `;
-  }
-
-  if (authEmail) {
-    authEmail.required =
-      true;
-  }
-
-  if (authPassword) {
-    authPassword.value =
-      "";
-
-    authPassword.required =
-      false;
-  }
-
-  const resetField =
-    document.getElementById(
-      "authResetConfirmField"
-    );
-
-  resetField?.classList.add(
-    "hidden"
-  );
-
-  if (authSubmit) {
-    authSubmit.textContent =
-      "Reset-Link senden";
-
-    authSubmit.disabled =
-      false;
-  }
-
-  if (authSwitch) {
-    authSwitch.disabled =
-      false;
-
-    authSwitch.innerHTML = `
-      <span style="
-        display:block;
-        color:#f5f6f7;
-        font-size:13px;
-        font-weight:800;
-        margin-bottom:4px;
-      ">
-        Wieder eingefallen?
-      </span>
-
-      <span style="
-        display:block;
-        color:#d7ff3f;
-        font-size:13px;
-        font-weight:900;
-      ">
-        → Zurück zum Login
-      </span>
-    `;
-  }
-
-  getRegistrationGate()?.remove();
-
-  updateFirstNameField();
-  updateForgotPasswordLink();
-
-  setTimeout(
-    () => {
-      authEmail?.focus();
-    },
-    50
-  );
-}
-
-function enterLoginMode() {
-  isRegisterMode =
-    false;
-
-  isResetMode =
-    false;
-
-  clearAuthMessage();
-
-  const resetField =
-    document.getElementById(
-      "authResetConfirmField"
-    );
-
-  resetField?.classList.add(
-    "hidden"
-  );
-
-  if (authEmail) {
-    authEmail.value =
-      "";
-
-    authEmail.required =
-      true;
-  }
-
-  if (authPassword) {
-    authPassword.value =
-      "";
-
-    authPassword.placeholder =
-      "";
-
-    authPassword.autocomplete =
-      "current-password";
-
-    authPassword.required =
-      true;
-  }
-
-  updateAuthMode();
-  updateForgotPasswordLink();
-}
-
-async function requestPasswordReset() {
-  const email =
-    authEmail?.value.trim();
-
-  if (!email) {
-    showAuthMessage(
-      "Bitte gib zuerst deine E-Mail-Adresse ein.",
-      "error"
-    );
-
-    authEmail?.focus();
-
-    return;
-  }
-
-  setAuthLoading(true);
-  clearAuthMessage();
-
-  const {
-    error
-  } =
-    await supabaseClient.auth.resetPasswordForEmail(
-      email,
-      {
-        redirectTo:
-          PASSWORD_RESET_REDIRECT
-      }
-    );
-
-  setAuthLoading(false);
-
-  if (error) {
-    console.error(
-      "HYPE password reset request error:",
-      error
-    );
-
-    showAuthMessage(
-      getAuthErrorMessage(error),
-      "error"
-    );
-
-    return;
-  }
-
-  showAuthMessage(
-    "Reset-Link gesendet. Prüfe jetzt deine E-Mails.",
-    "success"
-  );
-}
-
-async function updatePassword() {
-  const password =
-    authPassword?.value || "";
-
-  const confirm =
-    getResetConfirmInput()?.value || "";
-
-  if (!password) {
-    showAuthMessage(
-      "Bitte gib ein neues Passwort ein.",
-      "error"
-    );
-
-    authPassword?.focus();
-
-    return;
-  }
-
-  if (password.length < 6) {
-    showAuthMessage(
-      "Das Passwort muss mindestens 6 Zeichen haben.",
-      "error"
-    );
-
-    return;
-  }
-
-  if (password !== confirm) {
-    showAuthMessage(
-      "Die Passwörter stimmen nicht überein.",
-      "error"
-    );
-
-    getResetConfirmInput()?.focus();
-
-    return;
-  }
-
-  setAuthLoading(true);
-  clearAuthMessage();
-
-  const {
-    error
-  } =
-    await supabaseClient.auth.updateUser({
-      password
-    });
-
-  setAuthLoading(false);
-
-  if (error) {
-    console.error(
-      "HYPE password update error:",
-      error
-    );
-
-    showAuthMessage(
-      getAuthErrorMessage(error),
-      "error"
-    );
-
-    return;
-  }
-
-  isResetMode =
-    false;
-
-  isRegisterMode =
-    false;
-
-  if (authPassword) {
-    authPassword.value =
-      "";
-
-    authPassword.placeholder =
-      "";
-  }
-
-  if (getResetConfirmInput()) {
-    getResetConfirmInput().value =
-      "";
-  }
-
-  showAuthMessage(
-    "Passwort erfolgreich geändert. Du kannst dich jetzt einloggen.",
-    "success"
-  );
-
-  updateAuthMode();
-}
 
 /* =========================
    REGISTRATION GATE
 ========================= */
 
 function renderRegistrationGate() {
+
   if (!authForm) {
     return;
   }
 
+
   if (!isRegisterMode) {
+
     const existing =
       getRegistrationGate();
 
@@ -899,12 +457,16 @@ function renderRegistrationGate() {
     updateFirstNameField();
 
     return;
+
   }
+
 
   let gate =
     getRegistrationGate();
 
+
   if (!gate) {
+
     gate =
       document.createElement(
         "div"
@@ -916,6 +478,7 @@ function renderRegistrationGate() {
     gate.className =
       "registration-gate";
 
+
     const firstNameField =
       getFirstNameField();
 
@@ -923,40 +486,54 @@ function renderRegistrationGate() {
       authEmail?.closest("label") ||
       authEmail?.parentElement;
 
+
     if (firstNameField) {
+
       authForm.insertBefore(
         gate,
         firstNameField
       );
+
     } else if (emailContainer) {
+
       authForm.insertBefore(
         gate,
         emailContainer
       );
+
     } else {
+
       authForm.prepend(
         gate
       );
+
     }
+
   }
+
 
   const instagramDoneClass =
     instagramCompleted
       ? "completed"
       : "";
 
+
   const shareDoneClass =
     shareCompleted
       ? "completed"
       : "";
 
+
   gate.innerHTML = `
+
     <div class="registration-step">
+
       <div class="registration-step-number">
         1
       </div>
 
       <div class="registration-step-content">
+
         <strong>
           Folge Tano auf Instagram
         </strong>
@@ -986,10 +563,14 @@ function renderRegistrationGate() {
               : "Ich folge Tano"
           }
         </button>
+
       </div>
+
     </div>
 
+
     <div class="registration-divider"></div>
+
 
     <div
       class="registration-step ${
@@ -998,11 +579,13 @@ function renderRegistrationGate() {
           : "locked"
       }"
     >
+
       <div class="registration-step-number">
         2
       </div>
 
       <div class="registration-step-content">
+
         <strong>
           Teile HYPE mit jemandem
         </strong>
@@ -1042,8 +625,11 @@ function renderRegistrationGate() {
               : "Ich habe HYPE geteilt"
           }
         </button>
+
       </div>
+
     </div>
+
 
     ${
       instagramCompleted &&
@@ -1055,38 +641,54 @@ function renderRegistrationGate() {
         `
         : ""
     }
+
   `;
+
 
   attachRegistrationGateEvents();
 
   updateFirstNameField();
+
   updateRegistrationSubmitState();
+
 }
 
+
+/* =========================
+   REGISTRATION EVENTS
+========================= */
+
 function attachRegistrationGateEvents() {
+
   const instagramConfirm =
     document.getElementById(
       "instagramConfirmBtn"
     );
+
 
   const shareButton =
     document.getElementById(
       "shareHypeBtn"
     );
 
+
   const shareConfirm =
     document.getElementById(
       "shareConfirmBtn"
     );
 
+
   if (instagramConfirm) {
+
     instagramConfirm.addEventListener(
       "click",
       () => {
+
         instagramCompleted =
           true;
 
         saveGateProgress();
+
         clearAuthMessage();
 
         renderRegistrationGate();
@@ -1095,32 +697,50 @@ function attachRegistrationGateEvents() {
           "Perfekt. Jetzt kannst du HYPE mit jemandem teilen.",
           "success"
         );
+
       }
     );
+
   }
 
+
   if (shareButton) {
+
     shareButton.addEventListener(
       "click",
       async () => {
+
         if (!instagramCompleted) {
           return;
         }
 
+
         clearAuthMessage();
 
+
         try {
+
+          /*
+           * Native Share Sheet
+           */
+
           if (
             navigator.share
           ) {
+
             await navigator.share({
+
               title:
                 "HYPE",
+
               text:
                 HYPE_SHARE_TEXT,
+
               url:
                 HYPE_SHARE_URL
+
             });
+
 
             showAuthMessage(
               "Perfekt – HYPE wurde über die Teilen-Funktion geöffnet. Bestätige jetzt den Schritt.",
@@ -1128,15 +748,23 @@ function attachRegistrationGateEvents() {
             );
 
             return;
+
           }
+
+
+          /*
+           * Clipboard Fallback
+           */
 
           if (
             navigator.clipboard &&
             navigator.clipboard.writeText
           ) {
+
             await navigator.clipboard.writeText(
               `${HYPE_SHARE_TEXT} ${HYPE_SHARE_URL}`
             );
+
 
             showAuthMessage(
               "Der HYPE-Link wurde kopiert. Schick ihn jetzt über WhatsApp, Instagram oder Nachrichten.",
@@ -1144,116 +772,157 @@ function attachRegistrationGateEvents() {
             );
 
             return;
+
           }
+
+
+          /*
+           * Letzter Fallback
+           */
 
           showAuthMessage(
             `Bitte teile diesen Link mit jemandem: ${HYPE_SHARE_URL}`,
             "success"
           );
+
         } catch (error) {
+
+          /*
+           * User hat das native Share Sheet
+           * geschlossen.
+           */
+
           if (
             error?.name ===
             "AbortError"
           ) {
+
             showAuthMessage(
               "Teilen abgebrochen. Du kannst es jederzeit erneut versuchen.",
               "error"
             );
 
             return;
+
           }
+
 
           console.error(
             "HYPE share error:",
             error
           );
 
+
           showAuthMessage(
             "Das Teilen konnte nicht geöffnet werden. Du kannst den Link trotzdem kopieren und manuell teilen.",
             "error"
           );
+
         }
+
       }
     );
+
   }
 
+
   if (shareConfirm) {
+
     shareConfirm.addEventListener(
       "click",
       () => {
+
         if (!instagramCompleted) {
           return;
         }
+
 
         shareCompleted =
           true;
 
         saveGateProgress();
+
         clearAuthMessage();
 
         renderRegistrationGate();
 
         updateFirstNameField();
+
         updateRegistrationSubmitState();
 
         showAuthMessage(
           "Perfekt – jetzt kannst du deinen HYPE-Account erstellen.",
           "success"
         );
+
       }
     );
+
   }
+
 }
+
 
 /* =========================
    SUBMIT STATE
 ========================= */
 
 function updateRegistrationSubmitState() {
+
   if (!authSubmit) {
     return;
   }
 
+
   if (!isRegisterMode) {
+
     authSubmit.disabled =
       false;
 
     return;
+
   }
+
 
   const requirementsComplete =
     instagramCompleted &&
     shareCompleted;
 
+
   authSubmit.disabled =
     !requirementsComplete;
+
 }
+
 
 /* =========================
    AUTH MODE
 ========================= */
 
 function updateAuthMode() {
-  if (isResetMode) {
-    return;
-  }
 
   clearAuthMessage();
 
+
   if (authSubtitle) {
+
     authSubtitle.innerHTML = `
       Deine Trainingsplanung.<br>
       Dein Account.<br>
       Dein HYPE.
     `;
+
   }
 
+
   ensureFirstNameField();
-  ensureForgotPasswordLink();
+
 
   if (isRegisterMode) {
+
     authSubmit.textContent =
       "Account erstellen";
+
 
     authSwitch.innerHTML = `
       <span style="
@@ -1276,22 +945,29 @@ function updateAuthMode() {
       </span>
     `;
 
+
     authPassword.autocomplete =
       "new-password";
 
+
     renderRegistrationGate();
+
     updateFirstNameField();
+
     updateRegistrationSubmitState();
-    updateForgotPasswordLink();
 
     return;
+
   }
+
 
   authSubmit.textContent =
     "Einloggen";
 
+
   authSubmit.disabled =
     false;
+
 
   authSwitch.innerHTML = `
     <span style="
@@ -1314,13 +990,17 @@ function updateAuthMode() {
     </span>
   `;
 
+
   authPassword.autocomplete =
     "current-password";
 
+
   renderRegistrationGate();
+
   updateFirstNameField();
-  updateForgotPasswordLink();
+
 }
+
 
 /* =========================
    LOADING
@@ -1329,21 +1009,24 @@ function updateAuthMode() {
 function setAuthLoading(
   loading
 ) {
+
   if (!authForm) {
     return;
   }
+
 
   authForm.classList.toggle(
     "auth-loading",
     loading
   );
 
-  if (authSwitch) {
-    authSwitch.disabled =
-      loading;
-  }
+
+  authSwitch.disabled =
+    loading;
+
 
   if (loading) {
+
     authSubmit.textContent =
       "Bitte warten …";
 
@@ -1351,48 +1034,50 @@ function setAuthLoading(
       true;
 
     return;
+
   }
 
-  if (isResetMode) {
-    authSubmit.textContent =
-      "Passwort ändern";
-
-    authSubmit.disabled =
-      false;
-
-    return;
-  }
 
   authSubmit.textContent =
     isRegisterMode
       ? "Account erstellen"
       : "Einloggen";
 
+
   updateRegistrationSubmitState();
+
 }
+
 
 /* =========================
    LOGIN
 ========================= */
 
 async function signIn() {
+
   const email =
     authEmail.value.trim();
 
   const password =
     authPassword.value;
 
+
   if (!email || !password) {
+
     showAuthMessage(
       "Bitte E-Mail und Passwort eingeben.",
       "error"
     );
 
     return;
+
   }
 
+
   setAuthLoading(true);
+
   clearAuthMessage();
+
 
   const {
     error
@@ -1402,34 +1087,53 @@ async function signIn() {
       password
     });
 
+
   setAuthLoading(false);
 
+
   if (error) {
+
     console.error(
       "HYPE login error:",
       error
     );
+
 
     showAuthMessage(
       getAuthErrorMessage(error),
       "error"
     );
 
+
     return;
+
   }
 
+
   showApp();
+
 }
+
 
 /* =========================
    REGISTER
 ========================= */
 
 async function signUp() {
+
+  /*
+   * Sicherheits-/UX-Gate.
+   * Wichtig:
+   * Diese beiden Schritte können im Browser
+   * nicht technisch verifiziert werden.
+   * Sie werden vom Nutzer bestätigt.
+   */
+
   if (
     !instagramCompleted ||
     !shareCompleted
   ) {
+
     showAuthMessage(
       "Bitte zuerst beide Schritte abschließen.",
       "error"
@@ -1438,7 +1142,9 @@ async function signUp() {
     updateRegistrationSubmitState();
 
     return;
+
   }
+
 
   const firstName =
     getFirstName();
@@ -1449,7 +1155,9 @@ async function signUp() {
   const password =
     authPassword.value;
 
+
   if (!firstName) {
+
     showAuthMessage(
       "Bitte gib deinen Vornamen ein.",
       "error"
@@ -1461,77 +1169,119 @@ async function signUp() {
     input?.focus();
 
     return;
+
   }
 
+
   if (firstName.length > 40) {
+
     showAuthMessage(
       "Der Vorname darf maximal 40 Zeichen haben.",
       "error"
     );
 
     return;
+
   }
 
+
   if (!email || !password) {
+
     showAuthMessage(
       "Bitte E-Mail und Passwort eingeben.",
       "error"
     );
 
     return;
+
   }
 
+
   if (password.length < 6) {
+
     showAuthMessage(
       "Das Passwort muss mindestens 6 Zeichen haben.",
       "error"
     );
 
     return;
+
   }
 
+
   setAuthLoading(true);
+
   clearAuthMessage();
+
 
   const {
     data,
     error
   } =
     await supabaseClient.auth.signUp({
+
       email,
+
       password,
+
       options: {
+
         data: {
+
           first_name:
             firstName
+
         }
+
       }
+
     });
+
 
   setAuthLoading(false);
 
+
   if (error) {
+
     console.error(
       "HYPE registration error:",
       error
     );
+
 
     showAuthMessage(
       getAuthErrorMessage(error),
       "error"
     );
 
+
     return;
+
   }
+
+
+  /*
+   * Falls Supabase direkt eine Session erzeugt,
+   * ist der Account sofort eingeloggt.
+   */
 
   if (
     data &&
     data.session
   ) {
+
     clearGateProgress();
+
     showApp();
+
     return;
+
   }
+
+
+  /*
+   * Falls E-Mail-Bestätigung aktiviert ist.
+   */
 
   clearGateProgress();
 
@@ -1544,282 +1294,125 @@ async function signUp() {
     "Account erstellt. Bitte bestätige deine E-Mail-Adresse. Danach kannst du dich einloggen.",
     "success"
   );
+
 }
 
+
 /* =========================
-   UPDATE PROFILE FIRST NAME
+   UPDATE PROFILE
 ========================= */
 
 async function updateProfileFirstName(
   firstName
 ) {
+
   const cleanName =
     String(
       firstName || ""
     ).trim();
 
+
   if (!cleanName) {
+
     return {
       success: false,
       error:
         "Bitte gib einen Vornamen ein."
     };
+
   }
 
+
   if (cleanName.length > 40) {
+
     return {
       success: false,
       error:
         "Der Vorname darf maximal 40 Zeichen haben."
     };
+
   }
+
 
   const {
     data,
     error
   } =
     await supabaseClient.auth.updateUser({
+
       data: {
+
         first_name:
           cleanName
+
       }
+
     });
 
+
   if (error) {
+
     console.error(
       "HYPE profile update error:",
       error
     );
+
 
     return {
       success: false,
       error:
         getAuthErrorMessage(error)
     };
+
   }
+
 
   return {
     success: true,
     user:
       data?.user || null
   };
+
 }
+
 
 window.updateProfileFirstName =
   updateProfileFirstName;
 
-/* =========================
-   PROFILE AVATAR UPLOAD
-========================= */
-
-function getAvatarExtension(
-  file
-) {
-  const type =
-    String(
-      file?.type || ""
-    ).toLowerCase();
-
-  if (
-    type === "image/jpeg"
-  ) {
-    return "jpg";
-  }
-
-  if (
-    type === "image/png"
-  ) {
-    return "png";
-  }
-
-  if (
-    type === "image/webp"
-  ) {
-    return "webp";
-  }
-
-  return null;
-}
-
-async function uploadProfileAvatar(
-  file
-) {
-  if (!file) {
-    return {
-      success: false,
-      error:
-        "Bitte wähle ein Bild aus."
-    };
-  }
-
-  const extension =
-    getAvatarExtension(file);
-
-  if (!extension) {
-    return {
-      success: false,
-      error:
-        "Bitte verwende JPG, PNG oder WebP."
-    };
-  }
-
-  if (
-    file.size >
-    MAX_AVATAR_SIZE
-  ) {
-    return {
-      success: false,
-      error:
-        "Das Profilbild darf maximal 5 MB groß sein."
-    };
-  }
-
-  const {
-    data: userData,
-    error: userError
-  } =
-    await supabaseClient.auth.getUser();
-
-  if (
-    userError ||
-    !userData?.user
-  ) {
-    return {
-      success: false,
-      error:
-        "Du musst eingeloggt sein, um ein Profilbild hochzuladen."
-    };
-  }
-
-  const user =
-    userData.user;
-
-  const path =
-    `${user.id}/avatar-${Date.now()}.${extension}`;
-
-  try {
-    const {
-      error: uploadError
-    } =
-      await supabaseClient.storage
-        .from(AVATAR_BUCKET)
-        .upload(
-          path,
-          file,
-          {
-            cacheControl:
-              "3600",
-            upsert:
-              false,
-            contentType:
-              file.type
-          }
-        );
-
-    if (uploadError) {
-      console.error(
-        "HYPE avatar upload error:",
-        uploadError
-      );
-
-      return {
-        success: false,
-        error:
-          "Das Profilbild konnte nicht hochgeladen werden."
-      };
-    }
-
-    const {
-      data: publicUrlData
-    } =
-      supabaseClient.storage
-        .from(AVATAR_BUCKET)
-        .getPublicUrl(path);
-
-    const publicUrl =
-      publicUrlData?.publicUrl;
-
-    if (!publicUrl) {
-      return {
-        success: false,
-        error:
-          "Die URL des Profilbilds konnte nicht erstellt werden."
-      };
-    }
-
-    const {
-      data: updatedUserData,
-      error: updateError
-    } =
-      await supabaseClient.auth.updateUser({
-        data: {
-          avatar_url:
-            publicUrl
-        }
-      });
-
-    if (updateError) {
-      console.error(
-        "HYPE avatar profile update error:",
-        updateError
-      );
-
-      return {
-        success: false,
-        error:
-          "Das Bild wurde hochgeladen, konnte aber nicht im Profil gespeichert werden."
-      };
-    }
-
-    return {
-      success: true,
-      url:
-        publicUrl,
-      user:
-        updatedUserData?.user || null
-    };
-  } catch (error) {
-    console.error(
-      "HYPE avatar error:",
-      error
-    );
-
-    return {
-      success: false,
-      error:
-        "Beim Hochladen des Profilbilds ist ein Fehler aufgetreten."
-    };
-  }
-}
-
-window.uploadProfileAvatar =
-  uploadProfileAvatar;
 
 /* =========================
    GET CURRENT USER
 ========================= */
 
 async function getCurrentUser() {
+
   const {
     data,
     error
   } =
     await supabaseClient.auth.getUser();
 
+
   if (error) {
+
     console.error(
       "HYPE get user error:",
       error
     );
 
     return null;
+
   }
 
+
   return data?.user || null;
+
 }
+
 
 window.getCurrentUser =
   getCurrentUser;
+
 
 /* =========================
    AUTH ERRORS
@@ -1828,84 +1421,99 @@ window.getCurrentUser =
 function getAuthErrorMessage(
   error
 ) {
+
   const message =
     String(
       error?.message || ""
     ).toLowerCase();
+
 
   if (
     message.includes(
       "invalid login credentials"
     )
   ) {
+
     return "E-Mail oder Passwort ist falsch.";
+
   }
+
 
   if (
     message.includes(
       "user already registered"
     )
   ) {
+
     return "Für diese E-Mail existiert bereits ein Account.";
+
   }
+
 
   if (
     message.includes(
       "password should be at least"
     )
   ) {
+
     return "Das Passwort ist zu kurz.";
+
   }
+
 
   if (
     message.includes(
       "email not confirmed"
     )
   ) {
+
     return "Bitte bestätige zuerst deine E-Mail-Adresse.";
+
   }
+
 
   if (
     message.includes(
       "rate limit"
     )
   ) {
+
     return "Zu viele Versuche. Bitte kurz warten und erneut versuchen.";
+
   }
 
-  if (
-    message.includes(
-      "redirect"
-    ) &&
-    message.includes(
-      "not allowed"
-    )
-  ) {
-    return "Der Passwort-Reset ist noch nicht korrekt konfiguriert. Bitte prüfe die Redirect-URL in Supabase.";
-  }
 
   return (
     error?.message ||
     "Es ist ein Fehler aufgetreten."
   );
+
 }
+
 
 /* =========================
    SHOW APP
 ========================= */
 
 function showApp() {
+
   if (authScreen) {
+
     authScreen.classList.add(
       "hidden"
     );
+
   }
 
+
   if (appContent) {
+
     appContent.classList.remove(
       "hidden"
     );
+
   }
+
 
   const bottomNav =
     document.getElementById(
@@ -1913,34 +1521,51 @@ function showApp() {
     );
 
   if (bottomNav) {
+
     bottomNav.classList.remove(
       "hidden"
     );
+
   }
+
+
+  /*
+   * app.js bekommt ein klares Signal,
+   * dass der Auth-Status fertig ist.
+   */
 
   window.dispatchEvent(
     new CustomEvent(
       "hype-auth-ready"
     )
   );
+
 }
+
 
 /* =========================
    SHOW LOGIN
 ========================= */
 
 function showLogin() {
+
   if (authScreen) {
+
     authScreen.classList.remove(
       "hidden"
     );
+
   }
 
+
   if (appContent) {
+
     appContent.classList.add(
       "hidden"
     );
+
   }
+
 
   const bottomNav =
     document.getElementById(
@@ -1948,50 +1573,49 @@ function showLogin() {
     );
 
   if (bottomNav) {
+
     bottomNav.classList.add(
       "hidden"
     );
+
   }
+
 
   if (authForm) {
     authForm.reset();
   }
+
 
   clearGateProgress();
 
   isRegisterMode =
     false;
 
-  isResetMode =
-    false;
-
-  const resetField =
-    document.getElementById(
-      "authResetConfirmField"
-    );
-
-  resetField?.classList.add(
-    "hidden"
-  );
 
   updateAuthMode();
+
 }
+
 
 /* =========================
    LOGOUT
 ========================= */
 
 async function logout() {
+
   const {
     error
   } =
     await supabaseClient.auth.signOut();
 
+
   if (error) {
+
     console.error(
       "HYPE logout error:",
       error
     );
+
 
     showAuthMessage(
       "Logout fehlgeschlagen.",
@@ -1999,114 +1623,130 @@ async function logout() {
     );
 
     return;
+
   }
 
+
   showLogin();
+
 }
+
 
 window.logout =
   logout;
+
 
 /* =========================
    FORM SUBMIT
 ========================= */
 
 if (authForm) {
+
   authForm.addEventListener(
     "submit",
     async event => {
+
       event.preventDefault();
 
-      if (isResetMode) {
-        await updatePassword();
-        return;
-      }
 
       if (isRegisterMode) {
+
         await signUp();
+
         return;
+
       }
 
-      if (
-        authSubmit?.textContent ===
-        "Reset-Link senden"
-      ) {
-        await requestPasswordReset();
-        return;
-      }
 
       await signIn();
+
     }
   );
+
 }
+
 
 /* =========================
    LOGIN / REGISTER SWITCH
 ========================= */
 
 if (authSwitch) {
+
   authSwitch.addEventListener(
     "click",
     event => {
+
       event.preventDefault();
       event.stopPropagation();
+
 
       if (authSwitch.disabled) {
         return;
       }
 
-      if (isResetMode) {
-        enterLoginMode();
-        return;
-      }
-
-      if (
-        !isRegisterMode &&
-        authSubmit?.textContent ===
-        "Reset-Link senden"
-      ) {
-        enterLoginMode();
-        return;
-      }
 
       isRegisterMode =
         !isRegisterMode;
 
+
       if (authPassword) {
+
         authPassword.value =
           "";
+
       }
 
+
       if (isRegisterMode) {
+
+        /*
+         * Bei jedem bewussten Wechsel
+         * in die Registrierung beginnen
+         * wir das Gate sauber neu.
+         */
+
         loadGateProgress();
+
       } else {
+
         clearAuthMessage();
+
       }
+
 
       updateAuthMode();
 
+
       setTimeout(
         () => {
+
           if (
             isRegisterMode &&
             instagramCompleted &&
             shareCompleted
           ) {
+
             const firstNameInput =
               getFirstNameInput();
 
             firstNameInput?.focus();
 
             return;
+
           }
 
+
           authEmail?.focus();
+
         },
         50
       );
+
     }
   );
+
 }
+
 
 /* =========================
    AUTH STATE
@@ -2114,71 +1754,82 @@ if (authSwitch) {
 
 supabaseClient.auth.onAuthStateChange(
   (event, session) => {
-    if (
-      event ===
-      "PASSWORD_RECOVERY"
-    ) {
-      enterForgotPasswordMode();
-      return;
-    }
 
     if (session) {
+
       showApp();
+
       return;
+
     }
+
 
     if (
       event === "SIGNED_OUT" ||
       event === "INITIAL_SESSION"
     ) {
+
       showLogin();
+
     }
+
   }
 );
+
 
 /* =========================
    INITIAL AUTH CHECK
 ========================= */
 
 async function initAuth() {
+
   const {
     data,
     error
   } =
     await supabaseClient.auth.getSession();
 
+
   if (error) {
+
     console.error(
       "HYPE auth initialization error:",
       error
     );
+
 
     showAuthMessage(
       "Die Verbindung zu HYPE konnte nicht hergestellt werden.",
       "error"
     );
 
+
     return;
+
   }
 
+
   if (data.session) {
+
     showApp();
+
   } else {
+
     showLogin();
+
   }
+
 }
+
 
 /* =========================
    START
 ========================= */
 
 ensureFirstNameField();
-ensureForgotPasswordLink();
-ensureResetConfirmField();
 
 loadGateProgress();
 
 updateAuthMode();
-updateForgotPasswordLink();
 
 initAuth();
