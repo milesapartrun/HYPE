@@ -63,7 +63,6 @@ let overviewPeriod = "week";
 let overviewDate = new Date();
 overviewDate.setHours(12, 0, 0, 0);
 
-
 /*
   Separate Woche für die Profil-Share-Karte.
   Standardmäßig: letzte vollständig abgeschlossene Woche.
@@ -71,6 +70,13 @@ overviewDate.setHours(12, 0, 0, 0);
 let shareWeekStart = startOfWeek(
   addDays(new Date(), -7)
 );
+
+/*
+  Name für die Profil-Share-Karte zwischenspeichern,
+  damit beim Wechseln der Woche derselbe Name
+  sauber erhalten bleibt.
+*/
+let profileDisplayName = "";
 
 
 /* =========================
@@ -261,6 +267,436 @@ const shareHypeProfileBtn =
 
 const logoutBtn =
   document.getElementById("logoutBtn");
+
+
+/* =========================
+   PROFILE / SHARE STYLES
+   Nur für die von uns
+   überarbeitete Profilansicht.
+========================= */
+
+function ensureProfileShareStyles() {
+  if (
+    document.getElementById(
+      "hypeProfileShareStyles"
+    )
+  ) {
+    return;
+  }
+
+  const style =
+    document.createElement("style");
+
+  style.id =
+    "hypeProfileShareStyles";
+
+  style.textContent = `
+    #profileView #profileGreeting {
+      margin-bottom: 28px;
+    }
+
+    #profileView #profileName {
+      display: block;
+      margin: 0 0 7px 0;
+      line-height: 1.15;
+    }
+
+    #profileView #profileEmail {
+      display: block;
+      margin: 0;
+      line-height: 1.45;
+      overflow-wrap: anywhere;
+    }
+
+    #profileView #profileEmailEdit {
+      display: block;
+      margin: 10px 0 0 0;
+      line-height: 1.4;
+      overflow-wrap: anywhere;
+    }
+
+    #profileView #editProfileBtn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 18px;
+      white-space: nowrap;
+    }
+
+    #profileView #weeklyShareCard {
+      overflow: hidden;
+    }
+
+    #profileView .weekly-share-top {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      margin-bottom: 24px;
+    }
+
+    #profileView .weekly-share-eyebrow {
+      margin: 0;
+      font-size: 11px;
+      line-height: 1;
+      letter-spacing: .18em;
+      font-weight: 800;
+      text-transform: uppercase;
+      opacity: .72;
+    }
+
+    #profileView .weekly-share-navigation {
+      display: grid;
+      grid-template-columns: 42px minmax(0, 1fr) 42px;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+    }
+
+    #profileView #shareWeekPrevBtn,
+    #profileView #shareWeekNextBtn,
+    #profileView #shareWeekCurrentBtn {
+      appearance: none;
+      -webkit-appearance: none;
+      border: 1px solid rgba(255,255,255,.10);
+      box-shadow: none;
+      background: #171a1f;
+      color: #f5f6f7;
+      border-radius: 12px;
+      min-height: 42px;
+      padding: 0;
+      font: inherit;
+    }
+
+    #profileView #shareWeekPrevBtn,
+    #profileView #shareWeekNextBtn {
+      width: 42px;
+      font-size: 24px;
+      line-height: 1;
+    }
+
+    #profileView #shareWeekPrevBtn:hover,
+    #profileView #shareWeekNextBtn:hover {
+      background: #20242a;
+      border-color: rgba(215,255,63,.35);
+      color: #d7ff3f;
+    }
+
+    #profileView #shareWeekCurrentBtn {
+      justify-self: center;
+      width: 100%;
+      max-width: 320px;
+      padding: 0 16px;
+      font-size: 11px;
+      letter-spacing: .08em;
+      font-weight: 800;
+      text-transform: uppercase;
+      color: #d7ff3f;
+      background: #111419;
+    }
+
+    #profileView .weekly-share-selected-week {
+      text-align: center;
+      min-width: 0;
+    }
+
+    #profileView #shareWeekTitle {
+      display: block;
+      margin: 0;
+      color: #f5f6f7;
+      font-size: 13px;
+      line-height: 1.3;
+      font-weight: 800;
+      white-space: normal;
+    }
+
+    #profileView .weekly-share-identity {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      margin-top: 2px;
+    }
+
+    #profileView #weeklyShareName {
+      display: block;
+      margin: 0;
+      color: #f5f6f7;
+      font-size: clamp(24px, 6vw, 34px);
+      line-height: 1.08;
+      font-weight: 900;
+      letter-spacing: -.035em;
+    }
+
+    #profileView #weeklyShareRange {
+      display: block;
+      margin: 0;
+      color: #8d949e;
+      font-size: 13px;
+      line-height: 1.4;
+      font-weight: 600;
+    }
+
+    #profileView #weeklyShareDays {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: 6px;
+      width: 100%;
+      margin: 0;
+    }
+
+    #profileView .weekly-share-day {
+      min-width: 0;
+      min-height: 104px;
+      padding: 10px 7px 9px;
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 13px;
+      background: #12151a;
+      overflow: hidden;
+    }
+
+    #profileView .weekly-share-day.completed {
+      border-color: rgba(215,255,63,.35);
+      background:
+        linear-gradient(
+          180deg,
+          rgba(215,255,63,.08),
+          rgba(215,255,63,.025)
+        ),
+        #12151a;
+    }
+
+    #profileView .weekly-share-day-top {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      margin-bottom: 9px;
+    }
+
+    #profileView .weekly-share-day-top span {
+      color: #8d949e;
+      font-size: 9px;
+      line-height: 1;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+    }
+
+    #profileView .weekly-share-day-top strong {
+      color: #f5f6f7;
+      font-size: 17px;
+      line-height: 1;
+      font-weight: 900;
+    }
+
+    #profileView .weekly-share-day-training {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      min-width: 0;
+    }
+
+    #profileView .weekly-share-day-training span {
+      display: block;
+      min-width: 0;
+      color: #d7dbe0;
+      font-size: 9px;
+      line-height: 1.25;
+      font-weight: 700;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    #profileView .weekly-share-day-training .completed-training {
+      color: #d7ff3f;
+    }
+
+    #profileView .weekly-share-day-training .empty-day {
+      color: #565d67;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    #profileView .weekly-share-day-training .more-training {
+      color: #737b86;
+      font-size: 8px;
+      font-weight: 700;
+    }
+
+    #profileView #weeklyShareSummary {
+      margin-top: 16px;
+    }
+
+    #profileView .weekly-share-stats {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    #profileView .weekly-share-stat {
+      min-width: 0;
+      padding: 15px 14px;
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 14px;
+      background: #12151a;
+    }
+
+    #profileView .weekly-share-stat strong {
+      display: block;
+      margin: 0 0 4px;
+      color: #d7ff3f;
+      font-size: 22px;
+      line-height: 1;
+      font-weight: 900;
+    }
+
+    #profileView .weekly-share-stat span {
+      display: block;
+      color: #8d949e;
+      font-size: 9px;
+      line-height: 1.2;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    #profileView .weekly-share-empty {
+      padding: 17px 16px;
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 14px;
+      background: #12151a;
+    }
+
+    #profileView .weekly-share-empty strong {
+      display: block;
+      margin: 0 0 5px;
+      color: #f5f6f7;
+      font-size: 14px;
+      line-height: 1.3;
+      font-weight: 850;
+    }
+
+    #profileView .weekly-share-empty span {
+      display: block;
+      color: #8d949e;
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    #profileView #weeklyShareFooter {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      margin-top: 18px;
+      padding-top: 17px;
+      border-top: 1px solid rgba(255,255,255,.08);
+    }
+
+    #profileView #weeklyShareFooter strong {
+      color: #f5f6f7;
+      font-size: 13px;
+      line-height: 1.35;
+      font-weight: 800;
+    }
+
+    #profileView #weeklyShareFooter span {
+      color: #8d949e;
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    #profileView #shareWeekBtn {
+      width: 100%;
+      margin-top: 18px;
+      min-height: 48px;
+      border-radius: 13px;
+    }
+
+    #profileView #shareHypeProfileBtn {
+      width: 100%;
+      min-height: 48px;
+      border-radius: 13px;
+    }
+
+    #profileView .weekly-share-image-preview {
+      margin-top: 18px;
+      padding: 14px;
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 16px;
+      background: #111419;
+    }
+
+    #profileView .weekly-share-image-preview-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    #profileView .weekly-share-image-preview-head > div {
+      min-width: 0;
+    }
+
+    #profileView .weekly-share-image-preview-head strong {
+      display: block;
+      margin-top: 5px;
+      color: #f5f6f7;
+      font-size: 14px;
+      line-height: 1.2;
+    }
+
+    #profileView .weekly-share-preview-close {
+      flex: 0 0 auto;
+      width: 34px;
+      height: 34px;
+      padding: 0;
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: 10px;
+      background: #181b20;
+      color: #f5f6f7;
+      font-size: 20px;
+      line-height: 1;
+    }
+
+    #profileView .weekly-share-image {
+      display: block;
+      width: 100%;
+      height: auto;
+      border-radius: 12px;
+      background: #0b0d10;
+    }
+
+    @media (max-width: 520px) {
+      #profileView #weeklyShareDays {
+        gap: 4px;
+      }
+
+      #profileView .weekly-share-day {
+        min-height: 96px;
+        padding: 9px 5px 8px;
+        border-radius: 11px;
+      }
+
+      #profileView .weekly-share-day-top span {
+        font-size: 8px;
+      }
+
+      #profileView .weekly-share-day-top strong {
+        font-size: 15px;
+      }
+
+      #profileView .weekly-share-day-training span {
+        font-size: 8px;
+      }
+
+      #profileView .weekly-share-stats {
+        gap: 7px;
+      }
+    }
+  `;
+
+  document.head.appendChild(style);
+}
 
 
 /* =========================
@@ -563,12 +999,11 @@ async function renderProfile() {
       : "";
 
   const displayName =
-    firstName || "dein HYPE";
+    firstName || "Deine";
 
-  /*
-    Wenn noch kein Vorname hinterlegt ist,
-    zeigen wir eine direkte Aufforderung.
-  */
+  profileDisplayName =
+    displayName;
+
   if (profileGreeting) {
     profileGreeting.textContent =
       firstName
@@ -599,11 +1034,6 @@ async function renderProfile() {
       firstName;
   }
 
-  /*
-    Wenn noch kein Name vorhanden ist,
-    öffnen wir beim ersten Profil-Aufruf
-    automatisch die Namenseingabe.
-  */
   if (!firstName) {
     setTimeout(
       () => {
@@ -969,7 +1399,41 @@ function renderWeeklySharePreview(
 
   const cleanName =
     displayName ||
+    profileDisplayName ||
     "Deine";
+
+  profileDisplayName =
+    cleanName;
+
+  if (shareWeekPrevBtn) {
+    shareWeekPrevBtn.textContent =
+      "‹";
+
+    shareWeekPrevBtn.setAttribute(
+      "aria-label",
+      "Vorherige Woche"
+    );
+  }
+
+  if (shareWeekNextBtn) {
+    shareWeekNextBtn.textContent =
+      "›";
+
+    shareWeekNextBtn.setAttribute(
+      "aria-label",
+      "Nächste Woche"
+    );
+  }
+
+  if (shareWeekCurrentBtn) {
+    shareWeekCurrentBtn.textContent =
+      "Aktuelle Woche";
+
+    shareWeekCurrentBtn.setAttribute(
+      "aria-label",
+      "Aktuelle Woche auswählen"
+    );
+  }
 
   if (shareWeekTitle) {
     shareWeekTitle.textContent =
@@ -1028,10 +1492,16 @@ function renderWeeklySharePreview(
           .replace(".", "");
 
       const trainingTitles =
-        completedDay
+        daySessions
           .map(
-            session =>
-              session.title
+            session => ({
+              title:
+                session.title,
+              completed:
+                Boolean(
+                  session.completed
+                )
+            })
           );
 
       days.push(`
@@ -1043,9 +1513,7 @@ function renderWeeklySharePreview(
 
           <div class="weekly-share-day-top">
             <span>
-              ${esc(
-                weekday
-              )}
+              ${esc(weekday)}
             </span>
 
             <strong>
@@ -1060,13 +1528,31 @@ function renderWeeklySharePreview(
                 ? trainingTitles
                     .slice(0, 2)
                     .map(
-                      title =>
-                        `<span>${esc(
-                          title
-                        )}</span>`
+                      training =>
+                        `
+                          <span class="${
+                            training.completed
+                              ? "completed-training"
+                              : ""
+                          }">
+                            ${esc(
+                              training.title
+                            )}
+                          </span>
+                        `
                     )
                     .join("")
                 : `<span class="empty-day">—</span>`
+            }
+
+            ${
+              trainingTitles.length > 2
+                ? `
+                  <span class="more-training">
+                    +${trainingTitles.length - 2} weitere
+                  </span>
+                `
+                : ""
             }
 
           </div>
@@ -1082,32 +1568,43 @@ function renderWeeklySharePreview(
   if (weeklyShareSummary) {
     if (!weekSessions.length) {
       weeklyShareSummary.innerHTML = `
-        <strong>
-          Noch kein Training
-        </strong>
+        <div class="weekly-share-empty">
+          <strong>
+            Noch kein Training in dieser Woche
+          </strong>
 
-        <span>
-          In dieser Woche sind noch keine Einheiten geplant.
-        </span>
+          <span>
+            Für diese Woche sind noch keine Einheiten geplant.
+          </span>
+        </div>
       `;
     } else {
       weeklyShareSummary.innerHTML = `
-        <strong>
-          ${completed.length} ${
-            completed.length === 1
-              ? "Training"
-              : "Trainings"
-          }
-        </strong>
+        <div class="weekly-share-stats">
 
-        <span>
-          ${totalMinutes} Minuten ·
-          ${weekSessions.length} geplante ${
-            weekSessions.length === 1
-              ? "Einheit"
-              : "Einheiten"
-          }
-        </span>
+          <div class="weekly-share-stat">
+            <strong>
+              ${completed.length}
+            </strong>
+
+            <span>
+              ${completed.length === 1
+                ? "Training erledigt"
+                : "Trainings erledigt"}
+            </span>
+          </div>
+
+          <div class="weekly-share-stat">
+            <strong>
+              ${totalMinutes}
+            </strong>
+
+            <span>
+              Minuten erledigt
+            </span>
+          </div>
+
+        </div>
       `;
     }
   }
@@ -1115,12 +1612,11 @@ function renderWeeklySharePreview(
   if (weeklyShareFooter) {
     weeklyShareFooter.innerHTML = `
       <strong>
-        Trainiert jemand genauso gerne wie du?
+        Teile deine Trainingswoche mit deinem Trainingspartner.
       </strong>
 
       <span>
-        Dann schicke HYPE an einen Freund
-        oder einen Trainingspartner.
+        Zeig, was diese Woche bei dir auf dem Plan stand.
       </span>
     `;
   }
@@ -1280,7 +1776,7 @@ async function createWeeklyShareImage() {
   }
 
   /*
-    Background
+    Hintergrund
   */
 
   ctx.fillStyle =
@@ -1295,17 +1791,22 @@ async function createWeeklyShareImage() {
 
   const glow =
     ctx.createRadialGradient(
-      850,
-      230,
+      870,
+      150,
       0,
-      850,
-      230,
-      650
+      870,
+      150,
+      720
     );
 
   glow.addColorStop(
     0,
-    "rgba(215,255,63,.20)"
+    "rgba(215,255,63,.18)"
+  );
+
+  glow.addColorStop(
+    0.45,
+    "rgba(215,255,63,.05)"
   );
 
   glow.addColorStop(
@@ -1324,36 +1825,62 @@ async function createWeeklyShareImage() {
   );
 
   /*
-    Brand
+    Dezente obere Linie
   */
 
   ctx.fillStyle =
     "#d7ff3f";
 
+  ctx.fillRect(
+    80,
+    72,
+    120,
+    6
+  );
+
+  /*
+    Brand
+  */
+
+  ctx.fillStyle =
+    "#f5f6f7";
+
   ctx.font =
-    "900 72px Arial";
+    "900 74px Arial";
 
   ctx.fillText(
     "HYPE",
     80,
-    125
+    155
   );
 
   ctx.fillStyle =
     "#8d949e";
 
   ctx.font =
-    "700 22px Arial";
+    "700 20px Arial";
 
   ctx.fillText(
     "HYBRID PLAN & EXECUTION",
     83,
-    162
+    190
   );
 
   /*
-    Name + week
+    Woche
   */
+
+  ctx.fillStyle =
+    "#d7ff3f";
+
+  ctx.font =
+    "800 20px Arial";
+
+  ctx.fillText(
+    "DEINE WOCHE",
+    80,
+    275
+  );
 
   ctx.fillStyle =
     "#f5f6f7";
@@ -1361,17 +1888,20 @@ async function createWeeklyShareImage() {
   ctx.font =
     "900 58px Arial";
 
+  const nameTitle =
+    `${displayName}s Woche`;
+
   ctx.fillText(
-    `${displayName}s Woche`,
+    nameTitle,
     80,
-    285
+    350
   );
 
   ctx.fillStyle =
     "#8d949e";
 
   ctx.font =
-    "500 25px Arial";
+    "600 25px Arial";
 
   ctx.fillText(
     `${formatShortDate(
@@ -1380,7 +1910,7 @@ async function createWeeklyShareImage() {
       weekEnd
     )}`,
     83,
-    330
+    395
   );
 
   /*
@@ -1390,7 +1920,7 @@ async function createWeeklyShareImage() {
   drawShareStat(
     ctx,
     80,
-    410,
+    470,
     String(
       completed.length
     ),
@@ -1399,8 +1929,8 @@ async function createWeeklyShareImage() {
 
   drawShareStat(
     ctx,
-    375,
-    410,
+    540,
+    470,
     String(
       totalMinutes
     ),
@@ -1408,14 +1938,14 @@ async function createWeeklyShareImage() {
   );
 
   /*
-    Seven day rows
+    Wochenzeilen
   */
 
   const dayStartY =
-    650;
+    690;
 
   const rowHeight =
-    142;
+    143;
 
   for (
     let i = 0;
@@ -1433,37 +1963,55 @@ async function createWeeklyShareImage() {
         iso(date)
       );
 
-    const completedDay =
-      daySessions.filter(
-        session =>
-          session.completed
-      );
-
     const y =
       dayStartY +
       i * rowHeight;
 
+    const hasCompleted =
+      daySessions.some(
+        session =>
+          session.completed
+      );
+
     ctx.fillStyle =
-      "#14171c";
+      hasCompleted
+        ? "#151a13"
+        : "#14171c";
 
     roundRect(
       ctx,
       70,
       y,
       940,
-      112,
-      24
+      116,
+      22
     );
 
     ctx.fill();
+
+    if (hasCompleted) {
+      ctx.fillStyle =
+        "#d7ff3f";
+
+      ctx.fillRect(
+        70,
+        y + 22,
+        5,
+        72
+      );
+    }
+
+    /*
+      Tag
+    */
 
     ctx.fillStyle =
       "#8d949e";
 
     ctx.font =
-      "800 22px Arial";
+      "800 18px Arial";
 
-    ctx.fillText(
+    const weekday =
       new Intl.DateTimeFormat(
         "de-DE",
         {
@@ -1471,7 +2019,11 @@ async function createWeeklyShareImage() {
         }
       )
         .format(date)
-        .toUpperCase(),
+        .replace(".", "")
+        .toUpperCase();
+
+    ctx.fillText(
+      weekday,
       105,
       y + 42
     );
@@ -1480,76 +2032,124 @@ async function createWeeklyShareImage() {
       "#f5f6f7";
 
     ctx.font =
-      "900 31px Arial";
+      "900 30px Arial";
 
     ctx.fillText(
       String(
         date.getDate()
       ),
-      108,
-      y + 79
+      106,
+      y + 78
     );
 
-    if (
-      completedDay.length
-    ) {
-      let x = 235;
+    /*
+      Trainings
+    */
 
-      completedDay
-        .slice(0, 4)
-        .forEach(
-          session => {
-            const meta =
-              sportMeta[
-                session.sport
-              ] ||
-              sportMeta.running;
-
-            ctx.font =
-              "32px Arial";
-
-            ctx.fillText(
-              meta.icon,
-              x,
-              y + 45
-            );
-
-            ctx.fillStyle =
-              "#f5f6f7";
-
-            ctx.font =
-              "700 20px Arial";
-
-            const title =
-              session.title.length >
-              24
-                ? `${session.title.slice(
-                    0,
-                    23
-                  )}…`
-                : session.title;
-
-            ctx.fillText(
-              title,
-              x,
-              y + 78
-            );
-
-            x += 195;
-          }
-        );
-
-    } else {
+    if (!daySessions.length) {
       ctx.fillStyle =
         "#626973";
 
       ctx.font =
-        "600 21px Arial";
+        "600 20px Arial";
 
       ctx.fillText(
-        "Recovery / Rest",
-        235,
+        "Kein Training",
+        270,
         y + 62
+      );
+
+      continue;
+    }
+
+    const visibleSessions =
+      daySessions.slice(
+        0,
+        2
+      );
+
+    visibleSessions.forEach(
+      (
+        session,
+        index
+      ) => {
+        const meta =
+          sportMeta[
+            session.sport
+          ] ||
+          sportMeta.running;
+
+        const lineY =
+          y +
+          39 +
+          index * 37;
+
+        ctx.font =
+          "28px Arial";
+
+        ctx.fillText(
+          meta.icon,
+          270,
+          lineY
+        );
+
+        ctx.fillStyle =
+          session.completed
+            ? "#d7ff3f"
+            : "#f5f6f7";
+
+        ctx.font =
+          "750 20px Arial";
+
+        const rawTitle =
+          String(
+            session.title ||
+            "Training"
+          );
+
+        const maxTitleWidth =
+          520;
+
+        const title =
+          fitCanvasText(
+            ctx,
+            rawTitle,
+            maxTitleWidth
+          );
+
+        ctx.fillText(
+          title,
+          315,
+          lineY
+        );
+
+        ctx.fillStyle =
+          "#737b86";
+
+        ctx.font =
+          "600 16px Arial";
+
+        ctx.fillText(
+          `${session.duration || 0} min`,
+          855,
+          lineY
+        );
+      }
+    );
+
+    if (
+      daySessions.length > 2
+    ) {
+      ctx.fillStyle =
+        "#737b86";
+
+      ctx.font =
+        "600 14px Arial";
+
+      ctx.fillText(
+        `+${daySessions.length - 2} weitere`,
+        315,
+        y + 101
       );
     }
   }
@@ -1562,42 +2162,36 @@ async function createWeeklyShareImage() {
     "#d7ff3f";
 
   ctx.font =
-    "900 25px Arial";
+    "900 24px Arial";
 
   ctx.fillText(
     "TRAIN SMART. STAY HYPE.",
     80,
-    1730
+    1770
   );
 
   ctx.fillStyle =
     "#f5f6f7";
 
   ctx.font =
-    "800 27px Arial";
+    "800 26px Arial";
 
   ctx.fillText(
-    "Trainiert jemand genauso gerne wie du?",
+    "Teile deine Trainingswoche",
     80,
-    1785
+    1825
   );
 
   ctx.fillStyle =
     "#8d949e";
 
   ctx.font =
-    "600 22px Arial";
+    "600 20px Arial";
 
   ctx.fillText(
-    "Dann schicke HYPE an einen Freund",
+    "mit deinem Trainingspartner.",
     80,
-    1825
-  );
-
-  ctx.fillText(
-    "oder einen Trainingspartner.",
-    80,
-    1860
+    1862
   );
 
   return new Promise(
@@ -1624,6 +2218,41 @@ async function createWeeklyShareImage() {
 }
 
 
+function fitCanvasText(
+  ctx,
+  text,
+  maxWidth
+) {
+  const clean =
+    String(text || "");
+
+  if (
+    ctx.measureText(clean)
+      .width <= maxWidth
+  ) {
+    return clean;
+  }
+
+  let result =
+    clean;
+
+  while (
+    result.length > 1 &&
+    ctx.measureText(
+      `${result}…`
+    ).width > maxWidth
+  ) {
+    result =
+      result.slice(
+        0,
+        -1
+      );
+  }
+
+  return `${result}…`;
+}
+
+
 function drawShareStat(
   ctx,
   x,
@@ -1638,9 +2267,9 @@ function drawShareStat(
     ctx,
     x,
     y,
-    260,
-    145,
-    22
+    460,
+    150,
+    24
   );
 
   ctx.fill();
@@ -1649,12 +2278,12 @@ function drawShareStat(
     "#d7ff3f";
 
   ctx.font =
-    "900 52px Arial";
+    "900 54px Arial";
 
   ctx.fillText(
     value,
-    x + 25,
-    y + 65
+    x + 28,
+    y + 68
   );
 
   ctx.fillStyle =
@@ -1665,8 +2294,8 @@ function drawShareStat(
 
   ctx.fillText(
     label,
-    x + 25,
-    y + 105
+    x + 29,
+    y + 110
   );
 }
 
@@ -1755,11 +2384,6 @@ async function shareLastWeek() {
     const blob =
       await createWeeklyShareImage();
 
-    /*
-      Erst die erzeugte Grafik als
-      echte Vorschau in HYPE anzeigen.
-    */
-
     showShareImagePreview(
       blob
     );
@@ -1772,10 +2396,6 @@ async function shareLastWeek() {
           type: "image/png"
         }
       );
-
-    /*
-      Danach native Share-Funktion.
-    */
 
     if (
       navigator.share &&
@@ -1796,11 +2416,6 @@ async function shareLastWeek() {
 
       return;
     }
-
-    /*
-      Kein nativer Share:
-      Bild wird heruntergeladen.
-    */
 
     const url =
       URL.createObjectURL(blob);
@@ -4420,6 +5035,8 @@ if (
 /* =========================
    INITIAL RENDER
 ========================= */
+
+ensureProfileShareStyles();
 
 renderPlan();
 
