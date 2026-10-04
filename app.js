@@ -68,48 +68,92 @@ overviewDate.setHours(12, 0, 0, 0);
    DOM
 ========================= */
 
-const planView = document.getElementById("planView");
-const overviewView = document.getElementById("overviewView");
-const todayView = document.getElementById("todayView");
+const planView =
+  document.getElementById("planView");
 
-const weekTitle = document.getElementById("weekTitle");
-const heroYear = document.getElementById("heroYear");
+const overviewView =
+  document.getElementById("overviewView");
 
-const weekPrevBtn = document.getElementById("weekPrevBtn");
-const weekNextBtn = document.getElementById("weekNextBtn");
-const weekTodayBtn = document.getElementById("weekTodayBtn");
+const todayView =
+  document.getElementById("todayView");
 
-/* NEU */
-const weekJumpTodayBtn =
-  document.getElementById("weekJumpTodayBtn");
+const weekTitle =
+  document.getElementById("weekTitle");
 
-const weekStrip = document.getElementById("weekStrip");
-const sessionsEl = document.getElementById("sessions");
-const selectedDateLabel = document.getElementById("selectedDateLabel");
-const weeklyInsight = document.getElementById("weeklyInsight");
+const heroYear =
+  document.getElementById("heroYear");
 
-const addTrainingBtn = document.getElementById("addTrainingBtn");
+const weekPrevBtn =
+  document.getElementById("weekPrevBtn");
 
-const overviewContent = document.getElementById("overviewContent");
-const periodTitle = document.getElementById("periodTitle");
-const periodPrevBtn = document.getElementById("periodPrevBtn");
-const periodNextBtn = document.getElementById("periodNextBtn");
-const periodTodayBtn = document.getElementById("periodTodayBtn");
+const weekNextBtn =
+  document.getElementById("weekNextBtn");
 
-const todayTitle = document.getElementById("todayTitle");
-const todayContent = document.getElementById("todayContent");
+const weekTodayBtn =
+  document.getElementById("weekTodayBtn");
 
-const trainingDialog = document.getElementById("trainingDialog");
-const trainingForm = document.getElementById("trainingForm");
+const weekStrip =
+  document.getElementById("weekStrip");
 
-const dialogTitle = document.getElementById("dialogTitle");
-const closeDialogBtn = document.getElementById("closeDialogBtn");
+const sessionsEl =
+  document.getElementById("sessions");
 
-const sportInput = document.getElementById("sportInput");
-const titleInput = document.getElementById("titleInput");
-const durationInput = document.getElementById("durationInput");
-const intensityInput = document.getElementById("intensityInput");
-const notesInput = document.getElementById("notesInput");
+const selectedDateLabel =
+  document.getElementById("selectedDateLabel");
+
+const weeklyInsight =
+  document.getElementById("weeklyInsight");
+
+const addTrainingBtn =
+  document.getElementById("addTrainingBtn");
+
+const overviewContent =
+  document.getElementById("overviewContent");
+
+const periodTitle =
+  document.getElementById("periodTitle");
+
+const periodPrevBtn =
+  document.getElementById("periodPrevBtn");
+
+const periodNextBtn =
+  document.getElementById("periodNextBtn");
+
+const periodTodayBtn =
+  document.getElementById("periodTodayBtn");
+
+const todayTitle =
+  document.getElementById("todayTitle");
+
+const todayContent =
+  document.getElementById("todayContent");
+
+const trainingDialog =
+  document.getElementById("trainingDialog");
+
+const trainingForm =
+  document.getElementById("trainingForm");
+
+const dialogTitle =
+  document.getElementById("dialogTitle");
+
+const closeDialogBtn =
+  document.getElementById("closeDialogBtn");
+
+const sportInput =
+  document.getElementById("sportInput");
+
+const titleInput =
+  document.getElementById("titleInput");
+
+const durationInput =
+  document.getElementById("durationInput");
+
+const intensityInput =
+  document.getElementById("intensityInput");
+
+const notesInput =
+  document.getElementById("notesInput");
 
 
 /* =========================
@@ -131,7 +175,8 @@ function iso(date) {
 
 
 function parseDate(value) {
-  const [year, month, day] = value.split("-").map(Number);
+  const [year, month, day] =
+    value.split("-").map(Number);
 
   return new Date(
     year,
@@ -152,18 +197,26 @@ function startOfWeek(date) {
 
   const day = d.getDay();
 
-  const diff = day === 0 ? -6 : 1 - day;
+  const diff =
+    day === 0
+      ? -6
+      : 1 - day;
 
-  d.setDate(d.getDate() + diff);
+  d.setDate(
+    d.getDate() + diff
+  );
 
   return d;
 }
 
 
 function endOfWeek(date) {
-  const d = startOfWeek(date);
+  const d =
+    startOfWeek(date);
 
-  d.setDate(d.getDate() + 6);
+  d.setDate(
+    d.getDate() + 6
+  );
 
   return d;
 }
@@ -172,7 +225,9 @@ function endOfWeek(date) {
 function addDays(date, amount) {
   const d = new Date(date);
 
-  d.setDate(d.getDate() + amount);
+  d.setDate(
+    d.getDate() + amount
+  );
 
   return d;
 }
@@ -182,7 +237,10 @@ function addMonths(date, amount) {
   const d = new Date(date);
 
   d.setDate(1);
-  d.setMonth(d.getMonth() + amount);
+
+  d.setMonth(
+    d.getMonth() + amount
+  );
 
   return d;
 }
@@ -193,7 +251,10 @@ function addYears(date, amount) {
 
   d.setDate(1);
   d.setMonth(0);
-  d.setFullYear(d.getFullYear() + amount);
+
+  d.setFullYear(
+    d.getFullYear() + amount
+  );
 
   return d;
 }
@@ -210,52 +271,83 @@ function esc(value) {
 
 
 function formatLongDate(date) {
-  return new Intl.DateTimeFormat("de-DE", {
-    weekday: "long",
-    day: "numeric",
-    month: "long"
-  }).format(date);
+  return new Intl.DateTimeFormat(
+    "de-DE",
+    {
+      weekday: "long",
+      day: "numeric",
+      month: "long"
+    }
+  ).format(date);
 }
 
 
 function formatShortDate(date) {
-  return new Intl.DateTimeFormat("de-DE", {
-    day: "numeric",
-    month: "short"
-  }).format(date);
+  return new Intl.DateTimeFormat(
+    "de-DE",
+    {
+      day: "numeric",
+      month: "short"
+    }
+  ).format(date);
 }
 
 
 function formatMonthYear(date) {
-  return new Intl.DateTimeFormat("de-DE", {
-    month: "long",
-    year: "numeric"
-  }).format(date);
+  return new Intl.DateTimeFormat(
+    "de-DE",
+    {
+      month: "long",
+      year: "numeric"
+    }
+  ).format(date);
 }
 
 
 function isToday(date) {
-  return iso(date) === iso(new Date());
+  return (
+    iso(date) ===
+    iso(new Date())
+  );
 }
 
 
 function isFutureDate(dateString) {
   const today = new Date();
 
-  today.setHours(0, 0, 0, 0);
+  today.setHours(
+    0,
+    0,
+    0,
+    0
+  );
 
-  const target = parseDate(dateString);
+  const target =
+    parseDate(dateString);
 
-  target.setHours(0, 0, 0, 0);
+  target.setHours(
+    0,
+    0,
+    0,
+    0
+  );
 
   return target > today;
 }
 
 
 function getFutureMessage(dateString) {
-  const date = parseDate(dateString);
+  const date =
+    parseDate(dateString);
 
-  if (iso(addDays(new Date(), 1)) === dateString) {
+  if (
+    iso(
+      addDays(
+        new Date(),
+        1
+      )
+    ) === dateString
+  ) {
     return "Diese Einheit kommt erst morgen. Du kannst sie noch nicht abhaken.";
   }
 
@@ -269,13 +361,16 @@ function getFutureMessage(dateString) {
 
 function loadSessions() {
   try {
-    const raw = localStorage.getItem(KEY);
+
+    const raw =
+      localStorage.getItem(KEY);
 
     if (!raw) {
       return [];
     }
 
-    const data = JSON.parse(raw);
+    const data =
+      JSON.parse(raw);
 
     if (!Array.isArray(data)) {
       return [];
@@ -283,16 +378,25 @@ function loadSessions() {
 
     return data.map(session => ({
       ...session,
-      completed: Boolean(session.completed),
+
+      completed:
+        Boolean(session.completed),
+
       actualIntensity:
         session.actualIntensity === undefined
           ? null
           : session.actualIntensity,
-      postNotes: session.postNotes || ""
+
+      postNotes:
+        session.postNotes || ""
     }));
 
   } catch (error) {
-    console.error("HYPE storage error:", error);
+
+    console.error(
+      "HYPE storage error:",
+      error
+    );
 
     return [];
   }
@@ -313,46 +417,46 @@ function save() {
 
 function sessionsForDate(dateString) {
   return sessions
-    .filter(session => session.date === dateString)
-    .sort((a, b) => {
-      return Number(a.createdAt || 0) - Number(b.createdAt || 0);
-    });
+    .filter(
+      session =>
+        session.date === dateString
+    )
+    .sort(
+      (a, b) =>
+        Number(a.createdAt || 0) -
+        Number(b.createdAt || 0)
+    );
 }
 
 
 function sessionsForWeek(date) {
-  const start = startOfWeek(date);
-  const end = endOfWeek(date);
+  const start =
+    startOfWeek(date);
 
-  const startIso = iso(start);
-  const endIso = iso(end);
+  const end =
+    endOfWeek(date);
 
-  return sessions.filter(session => {
-    return session.date >= startIso &&
-           session.date <= endIso;
-  });
-}
+  const startIso =
+    iso(start);
 
+  const endIso =
+    iso(end);
 
-function sessionsForMonth(date) {
-  const year = date.getFullYear();
-  const month = date.getMonth();
-
-  return sessions.filter(session => {
-    const d = parseDate(session.date);
-
-    return (
-      d.getFullYear() === year &&
-      d.getMonth() === month
-    );
-  });
+  return sessions.filter(
+    session =>
+      session.date >= startIso &&
+      session.date <= endIso
+  );
 }
 
 
 function sessionsForYear(year) {
-  return sessions.filter(session => {
-    return parseDate(session.date).getFullYear() === year;
-  });
+  return sessions.filter(
+    session =>
+      parseDate(
+        session.date
+      ).getFullYear() === year
+  );
 }
 
 
@@ -361,18 +465,30 @@ function sessionsForYear(year) {
 ========================= */
 
 function renderPlan() {
-  const start = startOfWeek(selected);
-  const end = endOfWeek(selected);
 
-  const startText = new Intl.DateTimeFormat("de-DE", {
-    day: "numeric",
-    month: "short"
-  }).format(start);
+  const start =
+    startOfWeek(selected);
 
-  const endText = new Intl.DateTimeFormat("de-DE", {
-    day: "numeric",
-    month: "short"
-  }).format(end);
+  const end =
+    endOfWeek(selected);
+
+  const startText =
+    new Intl.DateTimeFormat(
+      "de-DE",
+      {
+        day: "numeric",
+        month: "short"
+      }
+    ).format(start);
+
+  const endText =
+    new Intl.DateTimeFormat(
+      "de-DE",
+      {
+        day: "numeric",
+        month: "short"
+      }
+    ).format(end);
 
   weekTitle.textContent =
     `${startText} – ${endText}`;
@@ -382,20 +498,44 @@ function renderPlan() {
 
 
   const weekEyebrow =
-    document.querySelector(
-      ".week-navigation .eyebrow"
+    document.getElementById(
+      "weekEyebrow"
     );
 
   if (weekEyebrow) {
 
     const currentWeekStart =
-      startOfWeek(new Date());
+      startOfWeek(
+        new Date()
+      );
 
     weekEyebrow.textContent =
-      iso(start) === iso(currentWeekStart)
+      iso(start) ===
+      iso(currentWeekStart)
         ? "DIESE WOCHE"
         : "WOCHENPLAN";
   }
+
+
+  /*
+   * HEUTE Button nur anzeigen,
+   * wenn wir nicht bereits in der
+   * aktuellen Woche sind.
+   */
+
+  const currentWeekStart =
+    startOfWeek(
+      new Date()
+    );
+
+  const isCurrentWeek =
+    iso(start) ===
+    iso(currentWeekStart);
+
+  weekTodayBtn.classList.toggle(
+    "is-current",
+    isCurrentWeek
+  );
 
 
   renderWeekStrip();
@@ -410,9 +550,11 @@ function renderPlan() {
 
 
 function renderWeekStrip() {
+
   weekStrip.innerHTML = "";
 
-  const start = startOfWeek(selected);
+  const start =
+    startOfWeek(selected);
 
   const dayNames = [
     "Mo",
@@ -424,37 +566,56 @@ function renderWeekStrip() {
     "So"
   ];
 
-  for (let i = 0; i < 7; i++) {
+  for (
+    let i = 0;
+    i < 7;
+    i++
+  ) {
 
-    const date = addDays(start, i);
+    const date =
+      addDays(start, i);
 
-    const dateString = iso(date);
+    const dateString =
+      iso(date);
 
     const daySessions =
-      sessionsForDate(dateString);
+      sessionsForDate(
+        dateString
+      );
 
     const button =
-      document.createElement("button");
+      document.createElement(
+        "button"
+      );
 
     button.className =
       "day" +
       (
-        dateString === iso(selected)
+        dateString ===
+        iso(selected)
           ? " active"
           : ""
       );
 
-    button.type = "button";
+    button.type =
+      "button";
+
 
     const todayLabel =
       isToday(date)
         ? `<span class="today-label">HEUTE</span>`
         : `<span class="today-label">&nbsp;</span>`;
 
+
     button.innerHTML = `
       ${dayNames[i]}
-      <strong>${date.getDate()}</strong>
+
+      <strong>
+        ${date.getDate()}
+      </strong>
+
       ${todayLabel}
+
       ${
         daySessions.length
           ? `<span class="dot"></span>`
@@ -462,19 +623,33 @@ function renderWeekStrip() {
       }
     `;
 
-    button.addEventListener("click", () => {
-      selected = date;
-      renderPlan();
-    });
 
-    weekStrip.appendChild(button);
+    button.addEventListener(
+      "click",
+      () => {
+
+        selected =
+          date;
+
+        renderPlan();
+
+      }
+    );
+
+
+    weekStrip.appendChild(
+      button
+    );
   }
 }
 
 
 function renderSelectedDay() {
+
   const list =
-    sessionsForDate(iso(selected));
+    sessionsForDate(
+      iso(selected)
+    );
 
   if (!list.length) {
 
@@ -488,9 +663,13 @@ function renderSelectedDay() {
   }
 
   sessionsEl.innerHTML =
-    list.map(renderSessionCard).join("");
+    list
+      .map(renderSessionCard)
+      .join("");
 
-  attachSessionEvents(sessionsEl);
+  attachSessionEvents(
+    sessionsEl
+  );
 }
 
 
@@ -505,13 +684,20 @@ function renderSessionCard(session) {
     sportMeta.running;
 
   const dots =
-    Array.from({ length: 5 })
-      .map((_, index) => {
-        return index < Number(session.intensity || 0)
-          ? "●"
-          : "○";
-      })
+    Array.from({
+      length: 5
+    })
+      .map(
+        (_, index) =>
+          index <
+          Number(
+            session.intensity || 0
+          )
+            ? "●"
+            : "○"
+      )
       .join("");
+
 
   const actualOptions = [
     [0, "entspannend"],
@@ -522,28 +708,35 @@ function renderSessionCard(session) {
     [5, "sehr hart"]
   ];
 
-  const actualSelect = actualOptions
-    .map(([value, label]) => {
 
-      return `
-        <option
-          value="${value}"
-          ${
-            Number(session.actualIntensity) === value
-              ? "selected"
-              : ""
-          }
-        >
-          ${value} · ${label}
-        </option>
-      `;
-    })
-    .join("");
+  const actualSelect =
+    actualOptions
+      .map(
+        ([value, label]) => `
+          <option
+            value="${value}"
+            ${
+              Number(
+                session.actualIntensity
+              ) === value
+                ? "selected"
+                : ""
+            }
+          >
+            ${value} · ${label}
+          </option>
+        `
+      )
+      .join("");
 
 
   return `
     <article
-      class="session ${session.completed ? "completed" : ""}"
+      class="session ${
+        session.completed
+          ? "completed"
+          : ""
+      }"
       data-id="${esc(session.id)}"
     >
 
@@ -555,11 +748,17 @@ function renderSessionCard(session) {
 
         <div class="session-title-row">
 
-          <h4>${esc(session.title)}</h4>
+          <h4>
+            ${esc(session.title)}
+          </h4>
 
           ${
             session.completed
-              ? `<span class="completed-label">ERLEDIGT</span>`
+              ? `
+                <span class="completed-label">
+                  ERLEDIGT
+                </span>
+              `
               : ""
           }
 
@@ -585,7 +784,9 @@ function renderSessionCard(session) {
             ? `
               <div class="actual-intensity">
 
-                <span>Gefühlt:</span>
+                <span>
+                  Gefühlt:
+                </span>
 
                 <select
                   class="actual-intensity-select"
@@ -596,6 +797,7 @@ function renderSessionCard(session) {
 
               </div>
 
+
               <div class="post-training-notes">
 
                 <label>
@@ -605,7 +807,9 @@ function renderSessionCard(session) {
                     rows="3"
                     data-action="post-notes"
                     placeholder="z. B. Hat sich heute sehr gut angefühlt …"
-                  >${esc(session.postNotes || "")}</textarea>
+                  >${esc(
+                    session.postNotes || ""
+                  )}</textarea>
 
                 </label>
 
@@ -615,6 +819,7 @@ function renderSessionCard(session) {
         }
 
       </div>
+
 
       <div class="session-actions">
 
@@ -626,11 +831,6 @@ function renderSessionCard(session) {
               : ""
           }"
           data-action="complete"
-          aria-label="${
-            session.completed
-              ? "Training als offen markieren"
-              : "Training abhaken"
-          }"
         >
           ${
             session.completed
@@ -639,6 +839,7 @@ function renderSessionCard(session) {
           }
         </button>
 
+
         <button
           type="button"
           class="edit-btn"
@@ -646,6 +847,7 @@ function renderSessionCard(session) {
         >
           ✎ Bearbeiten
         </button>
+
 
         <button
           type="button"
@@ -672,10 +874,14 @@ function attachSessionEvents(container) {
     .querySelectorAll(".session")
     .forEach(card => {
 
-      const id = card.dataset.id;
+      const id =
+        card.dataset.id;
 
       const session =
-        sessions.find(item => item.id === id);
+        sessions.find(
+          item =>
+            item.id === id
+        );
 
       if (!session) {
         return;
@@ -714,25 +920,34 @@ function attachSessionEvents(container) {
 
           if (
             !session.completed &&
-            isFutureDate(session.date)
+            isFutureDate(
+              session.date
+            )
           ) {
 
             alert(
-              getFutureMessage(session.date)
+              getFutureMessage(
+                session.date
+              )
             );
 
             return;
           }
 
+
           session.completed =
             !session.completed;
 
+
           if (!session.completed) {
 
-            session.actualIntensity = null;
+            session.actualIntensity =
+              null;
 
-            session.postNotes = "";
+            session.postNotes =
+              "";
           }
+
 
           save();
 
@@ -744,9 +959,9 @@ function attachSessionEvents(container) {
       editButton.addEventListener(
         "click",
         () => {
-
-          openEditDialog(session);
-
+          openEditDialog(
+            session
+          );
         }
       );
 
@@ -765,9 +980,11 @@ function attachSessionEvents(container) {
             return;
           }
 
+
           sessions =
             sessions.filter(
-              item => item.id !== id
+              item =>
+                item.id !== id
             );
 
           save();
@@ -784,12 +1001,15 @@ function attachSessionEvents(container) {
           () => {
 
             session.actualIntensity =
-              Number(actualIntensity.value);
+              Number(
+                actualIntensity.value
+              );
 
             save();
 
           }
         );
+
       }
 
 
@@ -806,6 +1026,7 @@ function attachSessionEvents(container) {
 
           }
         );
+
       }
 
     });
@@ -819,11 +1040,14 @@ function attachSessionEvents(container) {
 function renderWeeklyInsight() {
 
   const weekSessions =
-    sessionsForWeek(selected);
+    sessionsForWeek(
+      selected
+    );
 
   const completed =
     weekSessions.filter(
-      session => session.completed
+      session =>
+        session.completed
     ).length;
 
   const planned =
@@ -833,15 +1057,21 @@ function renderWeeklyInsight() {
   if (!planned) {
 
     weeklyInsight.innerHTML = `
-      <div class="insight-icon">✦</div>
+      <div class="insight-icon">
+        ✦
+      </div>
 
       <div>
-        <strong>Deine Woche ist noch frei.</strong>
+
+        <strong>
+          Deine Woche ist noch frei.
+        </strong>
 
         <p>
           Plane deine ersten Einheiten und baue dir
           deine Woche Schritt für Schritt auf.
         </p>
+
       </div>
     `;
 
@@ -855,29 +1085,39 @@ function renderWeeklyInsight() {
   let text =
     `${completed} von ${planned} Einheiten erledigt.`;
 
+
   if (remaining > 0) {
 
-    text += ` ${remaining} ${
-      remaining === 1
-        ? "Einheit ist"
-        : "Einheiten sind"
-    } noch offen.`;
+    text +=
+      ` ${remaining} ${
+        remaining === 1
+          ? "Einheit ist"
+          : "Einheiten sind"
+      } noch offen.`;
 
   } else {
 
-    text += " Stark – deine Woche ist komplett.";
+    text +=
+      " Stark – deine Woche ist komplett.";
+
   }
 
 
   weeklyInsight.innerHTML = `
-    <div class="insight-icon">✦</div>
+    <div class="insight-icon">
+      ✦
+    </div>
 
     <div>
-      <strong>Wochenstatus</strong>
+
+      <strong>
+        Wochenstatus
+      </strong>
 
       <p>
         ${text}
       </p>
+
     </div>
   `;
 }
@@ -894,17 +1134,26 @@ function renderOverview() {
   renderPeriodNavigation();
 
 
-  if (overviewPeriod === "week") {
+  if (
+    overviewPeriod ===
+    "week"
+  ) {
     renderOverviewWeek();
   }
 
 
-  if (overviewPeriod === "month") {
+  if (
+    overviewPeriod ===
+    "month"
+  ) {
     renderOverviewMonth();
   }
 
 
-  if (overviewPeriod === "year") {
+  if (
+    overviewPeriod ===
+    "year"
+  ) {
     renderOverviewYear();
   }
 }
@@ -918,7 +1167,8 @@ function renderPeriodButtons() {
 
       button.classList.toggle(
         "active",
-        button.dataset.period === overviewPeriod
+        button.dataset.period ===
+          overviewPeriod
       );
 
     });
@@ -927,25 +1177,41 @@ function renderPeriodButtons() {
 
 function renderPeriodNavigation() {
 
-  if (overviewPeriod === "week") {
+  if (
+    overviewPeriod ===
+    "week"
+  ) {
 
     const start =
-      startOfWeek(overviewDate);
+      startOfWeek(
+        overviewDate
+      );
 
     const end =
-      endOfWeek(overviewDate);
+      endOfWeek(
+        overviewDate
+      );
+
 
     const startText =
-      new Intl.DateTimeFormat("de-DE", {
-        day: "numeric",
-        month: "short"
-      }).format(start);
+      new Intl.DateTimeFormat(
+        "de-DE",
+        {
+          day: "numeric",
+          month: "short"
+        }
+      ).format(start);
+
 
     const endText =
-      new Intl.DateTimeFormat("de-DE", {
-        day: "numeric",
-        month: "short"
-      }).format(end);
+      new Intl.DateTimeFormat(
+        "de-DE",
+        {
+          day: "numeric",
+          month: "short"
+        }
+      ).format(end);
+
 
     periodTitle.textContent =
       `${startText} – ${endText} ${start.getFullYear()}`;
@@ -954,10 +1220,15 @@ function renderPeriodNavigation() {
   }
 
 
-  if (overviewPeriod === "month") {
+  if (
+    overviewPeriod ===
+    "month"
+  ) {
 
     periodTitle.textContent =
-      formatMonthYear(overviewDate);
+      formatMonthYear(
+        overviewDate
+      );
 
     return;
   }
@@ -975,26 +1246,38 @@ function renderPeriodNavigation() {
 function renderOverviewWeek() {
 
   const start =
-    startOfWeek(overviewDate);
+    startOfWeek(
+      overviewDate
+    );
 
   let html =
     `<div class="overview-week">`;
 
 
-  for (let i = 0; i < 7; i++) {
+  for (
+    let i = 0;
+    i < 7;
+    i++
+  ) {
 
     const date =
-      addDays(start, i);
+      addDays(
+        start,
+        i
+      );
 
     const dateString =
       iso(date);
 
     const daySessions =
-      sessionsForDate(dateString);
+      sessionsForDate(
+        dateString
+      );
 
     const completed =
       daySessions.filter(
-        session => session.completed
+        session =>
+          session.completed
       ).length;
 
 
@@ -1008,7 +1291,6 @@ function renderOverviewWeek() {
         data-date="${dateString}"
         role="button"
         tabindex="0"
-        aria-label="${formatLongDate(date)} öffnen"
       >
 
         <div class="overview-day-head">
@@ -1016,15 +1298,26 @@ function renderOverviewWeek() {
           <div class="overview-day-date">
 
             <span class="overview-day-name">
+
               ${
-                new Intl.DateTimeFormat("de-DE", {
-                  weekday: "long"
-                }).format(date)
+                new Intl.DateTimeFormat(
+                  "de-DE",
+                  {
+                    weekday:
+                      "long"
+                  }
+                ).format(date)
               }
+
             </span>
 
             <span class="overview-day-number">
-              ${date.getDate()}.${pad(date.getMonth() + 1)}.
+
+              ${date.getDate()}.
+              ${pad(
+                date.getMonth() + 1
+              )}.
+
             </span>
 
           </div>
@@ -1033,16 +1326,19 @@ function renderOverviewWeek() {
           <span
             class="overview-day-status ${
               daySessions.length &&
-              completed === daySessions.length
+              completed ===
+                daySessions.length
                 ? "done"
                 : ""
             }"
           >
+
             ${
               daySessions.length
                 ? `${completed}/${daySessions.length}`
                 : "frei"
             }
+
           </span>
 
         </div>
@@ -1062,55 +1358,63 @@ function renderOverviewWeek() {
 
     } else {
 
-      daySessions.forEach(session => {
+      daySessions.forEach(
+        session => {
 
-        const meta =
-          sportMeta[session.sport] ||
-          sportMeta.running;
-
-
-        html += `
-          <div
-            class="overview-mini-session"
-            data-session-id="${esc(session.id)}"
-          >
-
-            <div class="mini-icon">
-              ${meta.icon}
-            </div>
+          const meta =
+            sportMeta[
+              session.sport
+            ] ||
+            sportMeta.running;
 
 
-            <div>
-
-              <div class="mini-title">
-                ${esc(session.title)}
-              </div>
-
-              <div class="mini-meta">
-                ${meta.label}
-                · ${esc(session.duration)} min
-              </div>
-
-            </div>
-
-
+          html += `
             <div
-              class="mini-status ${
-                session.completed
-                  ? "completed"
-                  : ""
-              }"
+              class="overview-mini-session"
             >
-              ${
-                session.completed
-                  ? "✓"
-                  : "○"
-              }
-            </div>
 
-          </div>
-        `;
-      });
+              <div class="mini-icon">
+                ${meta.icon}
+              </div>
+
+
+              <div>
+
+                <div class="mini-title">
+                  ${esc(
+                    session.title
+                  )}
+                </div>
+
+                <div class="mini-meta">
+                  ${meta.label}
+                  · ${esc(
+                    session.duration
+                  )} min
+                </div>
+
+              </div>
+
+
+              <div
+                class="mini-status ${
+                  session.completed
+                    ? "completed"
+                    : ""
+                }"
+              >
+                ${
+                  session.completed
+                    ? "✓"
+                    : "○"
+                }
+              </div>
+
+            </div>
+          `;
+        }
+      );
+
     }
 
 
@@ -1127,7 +1431,9 @@ function renderOverviewWeek() {
   `;
 
 
-  overviewContent.innerHTML = html;
+  overviewContent.innerHTML =
+    html;
+
 
   attachOverviewDayNavigation();
 }
@@ -1136,57 +1442,68 @@ function renderOverviewWeek() {
 function attachOverviewDayNavigation() {
 
   overviewContent
-    .querySelectorAll(".overview-day")
-    .forEach(dayElement => {
+    .querySelectorAll(
+      ".overview-day"
+    )
+    .forEach(
+      dayElement => {
 
-      const dateString =
-        dayElement.dataset.date;
-
-
-      const openDay = () => {
-
-        selected =
-          parseDate(dateString);
-
-        currentView =
-          "plan";
-
-        setView("plan");
-
-      };
+        const dateString =
+          dayElement.dataset.date;
 
 
-      dayElement.addEventListener(
-        "click",
-        event => {
+        const openDay =
+          () => {
 
-          event.preventDefault();
+            selected =
+              parseDate(
+                dateString
+              );
 
-          openDay();
+            currentView =
+              "plan";
 
-        }
-      );
+            setView(
+              "plan"
+            );
+
+          };
 
 
-      dayElement.addEventListener(
-        "keydown",
-        event => {
-
-          if (
-            event.key === "Enter" ||
-            event.key === " "
-          ) {
+        dayElement.addEventListener(
+          "click",
+          event => {
 
             event.preventDefault();
 
             openDay();
 
           }
+        );
 
-        }
-      );
 
-    });
+        dayElement.addEventListener(
+          "keydown",
+          event => {
+
+            if (
+              event.key ===
+                "Enter" ||
+              event.key ===
+                " "
+            ) {
+
+              event.preventDefault();
+
+              openDay();
+
+            }
+
+          }
+        );
+
+      }
+    );
 }
 
 
@@ -1201,6 +1518,7 @@ function renderOverviewMonth() {
 
   const month =
     overviewDate.getMonth();
+
 
   const firstDay =
     new Date(
@@ -1218,10 +1536,12 @@ function renderOverviewMonth() {
       12
     );
 
+
   const mondayOffset =
     firstDay.getDay() === 0
       ? 6
       : firstDay.getDay() - 1;
+
 
   const daysInMonth =
     lastDay.getDate();
@@ -1232,13 +1552,33 @@ function renderOverviewMonth() {
 
       <div class="month-weekdays">
 
-        <div class="month-weekday">MO</div>
-        <div class="month-weekday">DI</div>
-        <div class="month-weekday">MI</div>
-        <div class="month-weekday">DO</div>
-        <div class="month-weekday">FR</div>
-        <div class="month-weekday">SA</div>
-        <div class="month-weekday">SO</div>
+        <div class="month-weekday">
+          MO
+        </div>
+
+        <div class="month-weekday">
+          DI
+        </div>
+
+        <div class="month-weekday">
+          MI
+        </div>
+
+        <div class="month-weekday">
+          DO
+        </div>
+
+        <div class="month-weekday">
+          FR
+        </div>
+
+        <div class="month-weekday">
+          SA
+        </div>
+
+        <div class="month-weekday">
+          SO
+        </div>
 
       </div>
 
@@ -1246,20 +1586,27 @@ function renderOverviewMonth() {
   `;
 
 
-  for (let i = 0; i < mondayOffset; i++) {
+  for (
+    let i = 0;
+    i < mondayOffset;
+    i++
+  ) {
 
     const previousDate =
       new Date(
         year,
         month,
-        i - mondayOffset + 1,
+        i -
+          mondayOffset +
+          1,
         12
       );
 
-    html += renderMonthCell(
-      previousDate,
-      true
-    );
+    html +=
+      renderMonthCell(
+        previousDate,
+        true
+      );
   }
 
 
@@ -1277,18 +1624,22 @@ function renderOverviewMonth() {
         12
       );
 
-    html += renderMonthCell(
-      date,
-      false
-    );
+    html +=
+      renderMonthCell(
+        date,
+        false
+      );
   }
 
 
   const usedCells =
-    mondayOffset + daysInMonth;
+    mondayOffset +
+    daysInMonth;
 
   const remaining =
-    (7 - (usedCells % 7)) % 7;
+    (7 -
+      (usedCells % 7)) %
+    7;
 
 
   for (
@@ -1301,14 +1652,16 @@ function renderOverviewMonth() {
       new Date(
         year,
         month,
-        daysInMonth + i,
+        daysInMonth +
+          i,
         12
       );
 
-    html += renderMonthCell(
-      nextDate,
-      true
-    );
+    html +=
+      renderMonthCell(
+        nextDate,
+        true
+      );
   }
 
 
@@ -1318,7 +1671,8 @@ function renderOverviewMonth() {
   `;
 
 
-  overviewContent.innerHTML = html;
+  overviewContent.innerHTML =
+    html;
 
   attachMonthWeekNavigation();
 }
@@ -1333,11 +1687,14 @@ function renderMonthCell(
     iso(date);
 
   const daySessions =
-    sessionsForDate(dateString);
+    sessionsForDate(
+      dateString
+    );
 
   const completed =
     daySessions.filter(
-      session => session.completed
+      session =>
+        session.completed
     ).length;
 
 
@@ -1346,18 +1703,20 @@ function renderMonthCell(
 
   daySessions
     .slice(0, 5)
-    .forEach(session => {
+    .forEach(
+      session => {
 
-      dots += `
-        <span
-          class="month-dot ${
-            session.completed
-              ? "completed"
-              : ""
-          }"
-        ></span>
-      `;
-    });
+        dots += `
+          <span
+            class="month-dot ${
+              session.completed
+                ? "completed"
+                : ""
+            }"
+          ></span>
+        `;
+      }
+    );
 
 
   return `
@@ -1400,7 +1759,9 @@ function renderMonthCell(
 function attachMonthWeekNavigation() {
 
   const grid =
-    overviewContent.querySelector(".month-grid");
+    overviewContent.querySelector(
+      ".month-grid"
+    );
 
   if (!grid) {
     return;
@@ -1409,7 +1770,9 @@ function attachMonthWeekNavigation() {
 
   const cells =
     Array.from(
-      grid.querySelectorAll(".month-cell")
+      grid.querySelectorAll(
+        ".month-cell"
+      )
     );
 
 
@@ -1420,7 +1783,10 @@ function attachMonthWeekNavigation() {
   ) {
 
     const weekCells =
-      cells.slice(i, i + 7);
+      cells.slice(
+        i,
+        i + 7
+      );
 
     if (!weekCells.length) {
       continue;
@@ -1429,43 +1795,48 @@ function attachMonthWeekNavigation() {
 
     const firstDate =
       parseDate(
-        weekCells[0].dataset.date
+        weekCells[0]
+          .dataset.date
       );
 
 
-    const lastRect =
-      weekCells[weekCells.length - 1]
-        .getBoundingClientRect();
+    const lastDate =
+      parseDate(
+        weekCells[
+          weekCells.length - 1
+        ].dataset.date
+      );
+
+
+    const weekButton =
+      document.createElement(
+        "button"
+      );
+
+    weekButton.type =
+      "button";
+
+    weekButton.className =
+      "month-week-hit-area";
+
+
+    weekButton.setAttribute(
+      "aria-label",
+      `Woche vom ${formatShortDate(firstDate)} bis ${formatShortDate(lastDate)} öffnen`
+    );
 
 
     const firstRect =
       weekCells[0]
         .getBoundingClientRect();
 
+    const lastRect =
+      weekCells[
+        weekCells.length - 1
+      ].getBoundingClientRect();
 
     const gridRect =
       grid.getBoundingClientRect();
-
-
-    const lastDate =
-      parseDate(
-        weekCells[weekCells.length - 1]
-          .dataset.date
-      );
-
-
-    const weekButton =
-      document.createElement("button");
-
-    weekButton.type = "button";
-
-    weekButton.className =
-      "month-week-hit-area";
-
-    weekButton.setAttribute(
-      "aria-label",
-      `Woche vom ${formatShortDate(firstDate)} bis ${formatShortDate(lastDate)} öffnen`
-    );
 
 
     weekButton.style.top =
@@ -1482,7 +1853,9 @@ function attachMonthWeekNavigation() {
         event.preventDefault();
 
         overviewDate =
-          startOfWeek(firstDate);
+          startOfWeek(
+            firstDate
+          );
 
         overviewPeriod =
           "week";
@@ -1493,7 +1866,9 @@ function attachMonthWeekNavigation() {
     );
 
 
-    grid.appendChild(weekButton);
+    grid.appendChild(
+      weekButton
+    );
   }
 }
 
@@ -1508,11 +1883,14 @@ function renderOverviewYear() {
     overviewDate.getFullYear();
 
   const yearSessions =
-    sessionsForYear(year);
+    sessionsForYear(
+      year
+    );
 
   const completed =
     yearSessions.filter(
-      session => session.completed
+      session =>
+        session.completed
     ).length;
 
   const planned =
@@ -1521,7 +1899,8 @@ function renderOverviewYear() {
   const trainingDays =
     new Set(
       yearSessions.map(
-        session => session.date
+        session =>
+          session.date
       )
     ).size;
 
@@ -1532,18 +1911,35 @@ function renderOverviewYear() {
       <div class="year-summary">
 
         <div class="year-stat">
-          <strong>${planned}</strong>
-          <span>Einheiten</span>
+          <strong>
+            ${planned}
+          </strong>
+
+          <span>
+            Einheiten
+          </span>
         </div>
 
-        <div class="year-stat">
-          <strong>${completed}</strong>
-          <span>Erledigt</span>
-        </div>
 
         <div class="year-stat">
-          <strong>${trainingDays}</strong>
-          <span>Trainingstage</span>
+          <strong>
+            ${completed}
+          </strong>
+
+          <span>
+            Erledigt
+          </span>
+        </div>
+
+
+        <div class="year-stat">
+          <strong>
+            ${trainingDays}
+          </strong>
+
+          <span>
+            Trainingstage
+          </span>
         </div>
 
       </div>
@@ -1559,10 +1955,12 @@ function renderOverviewYear() {
     month++
   ) {
 
-    html += renderYearMonth(
-      year,
-      month
-    );
+    html +=
+      renderYearMonth(
+        year,
+        month
+      );
+
   }
 
 
@@ -1601,6 +1999,7 @@ function renderYearMonth(
       12
     ).getDate();
 
+
   const mondayOffset =
     firstDay.getDay() === 0
       ? 6
@@ -1608,17 +2007,23 @@ function renderYearMonth(
 
 
   const monthSessions =
-    sessions.filter(session => {
+    sessions.filter(
+      session => {
 
-      const date =
-        parseDate(session.date);
+        const date =
+          parseDate(
+            session.date
+          );
 
-      return (
-        date.getFullYear() === year &&
-        date.getMonth() === month
-      );
+        return (
+          date.getFullYear() ===
+            year &&
+          date.getMonth() ===
+            month
+        );
 
-    });
+      }
+    );
 
 
   let html = `
@@ -1633,19 +2038,30 @@ function renderYearMonth(
 
         <span class="year-month-name">
           ${
-            new Intl.DateTimeFormat("de-DE", {
-              month: "long"
-            }).format(firstDay)
+            new Intl.DateTimeFormat(
+              "de-DE",
+              {
+                month:
+                  "long"
+              }
+            ).format(
+              firstDay
+            )
           }
         </span>
 
+
         <span class="year-month-count">
+
           ${monthSessions.length}
+
           ${
-            monthSessions.length === 1
+            monthSessions.length ===
+            1
               ? "Einheit"
               : "Einheiten"
           }
+
         </span>
 
       </div>
@@ -1653,13 +2069,33 @@ function renderYearMonth(
 
       <div class="year-month-grid">
 
-        <div class="year-weekday">M</div>
-        <div class="year-weekday">D</div>
-        <div class="year-weekday">M</div>
-        <div class="year-weekday">D</div>
-        <div class="year-weekday">F</div>
-        <div class="year-weekday">S</div>
-        <div class="year-weekday">S</div>
+        <div class="year-weekday">
+          M
+        </div>
+
+        <div class="year-weekday">
+          D
+        </div>
+
+        <div class="year-weekday">
+          M
+        </div>
+
+        <div class="year-weekday">
+          D
+        </div>
+
+        <div class="year-weekday">
+          F
+        </div>
+
+        <div class="year-weekday">
+          S
+        </div>
+
+        <div class="year-weekday">
+          S
+        </div>
   `;
 
 
@@ -1669,9 +2105,8 @@ function renderYearMonth(
     i++
   ) {
 
-    html += `
-      <div></div>
-    `;
+    html += `<div></div>`;
+
   }
 
 
@@ -1693,15 +2128,19 @@ function renderYearMonth(
       iso(date);
 
     const daySessions =
-      sessionsForDate(dateString);
+      sessionsForDate(
+        dateString
+      );
 
     const hasTraining =
-      daySessions.length > 0;
+      daySessions.length >
+      0;
 
     const allCompleted =
       hasTraining &&
       daySessions.every(
-        session => session.completed
+        session =>
+          session.completed
       );
 
 
@@ -1727,6 +2166,7 @@ function renderYearMonth(
 
   html += `
       </div>
+
     </button>
   `;
 
@@ -1738,41 +2178,47 @@ function renderYearMonth(
 function attachYearMonthNavigation() {
 
   overviewContent
-    .querySelectorAll(".year-month")
-    .forEach(monthButton => {
+    .querySelectorAll(
+      ".year-month"
+    )
+    .forEach(
+      monthButton => {
 
-      monthButton.addEventListener(
-        "click",
-        () => {
+        monthButton.addEventListener(
+          "click",
+          () => {
 
-          const year =
-            Number(
-              monthButton.dataset.year
-            );
+            const year =
+              Number(
+                monthButton
+                  .dataset.year
+              );
 
-          const month =
-            Number(
-              monthButton.dataset.month
-            );
+            const month =
+              Number(
+                monthButton
+                  .dataset.month
+              );
 
 
-          overviewDate =
-            new Date(
-              year,
-              month,
-              1,
-              12
-            );
+            overviewDate =
+              new Date(
+                year,
+                month,
+                1,
+                12
+              );
 
-          overviewPeriod =
-            "month";
+            overviewPeriod =
+              "month";
 
-          renderOverview();
+            renderOverview();
 
-        }
-      );
+          }
+        );
 
-    });
+      }
+    );
 }
 
 
@@ -1786,7 +2232,9 @@ function renderToday() {
     new Date();
 
   todayTitle.textContent =
-    formatLongDate(today);
+    formatLongDate(
+      today
+    );
 
 
   const todaySessions =
@@ -1812,6 +2260,7 @@ function renderToday() {
         <button
           class="primary"
           id="todayAddBtn"
+          type="button"
         >
           + Training hinzufügen
         </button>
@@ -1821,10 +2270,13 @@ function renderToday() {
 
 
     document
-      .getElementById("todayAddBtn")
+      .getElementById(
+        "todayAddBtn"
+      )
       .addEventListener(
         "click",
-        () => openNewDialog(today)
+        () =>
+          openNewDialog()
       );
 
     return;
@@ -1833,12 +2285,18 @@ function renderToday() {
 
   todayContent.innerHTML = `
     <div class="today-session-list">
-      ${todaySessions.map(renderSessionCard).join("")}
+      ${
+        todaySessions
+          .map(renderSessionCard)
+          .join("")
+      }
     </div>
   `;
 
 
-  attachSessionEvents(todayContent);
+  attachSessionEvents(
+    todayContent
+  );
 }
 
 
@@ -1848,7 +2306,8 @@ function renderToday() {
 
 function setView(view) {
 
-  currentView = view;
+  currentView =
+    view;
 
 
   planView.classList.toggle(
@@ -1856,12 +2315,10 @@ function setView(view) {
     view !== "plan"
   );
 
-
   overviewView.classList.toggle(
     "hidden",
     view !== "overview"
   );
-
 
   todayView.classList.toggle(
     "hidden",
@@ -1870,26 +2327,29 @@ function setView(view) {
 
 
   document
-    .querySelectorAll(".nav-item")
-    .forEach(button => {
+    .querySelectorAll(
+      ".nav-item"
+    )
+    .forEach(
+      button => {
 
-      button.classList.toggle(
-        "active",
-        button.dataset.view === view
-      );
+        button.classList.toggle(
+          "active",
+          button.dataset.view ===
+            view
+        );
 
-    });
+      }
+    );
 
 
   if (view === "plan") {
     renderPlan();
   }
 
-
   if (view === "overview") {
     renderOverview();
   }
-
 
   if (view === "today") {
     renderToday();
@@ -1903,7 +2363,8 @@ function setView(view) {
 
 function openNewDialog() {
 
-  editingId = null;
+  editingId =
+    null;
 
   dialogTitle.textContent =
     "Training hinzufügen";
@@ -1924,20 +2385,23 @@ function openNewDialog() {
   trainingDialog.showModal();
 
 
-  setTimeout(() => {
-    titleInput.focus();
-  }, 50);
+  setTimeout(
+    () =>
+      titleInput.focus(),
+    50
+  );
 }
 
 
-function openEditDialog(session) {
+function openEditDialog(
+  session
+) {
 
   editingId =
     session.id;
 
   dialogTitle.textContent =
     "Training bearbeiten";
-
 
   sportInput.value =
     session.sport;
@@ -1954,15 +2418,16 @@ function openEditDialog(session) {
   notesInput.value =
     session.notes || "";
 
-
   updateTitlePlaceholder();
 
   trainingDialog.showModal();
 
 
-  setTimeout(() => {
-    titleInput.focus();
-  }, 50);
+  setTimeout(
+    () =>
+      titleInput.focus(),
+    50
+  );
 }
 
 
@@ -1970,14 +2435,17 @@ function closeDialog() {
 
   trainingDialog.close();
 
-  editingId = null;
+  editingId =
+    null;
 }
 
 
 function updateTitlePlaceholder() {
 
   const meta =
-    sportMeta[sportInput.value] ||
+    sportMeta[
+      sportInput.value
+    ] ||
     sportMeta.running;
 
   titleInput.placeholder =
@@ -2003,10 +2471,14 @@ trainingForm.addEventListener(
       titleInput.value.trim();
 
     const duration =
-      Number(durationInput.value);
+      Number(
+        durationInput.value
+      );
 
     const intensity =
-      Number(intensityInput.value);
+      Number(
+        intensityInput.value
+      );
 
     const notes =
       notesInput.value.trim();
@@ -2016,8 +2488,10 @@ trainingForm.addEventListener(
       return;
     }
 
-
-    if (!duration || duration < 1) {
+    if (
+      !duration ||
+      duration < 1
+    ) {
       return;
     }
 
@@ -2026,7 +2500,9 @@ trainingForm.addEventListener(
 
       const session =
         sessions.find(
-          item => item.id === editingId
+          item =>
+            item.id ===
+            editingId
         );
 
 
@@ -2046,6 +2522,7 @@ trainingForm.addEventListener(
 
         session.notes =
           notes;
+
       }
 
     } else {
@@ -2061,20 +2538,29 @@ trainingForm.addEventListener(
           iso(selected),
 
         sport,
+
         title,
+
         duration,
+
         intensity,
+
         notes,
 
-        completed: false,
+        completed:
+          false,
 
-        actualIntensity: null,
+        actualIntensity:
+          null,
 
-        postNotes: "",
+        postNotes:
+          "",
 
         createdAt:
           Date.now()
+
       });
+
     }
 
 
@@ -2103,7 +2589,10 @@ trainingDialog.addEventListener(
   "click",
   event => {
 
-    if (event.target === trainingDialog) {
+    if (
+      event.target ===
+      trainingDialog
+    ) {
       closeDialog();
     }
 
@@ -2116,21 +2605,25 @@ trainingDialog.addEventListener(
 ========================= */
 
 document
-  .querySelectorAll(".nav-item")
-  .forEach(button => {
+  .querySelectorAll(
+    ".nav-item"
+  )
+  .forEach(
+    button => {
 
-    button.addEventListener(
-      "click",
-      () => {
+      button.addEventListener(
+        "click",
+        () => {
 
-        setView(
-          button.dataset.view
-        );
+          setView(
+            button.dataset.view
+          );
 
-      }
-    );
+        }
+      );
 
-  });
+    }
+  );
 
 
 /* =========================
@@ -2170,41 +2663,13 @@ weekNextBtn.addEventListener(
 
 
 /*
- * Bestehender Klick auf den
- * Wochen-Titel:
- * zurück zur aktuellen Woche.
+ * EIGENER HEUTE BUTTON
+ *
+ * Springt jederzeit direkt
+ * zum heutigen Tag.
  */
 
 weekTodayBtn.addEventListener(
-  "click",
-  () => {
-
-    selected =
-      new Date();
-
-    selected.setHours(
-      12,
-      0,
-      0,
-      0
-    );
-
-    renderPlan();
-
-  }
-);
-
-
-/*
- * NEU:
- * Separater HEUTE-Button.
- *
- * Egal in welcher Woche man sich befindet:
- * ein Klick bringt sofort zum heutigen
- * Datum und zur aktuellen Woche.
- */
-
-weekJumpTodayBtn.addEventListener(
   "click",
   () => {
 
@@ -2229,22 +2694,26 @@ weekJumpTodayBtn.addEventListener(
 ========================= */
 
 document
-  .querySelectorAll(".period-btn")
-  .forEach(button => {
+  .querySelectorAll(
+    ".period-btn"
+  )
+  .forEach(
+    button => {
 
-    button.addEventListener(
-      "click",
-      () => {
+      button.addEventListener(
+        "click",
+        () => {
 
-        overviewPeriod =
-          button.dataset.period;
+          overviewPeriod =
+            button.dataset.period;
 
-        renderOverview();
+          renderOverview();
 
-      }
-    );
+        }
+      );
 
-  });
+    }
+  );
 
 
 /* =========================
@@ -2255,33 +2724,45 @@ periodPrevBtn.addEventListener(
   "click",
   () => {
 
-    if (overviewPeriod === "week") {
+    if (
+      overviewPeriod ===
+      "week"
+    ) {
 
       overviewDate =
         addDays(
           overviewDate,
           -7
         );
+
     }
 
 
-    if (overviewPeriod === "month") {
+    if (
+      overviewPeriod ===
+      "month"
+    ) {
 
       overviewDate =
         addMonths(
           overviewDate,
           -1
         );
+
     }
 
 
-    if (overviewPeriod === "year") {
+    if (
+      overviewPeriod ===
+      "year"
+    ) {
 
       overviewDate =
         addYears(
           overviewDate,
           -1
         );
+
     }
 
 
@@ -2295,33 +2776,45 @@ periodNextBtn.addEventListener(
   "click",
   () => {
 
-    if (overviewPeriod === "week") {
+    if (
+      overviewPeriod ===
+      "week"
+    ) {
 
       overviewDate =
         addDays(
           overviewDate,
           7
         );
+
     }
 
 
-    if (overviewPeriod === "month") {
+    if (
+      overviewPeriod ===
+      "month"
+    ) {
 
       overviewDate =
         addMonths(
           overviewDate,
           1
         );
+
     }
 
 
-    if (overviewPeriod === "year") {
+    if (
+      overviewPeriod ===
+      "year"
+    ) {
 
       overviewDate =
         addYears(
           overviewDate,
           1
         );
+
     }
 
 
@@ -2374,12 +2867,18 @@ function renderAll() {
   renderPlan();
 
 
-  if (currentView === "overview") {
+  if (
+    currentView ===
+    "overview"
+  ) {
     renderOverview();
   }
 
 
-  if (currentView === "today") {
+  if (
+    currentView ===
+    "today"
+  ) {
     renderToday();
   }
 }
@@ -2389,7 +2888,10 @@ function renderAll() {
    PWA
 ========================= */
 
-if ("serviceWorker" in navigator) {
+if (
+  "serviceWorker" in
+  navigator
+) {
 
   window.addEventListener(
     "load",
@@ -2397,14 +2899,16 @@ if ("serviceWorker" in navigator) {
 
       navigator.serviceWorker
         .register("sw.js")
-        .catch(error => {
+        .catch(
+          error => {
 
-          console.error(
-            "Service worker registration failed:",
-            error
-          );
+            console.error(
+              "Service worker registration failed:",
+              error
+            );
 
-        });
+          }
+        );
 
     }
   );
