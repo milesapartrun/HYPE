@@ -73,13 +73,35 @@ const HYPE_SHARE_URL =
 
 
 /* =========================
-   MESSAGE
+   HELPERS
 ========================= */
+
+function getFirstNameInput() {
+
+  return document.getElementById(
+    "authFirstName"
+  );
+
+}
+
+
+function getRegistrationGate() {
+
+  return document.getElementById(
+    "registrationGate"
+  );
+
+}
+
 
 function showAuthMessage(
   message,
   type = ""
 ) {
+
+  if (!authMessage) {
+    return;
+  }
 
   authMessage.textContent =
     message;
@@ -106,17 +128,8 @@ function clearAuthMessage() {
 
 
 /* =========================
-   REGISTRATION CHECKS
+   REGISTRATION GATE
 ========================= */
-
-function getRegistrationGate() {
-
-  return document.getElementById(
-    "registrationGate"
-  );
-
-}
-
 
 function renderRegistrationGate() {
 
@@ -151,6 +164,11 @@ function renderRegistrationGate() {
     gate.className =
       "registration-gate";
 
+
+    /*
+     * Der Gate-Block wird direkt
+     * vor den E-Mail-Input gesetzt.
+     */
 
     authForm.insertBefore(
       gate,
@@ -218,9 +236,7 @@ function renderRegistrationGate() {
     </div>
 
 
-    <div
-      class="registration-divider"
-    ></div>
+    <div class="registration-divider"></div>
 
 
     <div
@@ -291,6 +307,10 @@ function renderRegistrationGate() {
 }
 
 
+/* =========================
+   REGISTRATION EVENTS
+========================= */
+
 function attachRegistrationGateEvents() {
 
   const instagramConfirm =
@@ -359,13 +379,9 @@ function attachRegistrationGateEvents() {
                 HYPE_SHARE_URL
             });
 
-            shareCompleted =
-              true;
-
-            renderRegistrationGate();
 
             showAuthMessage(
-              "Perfekt – HYPE wurde geteilt.",
+              "Perfekt – HYPE wurde geteilt. Bestätige den Schritt noch einmal.",
               "success"
             );
 
@@ -375,28 +391,40 @@ function attachRegistrationGateEvents() {
 
 
           /*
-           * Fallback für Browser,
-           * die das native Teilen nicht
-           * unterstützen.
+           * Fallback für Browser ohne
+           * native Share API.
            */
 
-          await navigator.clipboard.writeText(
-            `${HYPE_SHARE_TEXT} ${HYPE_SHARE_URL}`
-          );
+          if (
+            navigator.clipboard &&
+            navigator.clipboard.writeText
+          ) {
+
+            await navigator.clipboard.writeText(
+              `${HYPE_SHARE_TEXT} ${HYPE_SHARE_URL}`
+            );
+
+
+            showAuthMessage(
+              "Der HYPE-Link wurde kopiert. Schick ihn jetzt über WhatsApp, Instagram oder Nachrichten.",
+              "success"
+            );
+
+            return;
+
+          }
 
 
           showAuthMessage(
-            "Der HYPE-Link wurde kopiert. Du kannst ihn jetzt über WhatsApp, Instagram oder Nachrichten verschicken.",
-            "success"
+            "Bitte kopiere den HYPE-Link manuell und teile ihn mit jemandem.",
+            "error"
           );
-
 
         } catch (error) {
 
           /*
-           * Der Nutzer kann das
-           * native Share-Menü auch
-           * wieder schließen.
+           * Das native Share-Menü wurde
+           * möglicherweise nur geschlossen.
            */
 
           if (
@@ -459,6 +487,10 @@ function attachRegistrationGateEvents() {
 }
 
 
+/* =========================
+   SUBMIT STATE
+========================= */
+
 function updateRegistrationSubmitState() {
 
   if (!authSubmit) {
@@ -476,11 +508,6 @@ function updateRegistrationSubmitState() {
   }
 
 
-  /*
-   * Registrierung erst möglich,
-   * wenn beide Schritte bestätigt wurden.
-   */
-
   const requirementsComplete =
     instagramCompleted &&
     shareCompleted;
@@ -491,6 +518,10 @@ function updateRegistrationSubmitState() {
 
 }
 
+
+/* =========================
+   RESET REGISTRATION
+========================= */
 
 function resetRegistrationProgress() {
 
@@ -714,10 +745,8 @@ async function signIn() {
 async function signUp() {
 
   /*
-   * Sicherheitscheck:
-   * Selbst wenn jemand versucht,
-   * den Button technisch zu umgehen,
-   * wird hier nochmals geprüft.
+   * Zweite Prüfung direkt vor
+   * der Supabase-Registrierung.
    */
 
   if (
@@ -737,11 +766,37 @@ async function signUp() {
   }
 
 
+  const firstNameInput =
+    getFirstNameInput();
+
+
+  const firstName =
+    firstNameInput
+      ? firstNameInput.value.trim()
+      : "";
+
+
   const email =
     authEmail.value.trim();
 
   const password =
     authPassword.value;
+
+
+  if (!firstName) {
+
+    showAuthMessage(
+      "Bitte gib deinen Vornamen ein.",
+      "error"
+    );
+
+    if (firstNameInput) {
+      firstNameInput.focus();
+    }
+
+    return;
+
+  }
 
 
   if (!email || !password) {
@@ -779,7 +834,13 @@ async function signUp() {
   } =
     await supabaseClient.auth.signUp({
       email,
-      password
+      password,
+      options: {
+        data: {
+          first_name:
+            firstName
+        }
+      }
     });
 
 
@@ -805,6 +866,12 @@ async function signUp() {
   }
 
 
+  /*
+   * Wenn Supabase direkt eine
+   * Session erstellt, ist der User
+   * sofort eingeloggt.
+   */
+
   if (
     data &&
     data.session
@@ -816,6 +883,11 @@ async function signUp() {
 
   }
 
+
+  /*
+   * Falls E-Mail-Bestätigung
+   * aktiviert ist.
+   */
 
   showAuthMessage(
     "Account erstellt. Bitte bestätige deine E-Mail-Adresse.",
@@ -907,13 +979,41 @@ function getAuthErrorMessage(
 
 function showApp() {
 
-  authScreen.classList.add(
-    "hidden"
-  );
+  if (authScreen) {
 
-  appContent.classList.remove(
-    "hidden"
-  );
+    authScreen.classList.add(
+      "hidden"
+    );
+
+  }
+
+
+  if (appContent) {
+
+    appContent.classList.remove(
+      "hidden"
+    );
+
+  }
+
+
+  /*
+   * Bottom Navigation wieder
+   * sichtbar machen.
+   */
+
+  const bottomNav =
+    document.getElementById(
+      "bottomNav"
+    );
+
+  if (bottomNav) {
+
+    bottomNav.classList.remove(
+      "hidden"
+    );
+
+  }
 
 }
 
@@ -924,13 +1024,36 @@ function showApp() {
 
 function showLogin() {
 
-  authScreen.classList.remove(
-    "hidden"
-  );
+  if (authScreen) {
 
-  appContent.classList.add(
-    "hidden"
-  );
+    authScreen.classList.remove(
+      "hidden"
+    );
+
+  }
+
+
+  if (appContent) {
+
+    appContent.classList.add(
+      "hidden"
+    );
+
+  }
+
+
+  const bottomNav =
+    document.getElementById(
+      "bottomNav"
+    );
+
+  if (bottomNav) {
+
+    bottomNav.classList.add(
+      "hidden"
+    );
+
+  }
 
 
   authForm.reset();
@@ -967,6 +1090,11 @@ async function logout() {
       error
     );
 
+    showAuthMessage(
+      "Logout fehlgeschlagen.",
+      "error"
+    );
+
     return;
 
   }
@@ -975,6 +1103,15 @@ async function logout() {
   showLogin();
 
 }
+
+
+/*
+ * app.js kann logout()
+ * direkt verwenden.
+ */
+
+window.logout =
+  logout;
 
 
 /* =========================
@@ -1040,7 +1177,25 @@ authSwitch.addEventListener(
 
     setTimeout(
       () => {
+
+        const firstNameInput =
+          getFirstNameInput();
+
+
+        if (
+          isRegisterMode &&
+          firstNameInput
+        ) {
+
+          firstNameInput.focus();
+
+          return;
+
+        }
+
+
         authEmail.focus();
+
       },
       50
     );
