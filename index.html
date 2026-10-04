@@ -2,349 +2,798 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8">
+
   <meta
     name="viewport"
     content="width=device-width, initial-scale=1, viewport-fit=cover"
   >
-  <meta name="theme-color" content="#0b0d10">
+
+  <meta
+    name="theme-color"
+    content="#0b0d10"
+  >
+
   <meta
     name="description"
     content="HYPE – HYbrid Plan & Execution"
   >
 
-  <link rel="manifest" href="manifest.json">
+  <link
+    rel="manifest"
+    href="manifest.json"
+  >
 
   <title>HYPE</title>
 
-  <link rel="stylesheet" href="style.css">
+  <link
+    rel="stylesheet"
+    href="style.css"
+  >
+
+  <!-- SUPABASE -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    /* =========================
+       AUTH SCREEN
+    ========================== */
+
+    #authScreen {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      padding: 20px;
+
+      background: #0b0d10;
+
+      overflow-y: auto;
+    }
+
+    .auth-card {
+      width: min(420px, 100%);
+
+      padding: 28px;
+
+      background:
+        linear-gradient(
+          135deg,
+          #171b20,
+          #101318
+        );
+
+      border: 1px solid #292e36;
+
+      border-radius: 24px;
+
+      box-shadow:
+        0 30px 100px rgba(0,0,0,.55);
+    }
+
+    .auth-brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      margin-bottom: 6px;
+    }
+
+    .auth-brand h1 {
+      margin: 0;
+
+      font-size: 32px;
+      letter-spacing: -.05em;
+    }
+
+    .auth-logo {
+      width: 23px;
+      height: 23px;
+      object-fit: contain;
+    }
+
+    .auth-subtitle {
+      margin: 0 0 28px;
+
+      color: #8d949e;
+
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .auth-form {
+      padding: 0;
+    }
+
+    .auth-form label {
+      margin: 15px 0;
+    }
+
+    .auth-form input {
+      margin-top: 7px;
+    }
+
+    .auth-submit {
+      width: 100%;
+      margin-top: 8px;
+    }
+
+    .auth-switch {
+      width: 100%;
+
+      margin-top: 12px;
+      padding: 10px;
+
+      border: 0;
+      background: transparent;
+
+      color: #8d949e;
+
+      font-size: 12px;
+      font-weight: 700;
+
+      cursor: pointer;
+    }
+
+    .auth-switch:hover {
+      color: #f5f6f7;
+    }
+
+    .auth-message {
+      min-height: 20px;
+
+      margin: 14px 0 0;
+
+      color: #8d949e;
+
+      font-size: 12px;
+      line-height: 1.4;
+      text-align: center;
+    }
+
+    .auth-message.error {
+      color: #ff6b6b;
+    }
+
+    .auth-message.success {
+      color: #d7ff3f;
+    }
+
+    .auth-loading {
+      opacity: .65;
+      pointer-events: none;
+    }
+
+    #appContent.hidden {
+      display: none !important;
+    }
+
+    .logout-button {
+      margin-top: 5px;
+
+      border: 0;
+      background: transparent;
+
+      color: #8d949e;
+
+      font-size: 10px;
+      font-weight: 700;
+
+      cursor: pointer;
+    }
+
+    .logout-button:hover {
+      color: #f5f6f7;
+    }
+  </style>
 </head>
 
+
 <body>
-  <main class="app">
-
-    <!-- HEADER -->
-    <header class="topbar">
-      <div>
-        <div class="eyebrow">ATHLETE PLANNER</div>
-
-        <div class="brand-row">
-          <h1>HYPE</h1>
-
-          <img
-            src="hype-symbol.png"
-            class="hype-logo"
-            alt=""
-            aria-hidden="true"
-          >
-        </div>
-      </div>
-
-      <div class="sport-markers" aria-hidden="true">
-        <span>🏃</span>
-        <span>⚡</span>
-        <span>🏋️</span>
-      </div>
-    </header>
-
-
-    <!-- =========================
-         PLAN VIEW
-    ========================== -->
-    <section id="planView" class="view">
-
-      <div class="hero">
-
-        <div class="week-navigation">
-
-          <button
-            id="weekPrevBtn"
-            class="week-nav-arrow"
-            aria-label="Vorherige Woche"
-          >
-            ‹
-          </button>
-
-          <button
-            id="weekTodayBtn"
-            class="week-title-button"
-            aria-label="Zur aktuellen Woche"
-          >
-            <div class="eyebrow">DIESE WOCHE</div>
-            <h2 id="weekTitle">Diese Woche</h2>
-          </button>
-
-          <button
-            id="weekNextBtn"
-            class="week-nav-arrow"
-            aria-label="Nächste Woche"
-          >
-            ›
-          </button>
-
-        </div>
-
-        <div id="heroYear" class="hero-year">2026</div>
-
-      </div>
-
-
-      <!-- WEEK STRIP -->
-      <div id="weekStrip" class="week-strip"></div>
-
-
-      <!-- TRAINING PLAN -->
-      <section>
-        <div class="section-head">
-          <div>
-            <div class="eyebrow">TRAININGSPLAN</div>
-            <div id="selectedDateLabel" class="selected-date"></div>
-          </div>
-
-          <button id="addTrainingBtn" class="primary">
-            + Training
-          </button>
-        </div>
-
-        <div id="sessions" class="sessions"></div>
-      </section>
-
-
-      <!-- WEEKLY INSIGHT -->
-      <div id="weeklyInsight" class="insight"></div>
-
-    </section>
-
-
-    <!-- =========================
-         OVERVIEW VIEW
-    ========================== -->
-    <section id="overviewView" class="view hidden">
-
-      <div class="overview-header">
-        <div>
-          <div class="eyebrow">TRAININGSÜBERSICHT</div>
-          <h2>Übersicht</h2>
-        </div>
-      </div>
-
-
-      <!-- PERIOD SWITCH -->
-      <div class="period-switch">
-        <button
-          class="period-btn active"
-          data-period="week"
-        >
-          Woche
-        </button>
-
-        <button
-          class="period-btn"
-          data-period="month"
-        >
-          Monat
-        </button>
-
-        <button
-          class="period-btn"
-          data-period="year"
-        >
-          Jahr
-        </button>
-      </div>
-
-
-      <!-- PERIOD NAVIGATION -->
-      <div class="period-navigation">
-
-        <button
-          id="periodPrevBtn"
-          class="period-arrow"
-          aria-label="Vorheriger Zeitraum"
-        >
-          ‹
-        </button>
-
-        <button
-          id="periodTodayBtn"
-          class="period-title-button"
-        >
-          <span id="periodTitle">Diese Woche</span>
-        </button>
-
-        <button
-          id="periodNextBtn"
-          class="period-arrow"
-          aria-label="Nächster Zeitraum"
-        >
-          ›
-        </button>
-
-      </div>
-
-
-      <!-- OVERVIEW CONTENT -->
-      <div id="overviewContent"></div>
-
-    </section>
-
-
-    <!-- =========================
-         TODAY VIEW
-    ========================== -->
-    <section id="todayView" class="view hidden">
-
-      <div class="hero today-hero">
-        <div>
-          <div class="eyebrow">HEUTE</div>
-          <h2 id="todayTitle">Heute</h2>
-        </div>
-
-        <div class="today-symbol">●</div>
-      </div>
-
-      <div id="todayContent"></div>
-
-    </section>
-
-  </main>
-
 
   <!-- =========================
-       BOTTOM NAVIGATION
+       AUTH SCREEN
   ========================== -->
-  <nav class="bottom-nav">
 
-    <button
-      class="nav-item active"
-      data-view="plan"
-    >
-      <span class="nav-icon">▣</span>
-      <span>Woche</span>
-    </button>
+  <div id="authScreen">
 
-    <button
-      class="nav-item"
-      data-view="overview"
-    >
-      <span class="nav-icon">▦</span>
-      <span>Übersicht</span>
-    </button>
+    <div class="auth-card">
 
-  </nav>
+      <div class="eyebrow">
+        ATHLETE PLANNER
+      </div>
 
+      <div class="auth-brand">
 
-  <!-- =========================
-       TRAINING DIALOG
-  ========================== -->
-  <dialog id="trainingDialog">
+        <h1>HYPE</h1>
 
-    <form id="trainingForm">
-
-      <div class="dialog-head">
-
-        <div>
-          <div class="eyebrow">
-            TRAINING
-          </div>
-
-          <h3 id="dialogTitle">
-            Training hinzufügen
-          </h3>
-        </div>
-
-        <button
-          type="button"
-          class="close"
-          id="closeDialogBtn"
-          aria-label="Schließen"
+        <img
+          src="hype-symbol.png"
+          class="auth-logo"
+          alt=""
+          aria-hidden="true"
         >
-          ×
-        </button>
 
       </div>
 
-
-      <label>
-        Sport
-
-        <select id="sportInput" required>
-          <option value="running">🏃 Laufen</option>
-          <option value="strength">🏋️ Krafttraining</option>
-          <option value="hyrox">⚡ HYROX</option>
-          <option value="cycling">🚴 Rad</option>
-          <option value="swimming">🏊 Schwimmen</option>
-          <option value="mobility">🧘 Mobility</option>
-          <option value="rest">😴 Erholung</option>
-        </select>
-      </label>
+      <p
+        id="authSubtitle"
+        class="auth-subtitle"
+      >
+        Deine Trainingsplanung.
+        Dein Account. Dein HYPE.
+      </p>
 
 
-      <label>
-        Titel
-
-        <input
-          id="titleInput"
-          type="text"
-          placeholder="z. B. Easy Run"
-          required
-        >
-      </label>
-
-
-      <div class="two">
+      <form
+        id="authForm"
+        class="auth-form"
+      >
 
         <label>
-          Dauer
+          E-Mail
 
           <input
-            id="durationInput"
-            type="number"
-            min="1"
-            step="1"
-            value="45"
+            id="authEmail"
+            type="email"
+            autocomplete="email"
+            placeholder="name@example.com"
             required
           >
         </label>
 
 
         <label>
-          Intensität
+          Passwort
 
-          <select id="intensityInput">
-            <option value="0">0 · entspannend</option>
-            <option value="1">1 · sehr leicht</option>
-            <option value="2">2 · leicht</option>
-            <option value="3" selected>3 · moderat</option>
-            <option value="4">4 · hart</option>
-            <option value="5">5 · sehr hart</option>
-          </select>
+          <input
+            id="authPassword"
+            type="password"
+            autocomplete="current-password"
+            placeholder="Mindestens 6 Zeichen"
+            minlength="6"
+            required
+          >
         </label>
 
-      </div>
 
+        <button
+          id="authSubmit"
+          type="submit"
+          class="primary auth-submit"
+        >
+          Einloggen
+        </button>
 
-      <label>
-        Notizen
-
-        <textarea
-          id="notesInput"
-          rows="4"
-          placeholder="z. B. 5 × 1 km @ 4:30/km"
-        ></textarea>
-      </label>
+      </form>
 
 
       <button
-        type="submit"
-        class="primary full"
+        id="authSwitch"
+        type="button"
+        class="auth-switch"
       >
-        Training speichern
+        Noch keinen Account? Registrieren
       </button>
 
-    </form>
 
-  </dialog>
+      <div
+        id="authMessage"
+        class="auth-message"
+        aria-live="polite"
+      ></div>
 
+    </div>
+
+  </div>
+
+
+  <!-- =========================
+       HYPE APP
+  ========================== -->
+
+  <div
+    id="appContent"
+    class="hidden"
+  >
+
+    <main class="app">
+
+      <!-- HEADER -->
+
+      <header class="topbar">
+
+        <div>
+
+          <div class="eyebrow">
+            ATHLETE PLANNER
+          </div>
+
+          <div class="brand-row">
+
+            <h1>HYPE</h1>
+
+            <img
+              src="hype-symbol.png"
+              class="hype-logo"
+              alt=""
+              aria-hidden="true"
+            >
+
+          </div>
+
+        </div>
+
+
+        <div class="sport-markers" aria-hidden="true">
+
+          <span>🏃</span>
+          <span>⚡</span>
+          <span>🏋️</span>
+
+        </div>
+
+      </header>
+
+
+      <!-- PLAN VIEW -->
+
+      <section
+        id="planView"
+        class="view"
+      >
+
+        <div class="hero">
+
+          <div class="week-navigation">
+
+            <button
+              id="weekPrevBtn"
+              class="week-nav-arrow"
+              aria-label="Vorherige Woche"
+            >
+              ‹
+            </button>
+
+
+            <button
+              id="weekTodayBtn"
+              class="week-title-button"
+              aria-label="Zur aktuellen Woche"
+            >
+
+              <div class="eyebrow">
+                DIESE WOCHE
+              </div>
+
+              <h2 id="weekTitle">
+                Diese Woche
+              </h2>
+
+            </button>
+
+
+            <button
+              id="weekNextBtn"
+              class="week-nav-arrow"
+              aria-label="Nächste Woche"
+            >
+              ›
+            </button>
+
+          </div>
+
+
+          <div
+            id="heroYear"
+            class="hero-year"
+          >
+            2026
+          </div>
+
+        </div>
+
+
+        <!-- WEEK STRIP -->
+
+        <div
+          id="weekStrip"
+          class="week-strip"
+        ></div>
+
+
+        <!-- TRAINING PLAN -->
+
+        <section>
+
+          <div class="section-head">
+
+            <div>
+
+              <div class="eyebrow">
+                TRAININGSPLAN
+              </div>
+
+              <div
+                id="selectedDateLabel"
+                class="selected-date"
+              ></div>
+
+            </div>
+
+
+            <button
+              id="addTrainingBtn"
+              class="primary"
+            >
+              + Training
+            </button>
+
+          </div>
+
+
+          <div
+            id="sessions"
+            class="sessions"
+          ></div>
+
+        </section>
+
+
+        <!-- WEEKLY INSIGHT -->
+
+        <div
+          id="weeklyInsight"
+          class="insight"
+        ></div>
+
+      </section>
+
+
+      <!-- OVERVIEW VIEW -->
+
+      <section
+        id="overviewView"
+        class="view hidden"
+      >
+
+        <div class="overview-header">
+
+          <div>
+
+            <div class="eyebrow">
+              TRAININGSÜBERSICHT
+            </div>
+
+            <h2>
+              Übersicht
+            </h2>
+
+          </div>
+
+        </div>
+
+
+        <!-- PERIOD SWITCH -->
+
+        <div class="period-switch">
+
+          <button
+            class="period-btn active"
+            data-period="week"
+          >
+            Woche
+          </button>
+
+
+          <button
+            class="period-btn"
+            data-period="month"
+          >
+            Monat
+          </button>
+
+
+          <button
+            class="period-btn"
+            data-period="year"
+          >
+            Jahr
+          </button>
+
+        </div>
+
+
+        <!-- PERIOD NAVIGATION -->
+
+        <div class="period-navigation">
+
+          <button
+            id="periodPrevBtn"
+            class="period-arrow"
+            aria-label="Vorheriger Zeitraum"
+          >
+            ‹
+          </button>
+
+
+          <button
+            id="periodTodayBtn"
+            class="period-title-button"
+          >
+            <span id="periodTitle">
+              Diese Woche
+            </span>
+          </button>
+
+
+          <button
+            id="periodNextBtn"
+            class="period-arrow"
+            aria-label="Nächster Zeitraum"
+          >
+            ›
+          </button>
+
+        </div>
+
+
+        <div id="overviewContent"></div>
+
+      </section>
+
+
+      <!-- TODAY VIEW -->
+
+      <section
+        id="todayView"
+        class="view hidden"
+      >
+
+        <div class="hero today-hero">
+
+          <div>
+
+            <div class="eyebrow">
+              HEUTE
+            </div>
+
+            <h2 id="todayTitle">
+              Heute
+            </h2>
+
+          </div>
+
+
+          <div class="today-symbol">
+            ●
+          </div>
+
+        </div>
+
+
+        <div id="todayContent"></div>
+
+      </section>
+
+    </main>
+
+
+    <!-- BOTTOM NAV -->
+
+    <nav class="bottom-nav">
+
+      <button
+        class="nav-item active"
+        data-view="plan"
+      >
+
+        <span class="nav-icon">
+          ▣
+        </span>
+
+        <span>
+          Woche
+        </span>
+
+      </button>
+
+
+      <button
+        class="nav-item"
+        data-view="overview"
+      >
+
+        <span class="nav-icon">
+          ▦
+        </span>
+
+        <span>
+          Übersicht
+        </span>
+
+      </button>
+
+    </nav>
+
+
+    <!-- TRAINING DIALOG -->
+
+    <dialog id="trainingDialog">
+
+      <form id="trainingForm">
+
+        <div class="dialog-head">
+
+          <div>
+
+            <div class="eyebrow">
+              TRAINING
+            </div>
+
+            <h3 id="dialogTitle">
+              Training hinzufügen
+            </h3>
+
+          </div>
+
+
+          <button
+            type="button"
+            class="close"
+            id="closeDialogBtn"
+            aria-label="Schließen"
+          >
+            ×
+          </button>
+
+        </div>
+
+
+        <label>
+          Sport
+
+          <select
+            id="sportInput"
+            required
+          >
+
+            <option value="running">
+              🏃 Laufen
+            </option>
+
+            <option value="strength">
+              🏋️ Krafttraining
+            </option>
+
+            <option value="hyrox">
+              ⚡ HYROX
+            </option>
+
+            <option value="cycling">
+              🚴 Rad
+            </option>
+
+            <option value="swimming">
+              🏊 Schwimmen
+            </option>
+
+            <option value="mobility">
+              🧘 Mobility
+            </option>
+
+            <option value="rest">
+              😴 Erholung
+            </option>
+
+          </select>
+
+        </label>
+
+
+        <label>
+          Titel
+
+          <input
+            id="titleInput"
+            type="text"
+            placeholder="z. B. Easy Run"
+            required
+          >
+
+        </label>
+
+
+        <div class="two">
+
+          <label>
+            Dauer
+
+            <input
+              id="durationInput"
+              type="number"
+              min="1"
+              step="1"
+              value="45"
+              required
+            >
+
+          </label>
+
+
+          <label>
+            Intensität
+
+            <select id="intensityInput">
+
+              <option value="0">
+                0 · entspannend
+              </option>
+
+              <option value="1">
+                1 · sehr leicht
+              </option>
+
+              <option value="2">
+                2 · leicht
+              </option>
+
+              <option
+                value="3"
+                selected
+              >
+                3 · moderat
+              </option>
+
+              <option value="4">
+                4 · hart
+              </option>
+
+              <option value="5">
+                5 · sehr hart
+              </option>
+
+            </select>
+
+          </label>
+
+        </div>
+
+
+        <label>
+          Notizen
+
+          <textarea
+            id="notesInput"
+            rows="4"
+            placeholder="z. B. 5 × 1 km @ 4:30/km"
+          ></textarea>
+
+        </label>
+
+
+        <button
+          type="submit"
+          class="primary full"
+        >
+          Training speichern
+        </button>
+
+      </form>
+
+    </dialog>
+
+  </div>
+
+
+  <!-- SUPABASE AUTH -->
+
+  <script src="auth.js"></script>
+
+  <!-- EXISTING HYPE APP -->
 
   <script src="app.js"></script>
 
