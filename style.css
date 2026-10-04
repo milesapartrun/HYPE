@@ -9,6 +9,7 @@
 
   --line: #292e36;
 
+  /* HYPE LIME */
   --accent: #d7ff3f;
 
   --danger: #ff6b6b;
@@ -413,12 +414,20 @@ h2 {
 }
 
 
-/* SELECTED DATE */
+/*
+  AUSGEWÄHLTES DATUM
+
+  Exakt dieselbe HYPE-Lime-Farbe
+  wie der restliche Accent.
+*/
 
 .selected-date {
 
   color:
-    var(--accent) !important;
+    #d7ff3f !important;
+
+  opacity:
+    1 !important;
 
 }
 
@@ -431,7 +440,7 @@ h2 {
     0;
 
   background:
-    var(--accent);
+    #d7ff3f;
 
   color:
     #111;
@@ -586,7 +595,7 @@ h2 {
     20px;
 
   color:
-    var(--accent);
+    #d7ff3f;
 
 }
 
