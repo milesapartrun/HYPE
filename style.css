@@ -156,7 +156,6 @@ h1 {
 
 .auth-brand {
   text-align: center;
-
   margin-bottom: 26px;
 }
 
@@ -202,13 +201,11 @@ h1 {
 
 .auth-submit {
   width: 100%;
-
   margin-top: 10px;
 }
 
 .auth-submit:disabled {
   opacity: .45;
-
   cursor: default;
 }
 
@@ -269,7 +266,11 @@ h1 {
   padding: 15px;
 
   background:
-    rgba(255,255,255,.018);
+    linear-gradient(
+      145deg,
+      rgba(255,255,255,.025),
+      rgba(255,255,255,.012)
+    );
 
   border:
     1px solid
@@ -289,7 +290,8 @@ h1 {
   align-items: start;
 
   transition:
-    opacity .2s ease;
+    opacity .2s ease,
+    transform .2s ease;
 }
 
 .registration-step.locked {
@@ -401,7 +403,6 @@ h1 {
 
 .registration-action:disabled {
   opacity: .45;
-
   cursor: default;
 }
 
@@ -488,7 +489,6 @@ h1 {
 
 .registration-confirm:disabled {
   opacity: .35;
-
   cursor: default;
 }
 
@@ -501,6 +501,23 @@ h1 {
 
   background:
     var(--line);
+}
+
+
+/* =========================
+   AUTH FORM FIELDS
+========================= */
+
+.auth-form .auth-first-name-field {
+  margin-top: 15px;
+}
+
+.auth-first-name-field label {
+  display: block;
+}
+
+.auth-first-name-field input {
+  width: 100%;
 }
 
 
@@ -1845,6 +1862,472 @@ h2 {
 
 
 /* =========================
+   PROFILE
+========================= */
+
+.profile-view {
+  padding-bottom: 20px;
+}
+
+.profile-header {
+  margin: 34px 0 20px;
+}
+
+.profile-header h2 {
+  margin-top: 5px;
+}
+
+.profile-greeting {
+  color: var(--accent);
+
+  font-size: 13px;
+
+  font-weight: 800;
+
+  margin-top: 7px;
+}
+
+
+/* =========================
+   PROFILE CARDS
+========================= */
+
+.profile-card {
+  background:
+    linear-gradient(
+      145deg,
+      #171b20,
+      #111419
+    );
+
+  border:
+    1px solid
+    var(--line);
+
+  border-radius: 22px;
+
+  padding: 18px;
+
+  margin-bottom: 12px;
+}
+
+.profile-card-head {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 12px;
+
+  margin-bottom: 14px;
+}
+
+.profile-card-title {
+  min-width: 0;
+}
+
+.profile-card-title .eyebrow {
+  margin-bottom: 4px;
+}
+
+.profile-card-title h3 {
+  margin: 0;
+
+  font-size: 19px;
+
+  line-height: 1.1;
+}
+
+.profile-card-icon {
+  width: 38px;
+  height: 38px;
+
+  flex: 0 0 auto;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 12px;
+
+  background:
+    rgba(215,255,63,.08);
+
+  border:
+    1px solid
+    rgba(215,255,63,.18);
+
+  font-size: 18px;
+}
+
+
+/* =========================
+   WEEKLY SHARE CARD
+========================= */
+
+.weekly-share-card {
+  overflow: hidden;
+
+  background:
+    linear-gradient(
+      145deg,
+      #171b20,
+      #0e1115
+    );
+}
+
+.weekly-share-meta {
+  color: var(--muted);
+
+  font-size: 11px;
+
+  line-height: 1.4;
+
+  margin-bottom: 14px;
+}
+
+.weekly-share-summary {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, 1fr);
+
+  gap: 8px;
+
+  margin-bottom: 12px;
+}
+
+.weekly-share-stat {
+  padding: 12px;
+
+  border-radius: 14px;
+
+  background:
+    rgba(255,255,255,.025);
+
+  border:
+    1px solid
+    var(--line);
+}
+
+.weekly-share-stat strong {
+  display: block;
+
+  color: var(--text);
+
+  font-size: 20px;
+
+  letter-spacing: -.03em;
+}
+
+.weekly-share-stat span {
+  display: block;
+
+  margin-top: 3px;
+
+  color: var(--muted);
+
+  font-size: 9px;
+
+  font-weight: 800;
+
+  text-transform: uppercase;
+
+  letter-spacing: .05em;
+}
+
+.weekly-share-days {
+  display: grid;
+
+  grid-template-columns:
+    repeat(7, 1fr);
+
+  gap: 5px;
+
+  margin-top: 10px;
+}
+
+.weekly-share-day {
+  min-width: 0;
+
+  min-height: 62px;
+
+  padding: 7px 3px;
+
+  border-radius: 10px;
+
+  border:
+    1px solid
+    var(--line);
+
+  background:
+    rgba(255,255,255,.018);
+
+  text-align: center;
+}
+
+.weekly-share-day-name {
+  display: block;
+
+  color: var(--muted);
+
+  font-size: 8px;
+
+  font-weight: 800;
+
+  text-transform: uppercase;
+}
+
+.weekly-share-day-number {
+  display: block;
+
+  margin-top: 4px;
+
+  color: var(--text);
+
+  font-size: 12px;
+
+  font-weight: 900;
+}
+
+.weekly-share-day-status {
+  display: block;
+
+  margin-top: 7px;
+
+  color: #59616b;
+
+  font-size: 11px;
+}
+
+.weekly-share-day.completed {
+  border-color:
+    rgba(215,255,63,.32);
+
+  background:
+    rgba(215,255,63,.055);
+}
+
+.weekly-share-day.completed
+.weekly-share-day-status {
+  color: var(--accent);
+}
+
+.weekly-share-empty {
+  padding: 15px;
+
+  color: var(--muted);
+
+  font-size: 11px;
+
+  line-height: 1.45;
+
+  border:
+    1px dashed
+    var(--line);
+
+  border-radius: 14px;
+
+  text-align: center;
+}
+
+.weekly-share-actions {
+  display: grid;
+
+  gap: 8px;
+
+  margin-top: 14px;
+}
+
+.share-week-btn {
+  width: 100%;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 8px;
+}
+
+.share-hype-btn {
+  width: 100%;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 8px;
+}
+
+
+/* =========================
+   PROFILE SHARE BUTTONS
+========================= */
+
+.secondary-action {
+  appearance: none;
+  -webkit-appearance: none;
+
+  border:
+    1px solid
+    rgba(215,255,63,.30);
+
+  background:
+    rgba(215,255,63,.07);
+
+  color: var(--accent);
+
+  padding: 11px 14px;
+
+  border-radius: 13px;
+
+  font-size: 11px;
+
+  font-weight: 850;
+
+  line-height: 1;
+
+  transition:
+    background .15s ease,
+    border-color .15s ease,
+    transform .15s ease;
+}
+
+.secondary-action:hover {
+  background:
+    rgba(215,255,63,.12);
+
+  border-color:
+    rgba(215,255,63,.50);
+}
+
+.secondary-action:active {
+  transform: scale(.98);
+}
+
+.profile-share-hype {
+  border-color:
+    rgba(255,255,255,.12);
+
+  background:
+    rgba(255,255,255,.035);
+
+  color: var(--text);
+}
+
+.profile-share-hype:hover {
+  background:
+    rgba(255,255,255,.065);
+
+  border-color:
+    rgba(255,255,255,.20);
+}
+
+
+/* =========================
+   PROFILE RECOMMEND
+========================= */
+
+.profile-recommend-text {
+  color: var(--muted);
+
+  font-size: 12px;
+
+  line-height: 1.5;
+
+  margin: 0 0 13px;
+}
+
+.profile-link-preview {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 10px;
+
+  padding: 11px 12px;
+
+  margin-bottom: 10px;
+
+  background:
+    rgba(255,255,255,.025);
+
+  border:
+    1px solid
+    var(--line);
+
+  border-radius: 12px;
+}
+
+.profile-link-preview span:first-child {
+  min-width: 0;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+
+  white-space: nowrap;
+
+  color: var(--muted);
+
+  font-size: 10px;
+}
+
+.profile-link-preview strong {
+  color: var(--accent);
+
+  font-size: 11px;
+}
+
+
+/* =========================
+   PROFILE LOGOUT
+========================= */
+
+.profile-logout {
+  width: 100%;
+
+  margin-top: 18px;
+
+  padding: 11px;
+
+  border:
+    1px solid
+    rgba(255,107,107,.20);
+
+  border-radius: 13px;
+
+  background:
+    rgba(255,107,107,.035);
+
+  color:
+    rgba(255,107,107,.85);
+
+  font-size: 11px;
+
+  font-weight: 800;
+
+  transition:
+    background .15s ease,
+    border-color .15s ease;
+}
+
+.profile-logout:hover {
+  background:
+    rgba(255,107,107,.07);
+
+  border-color:
+    rgba(255,107,107,.35);
+}
+
+
+/* =========================
    TODAY VIEW
 ========================= */
 
@@ -1902,7 +2385,7 @@ h2 {
   display: grid;
 
   grid-template-columns:
-    repeat(2, 1fr);
+    repeat(3, 1fr);
 
   padding: 7px;
 
@@ -2191,6 +2674,49 @@ textarea:focus {
   }
 
 
+  .profile-card {
+    padding: 15px;
+  }
+
+
+  .profile-header {
+    margin-top: 28px;
+  }
+
+
+  .profile-header h2 {
+    font-size: 27px;
+  }
+
+
+  .weekly-share-days {
+    gap: 3px;
+  }
+
+
+  .weekly-share-day {
+    min-height: 57px;
+
+    padding:
+      6px 2px;
+  }
+
+
+  .weekly-share-day-name {
+    font-size: 7px;
+  }
+
+
+  .weekly-share-day-number {
+    font-size: 11px;
+  }
+
+
+  .weekly-share-day-status {
+    font-size: 10px;
+  }
+
+
   .month-cell {
     min-height: 50px;
   }
@@ -2260,6 +2786,25 @@ textarea:focus {
 
   .primary {
     padding: 11px 14px;
+  }
+
+
+  .bottom-nav {
+    bottom: 9px;
+
+    width:
+      calc(100% - 20px);
+  }
+
+
+  .nav-item {
+    padding:
+      8px 5px;
+  }
+
+
+  .nav-item span {
+    font-size: 9px;
   }
 
 }
