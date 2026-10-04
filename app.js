@@ -46,13 +46,16 @@ const sportMeta = {
 
 };
 
+
 /* =========================
    STATE
 ========================= */
 
-let sessions = loadSessions();
+let sessions =
+  loadSessions();
 
-let selected = new Date();
+let selected =
+  new Date();
 
 selected.setHours(
   12,
@@ -61,13 +64,17 @@ selected.setHours(
   0
 );
 
-let editingId = null;
+let editingId =
+  null;
 
-let currentView = "plan";
+let currentView =
+  "plan";
 
-let overviewPeriod = "week";
+let overviewPeriod =
+  "week";
 
-let overviewDate = new Date();
+let overviewDate =
+  new Date();
 
 overviewDate.setHours(
   12,
@@ -76,99 +83,216 @@ overviewDate.setHours(
   0
 );
 
+
 /* =========================
    DOM
 ========================= */
 
 const planView =
-  document.getElementById("planView");
+  document.getElementById(
+    "planView"
+  );
 
 const overviewView =
-  document.getElementById("overviewView");
+  document.getElementById(
+    "overviewView"
+  );
+
+const profileView =
+  document.getElementById(
+    "profileView"
+  );
 
 const todayView =
-  document.getElementById("todayView");
+  document.getElementById(
+    "todayView"
+  );
+
+const bottomNav =
+  document.getElementById(
+    "bottomNav"
+  );
 
 const weekTitle =
-  document.getElementById("weekTitle");
+  document.getElementById(
+    "weekTitle"
+  );
 
 const heroYear =
-  document.getElementById("heroYear");
+  document.getElementById(
+    "heroYear"
+  );
 
 const weekPrevBtn =
-  document.getElementById("weekPrevBtn");
+  document.getElementById(
+    "weekPrevBtn"
+  );
 
 const weekNextBtn =
-  document.getElementById("weekNextBtn");
+  document.getElementById(
+    "weekNextBtn"
+  );
 
 const todayJumpBtn =
-  document.getElementById("todayJumpBtn");
+  document.getElementById(
+    "todayJumpBtn"
+  );
 
 const weekStrip =
-  document.getElementById("weekStrip");
+  document.getElementById(
+    "weekStrip"
+  );
 
 const sessionsEl =
-  document.getElementById("sessions");
+  document.getElementById(
+    "sessions"
+  );
 
 const selectedDateLabel =
-  document.getElementById("selectedDateLabel");
+  document.getElementById(
+    "selectedDateLabel"
+  );
 
 const weeklyInsight =
-  document.getElementById("weeklyInsight");
+  document.getElementById(
+    "weeklyInsight"
+  );
 
 const addTrainingBtn =
-  document.getElementById("addTrainingBtn");
+  document.getElementById(
+    "addTrainingBtn"
+  );
 
 const calendarExportBtn =
-  document.getElementById("calendarExportBtn");
+  document.getElementById(
+    "calendarExportBtn"
+  );
 
 const overviewContent =
-  document.getElementById("overviewContent");
+  document.getElementById(
+    "overviewContent"
+  );
 
 const periodTitle =
-  document.getElementById("periodTitle");
+  document.getElementById(
+    "periodTitle"
+  );
 
 const periodPrevBtn =
-  document.getElementById("periodPrevBtn");
+  document.getElementById(
+    "periodPrevBtn"
+  );
 
 const periodNextBtn =
-  document.getElementById("periodNextBtn");
+  document.getElementById(
+    "periodNextBtn"
+  );
 
 const periodTodayBtn =
-  document.getElementById("periodTodayBtn");
+  document.getElementById(
+    "periodTodayBtn"
+  );
 
 const todayTitle =
-  document.getElementById("todayTitle");
+  document.getElementById(
+    "todayTitle"
+  );
 
 const todayContent =
-  document.getElementById("todayContent");
+  document.getElementById(
+    "todayContent"
+  );
 
 const trainingDialog =
-  document.getElementById("trainingDialog");
+  document.getElementById(
+    "trainingDialog"
+  );
 
 const trainingForm =
-  document.getElementById("trainingForm");
+  document.getElementById(
+    "trainingForm"
+  );
 
 const dialogTitle =
-  document.getElementById("dialogTitle");
+  document.getElementById(
+    "dialogTitle"
+  );
 
 const closeDialogBtn =
-  document.getElementById("closeDialogBtn");
+  document.getElementById(
+    "closeDialogBtn"
+  );
 
 const sportInput =
-  document.getElementById("sportInput");
+  document.getElementById(
+    "sportInput"
+  );
 
 const titleInput =
-  document.getElementById("titleInput");
+  document.getElementById(
+    "titleInput"
+  );
 
 const durationInput =
-  document.getElementById("durationInput");
+  document.getElementById(
+    "durationInput"
+  );
 
 const intensityInput =
-  document.getElementById("intensityInput");
+  document.getElementById(
+    "intensityInput"
+  );
 
 const notesInput =
-  document.getElementById("notesInput");
+  document.getElementById(
+    "notesInput"
+  );
+
+
+/* =========================
+   PROFILE DOM
+========================= */
+
+const profileGreeting =
+  document.getElementById(
+    "profileGreeting"
+  );
+
+const weeklyShareName =
+  document.getElementById(
+    "weeklyShareName"
+  );
+
+const weeklyShareDays =
+  document.getElementById(
+    "weeklyShareDays"
+  );
+
+const weeklyShareSummary =
+  document.getElementById(
+    "weeklyShareSummary"
+  );
+
+const weeklyShareCard =
+  document.getElementById(
+    "weeklyShareCard"
+  );
+
+const shareWeekBtn =
+  document.getElementById(
+    "shareWeekBtn"
+  );
+
+const shareHypeProfileBtn =
+  document.getElementById(
+    "shareHypeProfileBtn"
+  );
+
+const logoutBtn =
+  document.getElementById(
+    "logoutBtn"
+  );
+
 
 /* =========================
    HELPERS
@@ -181,6 +305,7 @@ function pad(value) {
 
 }
 
+
 function iso(date) {
 
   return [
@@ -190,6 +315,7 @@ function iso(date) {
   ].join("-");
 
 }
+
 
 function parseDate(value) {
 
@@ -213,9 +339,11 @@ function parseDate(value) {
 
 }
 
+
 function startOfWeek(date) {
 
-  const d = new Date(date);
+  const d =
+    new Date(date);
 
   d.setHours(
     12,
@@ -240,6 +368,7 @@ function startOfWeek(date) {
 
 }
 
+
 function endOfWeek(date) {
 
   const d =
@@ -253,7 +382,11 @@ function endOfWeek(date) {
 
 }
 
-function addDays(date, amount) {
+
+function addDays(
+  date,
+  amount
+) {
 
   const d =
     new Date(date);
@@ -266,7 +399,11 @@ function addDays(date, amount) {
 
 }
 
-function addMonths(date, amount) {
+
+function addMonths(
+  date,
+  amount
+) {
 
   const d =
     new Date(date);
@@ -281,7 +418,11 @@ function addMonths(date, amount) {
 
 }
 
-function addYears(date, amount) {
+
+function addYears(
+  date,
+  amount
+) {
 
   const d =
     new Date(date);
@@ -298,18 +439,39 @@ function addYears(date, amount) {
 
 }
 
+
 function esc(value) {
 
-  return String(value ?? "")
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
+  return String(
+    value ?? ""
+  )
+    .replace(
+      /&/g,
+      "&amp;"
+    )
+    .replace(
+      /</g,
+      "&lt;"
+    )
+    .replace(
+      />/g,
+      "&gt;"
+    )
+    .replace(
+      /"/g,
+      "&quot;"
+    )
+    .replace(
+      /'/g,
+      "&#039;"
+    );
 
 }
 
-function formatLongDate(date) {
+
+function formatLongDate(
+  date
+) {
 
   return new Intl.DateTimeFormat(
     "de-DE",
@@ -322,7 +484,10 @@ function formatLongDate(date) {
 
 }
 
-function formatShortDate(date) {
+
+function formatShortDate(
+  date
+) {
 
   return new Intl.DateTimeFormat(
     "de-DE",
@@ -334,7 +499,10 @@ function formatShortDate(date) {
 
 }
 
-function formatMonthYear(date) {
+
+function formatMonthYear(
+  date
+) {
 
   return new Intl.DateTimeFormat(
     "de-DE",
@@ -346,6 +514,7 @@ function formatMonthYear(date) {
 
 }
 
+
 function isToday(date) {
 
   return (
@@ -355,7 +524,10 @@ function isToday(date) {
 
 }
 
-function isFutureDate(dateString) {
+
+function isFutureDate(
+  dateString
+) {
 
   const today =
     new Date();
@@ -368,7 +540,9 @@ function isFutureDate(dateString) {
   );
 
   const target =
-    parseDate(dateString);
+    parseDate(
+      dateString
+    );
 
   target.setHours(
     0,
@@ -381,10 +555,15 @@ function isFutureDate(dateString) {
 
 }
 
-function getFutureMessage(dateString) {
+
+function getFutureMessage(
+  dateString
+) {
 
   const date =
-    parseDate(dateString);
+    parseDate(
+      dateString
+    );
 
   if (
     iso(
@@ -392,7 +571,8 @@ function getFutureMessage(dateString) {
         new Date(),
         1
       )
-    ) === dateString
+    ) ===
+    dateString
   ) {
 
     return "Diese Einheit kommt erst morgen. Du kannst sie noch nicht abhaken.";
@@ -403,6 +583,110 @@ function getFutureMessage(dateString) {
 
 }
 
+
+/* =========================
+   CURRENT USER
+========================= */
+
+function getCurrentUser() {
+
+  if (
+    typeof supabaseClient ===
+    "undefined"
+  ) {
+
+    return null;
+
+  }
+
+  try {
+
+    return (
+      supabaseClient.auth
+        .getUser()
+    );
+
+  } catch (error) {
+
+    console.error(
+      "HYPE user error:",
+      error
+    );
+
+    return null;
+
+  }
+
+}
+
+
+/*
+ * Holt den Vornamen aus den
+ * Supabase user_metadata.
+ *
+ * auth.js wird beim nächsten
+ * Schritt so angepasst, dass
+ * der Vorname dort gespeichert
+ * wird.
+ */
+
+async function getUserFirstName() {
+
+  if (
+    typeof supabaseClient ===
+    "undefined"
+  ) {
+
+    return "";
+
+  }
+
+  try {
+
+    const {
+      data,
+      error
+    } =
+      await supabaseClient.auth
+        .getUser();
+
+    if (error) {
+
+      console.error(
+        "HYPE user lookup error:",
+        error
+      );
+
+      return "";
+
+    }
+
+    const firstName =
+      data?.user?.user_metadata
+        ?.first_name;
+
+    return (
+      firstName
+        ? String(
+            firstName
+          ).trim()
+        : ""
+    );
+
+  } catch (error) {
+
+    console.error(
+      "HYPE profile error:",
+      error
+    );
+
+    return "";
+
+  }
+
+}
+
+
 /* =========================
    STORAGE
 ========================= */
@@ -412,7 +696,9 @@ function loadSessions() {
   try {
 
     const raw =
-      localStorage.getItem(KEY);
+      localStorage.getItem(
+        KEY
+      );
 
     if (!raw) {
       return [];
@@ -421,12 +707,17 @@ function loadSessions() {
     const data =
       JSON.parse(raw);
 
-    if (!Array.isArray(data)) {
+    if (
+      !Array.isArray(data)
+    ) {
+
       return [];
+
     }
 
     return data.map(
       session => ({
+
         ...session,
 
         completed:
@@ -435,12 +726,15 @@ function loadSessions() {
           ),
 
         actualIntensity:
-          session.actualIntensity === undefined
+          session.actualIntensity ===
+          undefined
             ? null
             : session.actualIntensity,
 
         postNotes:
-          session.postNotes || ""
+          session.postNotes ||
+          ""
+
       })
     );
 
@@ -457,41 +751,59 @@ function loadSessions() {
 
 }
 
+
 function save() {
 
   localStorage.setItem(
     KEY,
-    JSON.stringify(sessions)
+    JSON.stringify(
+      sessions
+    )
   );
 
 }
+
 
 /* =========================
    SESSION QUERIES
 ========================= */
 
-function sessionsForDate(dateString) {
+function sessionsForDate(
+  dateString
+) {
 
   return sessions
     .filter(
       session =>
-        session.date === dateString
+        session.date ===
+        dateString
     )
     .sort(
       (a, b) =>
-        Number(a.createdAt || 0) -
-        Number(b.createdAt || 0)
+        Number(
+          a.createdAt || 0
+        ) -
+        Number(
+          b.createdAt || 0
+        )
     );
 
 }
 
-function sessionsForWeek(date) {
+
+function sessionsForWeek(
+  date
+) {
 
   const start =
-    startOfWeek(date);
+    startOfWeek(
+      date
+    );
 
   const end =
-    endOfWeek(date);
+    endOfWeek(
+      date
+    );
 
   const startIso =
     iso(start);
@@ -501,13 +813,18 @@ function sessionsForWeek(date) {
 
   return sessions.filter(
     session =>
-      session.date >= startIso &&
-      session.date <= endIso
+      session.date >=
+        startIso &&
+      session.date <=
+        endIso
   );
 
 }
 
-function sessionsForMonth(date) {
+
+function sessionsForMonth(
+  date
+) {
 
   const year =
     date.getFullYear();
@@ -519,11 +836,15 @@ function sessionsForMonth(date) {
     session => {
 
       const d =
-        parseDate(session.date);
+        parseDate(
+          session.date
+        );
 
       return (
-        d.getFullYear() === year &&
-        d.getMonth() === month
+        d.getFullYear() ===
+          year &&
+        d.getMonth() ===
+          month
       );
 
     }
@@ -531,69 +852,1098 @@ function sessionsForMonth(date) {
 
 }
 
-function sessionsForYear(year) {
+
+function sessionsForYear(
+  year
+) {
 
   return sessions.filter(
     session =>
       parseDate(
         session.date
-      ).getFullYear() === year
+      ).getFullYear() ===
+      year
   );
 
 }
+
+
+/* =========================
+   LAST WEEK
+========================= */
+
+function getLastWeek() {
+
+  const today =
+    new Date();
+
+  const thisWeek =
+    startOfWeek(
+      today
+    );
+
+  return {
+    start:
+      addDays(
+        thisWeek,
+        -7
+      ),
+    end:
+      addDays(
+        thisWeek,
+        -1
+      )
+  };
+
+}
+
+
+function getLastWeekSessions() {
+
+  const lastWeek =
+    getLastWeek();
+
+  return sessionsForWeek(
+    lastWeek.start
+  );
+
+}
+
+
+/* =========================
+   PROFILE
+========================= */
+
+async function renderProfile() {
+
+  const firstName =
+    await getUserFirstName();
+
+  const displayName =
+    firstName ||
+    "Athlete";
+
+  if (profileGreeting) {
+
+    profileGreeting.textContent =
+      `Hallo ${displayName} 👋`;
+
+  }
+
+  renderWeeklySharePreview(
+    displayName
+  );
+
+}
+
+
+function renderWeeklySharePreview(
+  displayName
+) {
+
+  const lastWeek =
+    getLastWeek();
+
+  const weekSessions =
+    getLastWeekSessions();
+
+  const completed =
+    weekSessions.filter(
+      session =>
+        session.completed
+    );
+
+  const totalMinutes =
+    completed.reduce(
+      (sum, session) =>
+        sum +
+        Number(
+          session.duration || 0
+        ),
+      0
+    );
+
+  if (weeklyShareName) {
+
+    weeklyShareName.textContent =
+      `${displayName}s Woche`;
+
+  }
+
+  if (weeklyShareDays) {
+
+    const days =
+      [];
+
+    for (
+      let i = 0;
+      i < 7;
+      i++
+    ) {
+
+      const date =
+        addDays(
+          lastWeek.start,
+          i
+        );
+
+      const daySessions =
+        sessionsForDate(
+          iso(date)
+        );
+
+      const completedDay =
+        daySessions.some(
+          session =>
+            session.completed
+        );
+
+      days.push({
+        date,
+        completed:
+          completedDay,
+        sessions:
+          daySessions
+      });
+
+    }
+
+    weeklyShareDays.innerHTML =
+      days
+        .map(
+          day => `
+            <div class="weekly-share-day ${
+              day.completed
+                ? "completed"
+                : ""
+            }">
+
+              <span>
+                ${
+                  new Intl.DateTimeFormat(
+                    "de-DE",
+                    {
+                      weekday:
+                        "narrow"
+                    }
+                  ).format(
+                    day.date
+                  )
+                }
+              </span>
+
+              <strong>
+                ${
+                  day.sessions.length
+                    ? day.sessions
+                        .filter(
+                          session =>
+                            session.completed
+                        )
+                        .length
+                    : "·"
+                }
+              </strong>
+
+            </div>
+          `
+        )
+        .join("");
+
+  }
+
+  if (weeklyShareSummary) {
+
+    if (!weekSessions.length) {
+
+      weeklyShareSummary.textContent =
+        "Noch keine Trainingsdaten aus letzter Woche.";
+
+    } else {
+
+      weeklyShareSummary.textContent =
+        `${completed.length} Trainings · ${totalMinutes} Minuten`;
+
+    }
+
+  }
+
+}
+
+
+/* =========================
+   SHARE HYPE
+========================= */
+
+async function shareHype() {
+
+  const shareData = {
+
+    title:
+      "HYPE – HYbrid Plan & Execution",
+
+    text:
+      "Ich nutze HYPE für meine Trainingsplanung. Probier's aus:",
+
+    url:
+      window.location.href
+
+  };
+
+
+  try {
+
+    if (
+      navigator.share
+    ) {
+
+      await navigator.share(
+        shareData
+      );
+
+      return;
+
+    }
+
+
+    await copyHypeLink();
+
+    alert(
+      "Der HYPE-Link wurde kopiert. Du kannst ihn jetzt über WhatsApp, Instagram oder Nachrichten verschicken."
+    );
+
+  } catch (error) {
+
+    if (
+      error?.name ===
+      "AbortError"
+    ) {
+
+      return;
+
+    }
+
+    console.error(
+      "HYPE share error:",
+      error
+    );
+
+    await copyHypeLink();
+
+    alert(
+      "Der HYPE-Link wurde kopiert."
+    );
+
+  }
+
+}
+
+
+async function copyHypeLink() {
+
+  const text =
+    `HYPE – HYbrid Plan & Execution\n${window.location.href}`;
+
+  try {
+
+    await navigator.clipboard.writeText(
+      text
+    );
+
+  } catch (error) {
+
+    console.error(
+      "HYPE clipboard error:",
+      error
+    );
+
+  }
+
+}
+
+
+/* =========================
+   WEEK SHARE IMAGE
+========================= */
+
+/*
+ * Erzeugt eine Story-Grafik
+ * mit 1080 × 1920 Pixeln.
+ */
+
+async function createWeeklyShareImage() {
+
+  const firstName =
+    await getUserFirstName();
+
+  const displayName =
+    firstName ||
+    "Athlete";
+
+  const lastWeek =
+    getLastWeek();
+
+  const weekSessions =
+    getLastWeekSessions();
+
+  const completed =
+    weekSessions.filter(
+      session =>
+        session.completed
+    );
+
+  const totalMinutes =
+    completed.reduce(
+      (sum, session) =>
+        sum +
+        Number(
+          session.duration || 0
+        ),
+      0
+    );
+
+  const canvas =
+    document.createElement(
+      "canvas"
+    );
+
+  canvas.width =
+    1080;
+
+  canvas.height =
+    1920;
+
+  const ctx =
+    canvas.getContext(
+      "2d"
+    );
+
+  if (!ctx) {
+
+    throw new Error(
+      "Canvas wird nicht unterstützt."
+    );
+
+  }
+
+
+  /* =========================
+     BACKGROUND
+  ========================== */
+
+  ctx.fillStyle =
+    "#0b0d10";
+
+  ctx.fillRect(
+    0,
+    0,
+    1080,
+    1920
+  );
+
+
+  /*
+   * Lime glow
+   */
+
+  const glow =
+    ctx.createRadialGradient(
+      850,
+      230,
+      0,
+      850,
+      230,
+      650
+    );
+
+  glow.addColorStop(
+    0,
+    "rgba(215,255,63,.20)"
+  );
+
+  glow.addColorStop(
+    1,
+    "rgba(215,255,63,0)"
+  );
+
+  ctx.fillStyle =
+    glow;
+
+  ctx.fillRect(
+    0,
+    0,
+    1080,
+    1920
+  );
+
+
+  /* =========================
+     BRAND
+  ========================== */
+
+  ctx.fillStyle =
+    "#d7ff3f";
+
+  ctx.font =
+    "900 72px Arial";
+
+  ctx.fillText(
+    "HYPE",
+    80,
+    125
+  );
+
+  ctx.fillStyle =
+    "#8d949e";
+
+  ctx.font =
+    "700 22px Arial";
+
+  ctx.fillText(
+    "HYBRID PLAN & EXECUTION",
+    83,
+    162
+  );
+
+
+  /* =========================
+     TITLE
+  ========================== */
+
+  ctx.fillStyle =
+    "#f5f6f7";
+
+  ctx.font =
+    "900 58px Arial";
+
+  ctx.fillText(
+    `${displayName}s Woche`,
+    80,
+    285
+  );
+
+  ctx.fillStyle =
+    "#8d949e";
+
+  ctx.font =
+    "500 25px Arial";
+
+  const weekLabel =
+    `${formatShortDate(
+      lastWeek.start
+    )} – ${formatShortDate(
+      lastWeek.end
+    )}`;
+
+  ctx.fillText(
+    weekLabel,
+    83,
+    330
+  );
+
+
+  /* =========================
+     SUMMARY
+  ========================== */
+
+  drawShareStat(
+    ctx,
+    80,
+    410,
+    String(
+      completed.length
+    ),
+    "TRAININGS"
+  );
+
+  drawShareStat(
+    ctx,
+    375,
+    410,
+    String(
+      totalMinutes
+    ),
+    "MINUTEN"
+  );
+
+
+  /* =========================
+     WEEK DAYS
+  ========================== */
+
+  const dayStartY =
+    650;
+
+  const rowHeight =
+    142;
+
+  for (
+    let i = 0;
+    i < 7;
+    i++
+  ) {
+
+    const date =
+      addDays(
+        lastWeek.start,
+        i
+      );
+
+    const daySessions =
+      sessionsForDate(
+        iso(date)
+      );
+
+    const completedDay =
+      daySessions.filter(
+        session =>
+          session.completed
+      );
+
+    const y =
+      dayStartY +
+      i * rowHeight;
+
+    /*
+     * Card
+     */
+
+    ctx.fillStyle =
+      "#14171c";
+
+    roundRect(
+      ctx,
+      70,
+      y,
+      940,
+      112,
+      24
+    );
+
+    ctx.fill();
+
+
+    /*
+     * Day
+     */
+
+    ctx.fillStyle =
+      "#8d949e";
+
+    ctx.font =
+      "800 22px Arial";
+
+    ctx.fillText(
+      new Intl.DateTimeFormat(
+        "de-DE",
+        {
+          weekday:
+            "short"
+        }
+      )
+        .format(date)
+        .toUpperCase(),
+      105,
+      y + 42
+    );
+
+
+    ctx.fillStyle =
+      "#f5f6f7";
+
+    ctx.font =
+      "900 31px Arial";
+
+    ctx.fillText(
+      String(
+        date.getDate()
+      ),
+      108,
+      y + 79
+    );
+
+
+    /*
+     * Training content
+     */
+
+    if (
+      completedDay.length
+    ) {
+
+      let x =
+        235;
+
+      completedDay
+        .slice(0, 4)
+        .forEach(
+          session => {
+
+            const meta =
+              sportMeta[
+                session.sport
+              ] ||
+              sportMeta.running;
+
+            ctx.font =
+              "32px Arial";
+
+            ctx.fillText(
+              meta.icon,
+              x,
+              y + 45
+            );
+
+            ctx.fillStyle =
+              "#f5f6f7";
+
+            ctx.font =
+              "700 20px Arial";
+
+            const title =
+              session.title
+                .length > 24
+                ? `${session.title.slice(
+                    0,
+                    23
+                  )}…`
+                : session.title;
+
+            ctx.fillText(
+              title,
+              x,
+              y + 78
+            );
+
+            x += 195;
+
+          }
+        );
+
+    } else {
+
+      ctx.fillStyle =
+        "#626973";
+
+      ctx.font =
+        "600 21px Arial";
+
+      ctx.fillText(
+        "Recovery / Rest",
+        235,
+        y + 62
+      );
+
+    }
+
+  }
+
+
+  /* =========================
+     FOOTER
+  ========================== */
+
+  ctx.fillStyle =
+    "#d7ff3f";
+
+  ctx.font =
+    "900 25px Arial";
+
+  ctx.fillText(
+    "TRAIN SMART. STAY HYPE.",
+    80,
+    1800
+  );
+
+  ctx.fillStyle =
+    "#626973";
+
+  ctx.font =
+    "600 18px Arial";
+
+  ctx.fillText(
+    "hype · HYbrid Plan & Execution",
+    80,
+    1840
+  );
+
+
+  return new Promise(
+    (resolve, reject) => {
+
+      canvas.toBlob(
+        blob => {
+
+          if (!blob) {
+
+            reject(
+              new Error(
+                "Die Share-Grafik konnte nicht erstellt werden."
+              )
+            );
+
+            return;
+
+          }
+
+          resolve(
+            blob
+          );
+
+        },
+        "image/png",
+        1
+      );
+
+    }
+  );
+
+}
+
+
+function drawShareStat(
+  ctx,
+  x,
+  y,
+  value,
+  label
+) {
+
+  ctx.fillStyle =
+    "#14171c";
+
+  roundRect(
+    ctx,
+    x,
+    y,
+    260,
+    145,
+    22
+  );
+
+  ctx.fill();
+
+  ctx.fillStyle =
+    "#d7ff3f";
+
+  ctx.font =
+    "900 52px Arial";
+
+  ctx.fillText(
+    value,
+    x + 25,
+    y + 65
+  );
+
+  ctx.fillStyle =
+    "#8d949e";
+
+  ctx.font =
+    "800 17px Arial";
+
+  ctx.fillText(
+    label,
+    x + 25,
+    y + 105
+  );
+
+}
+
+
+function roundRect(
+  ctx,
+  x,
+  y,
+  width,
+  height,
+  radius
+) {
+
+  ctx.beginPath();
+
+  ctx.moveTo(
+    x + radius,
+    y
+  );
+
+  ctx.lineTo(
+    x + width - radius,
+    y
+  );
+
+  ctx.quadraticCurveTo(
+    x + width,
+    y,
+    x + width,
+    y + radius
+  );
+
+  ctx.lineTo(
+    x + width,
+    y + height - radius
+  );
+
+  ctx.quadraticCurveTo(
+    x + width,
+    y + height,
+    x + width - radius,
+    y + height
+  );
+
+  ctx.lineTo(
+    x + radius,
+    y + height
+  );
+
+  ctx.quadraticCurveTo(
+    x,
+    y + height,
+    x,
+    y + height - radius
+  );
+
+  ctx.lineTo(
+    x,
+    y + radius
+  );
+
+  ctx.quadraticCurveTo(
+    x,
+    y,
+    x + radius,
+    y
+  );
+
+  ctx.closePath();
+
+}
+
+
+/* =========================
+   SHARE WEEK ACTION
+========================= */
+
+async function shareLastWeek() {
+
+  if (shareWeekBtn) {
+
+    shareWeekBtn.disabled =
+      true;
+
+    shareWeekBtn.textContent =
+      "Grafik wird erstellt …";
+
+  }
+
+
+  try {
+
+    const blob =
+      await createWeeklyShareImage();
+
+    const file =
+      new File(
+        [blob],
+        "HYPE-meine-Woche.png",
+        {
+          type:
+            "image/png"
+        }
+      );
+
+
+    /*
+     * Modernes Mobile-Sharing:
+     * Bild + Text + URL.
+     */
+
+    if (
+      navigator.share &&
+      navigator.canShare &&
+      navigator.canShare({
+        files: [file]
+      })
+    ) {
+
+      await navigator.share({
+
+        title:
+          "Meine Woche mit HYPE",
+
+        text:
+          "Meine Trainingswoche mit HYPE.",
+
+        files:
+          [file]
+
+      });
+
+      return;
+
+    }
+
+
+    /*
+     * Fallback:
+     * Grafik herunterladen.
+     */
+
+    const url =
+      URL.createObjectURL(
+        blob
+      );
+
+    const link =
+      document.createElement(
+        "a"
+      );
+
+    link.href =
+      url;
+
+    link.download =
+      "HYPE-meine-Woche.png";
+
+    document.body.appendChild(
+      link
+    );
+
+    link.click();
+
+    link.remove();
+
+    setTimeout(
+      () => {
+
+        URL.revokeObjectURL(
+          url
+        );
+
+      },
+      1000
+    );
+
+    alert(
+      "Deine HYPE-Woche wurde als Bild erstellt. Du kannst sie jetzt auf Instagram teilen."
+    );
+
+  } catch (error) {
+
+    if (
+      error?.name !==
+      "AbortError"
+    ) {
+
+      console.error(
+        "HYPE weekly share error:",
+        error
+      );
+
+      alert(
+        "Die Wochen-Grafik konnte nicht geteilt werden."
+      );
+
+    }
+
+  } finally {
+
+    if (shareWeekBtn) {
+
+      shareWeekBtn.disabled =
+        false;
+
+      shareWeekBtn.textContent =
+        "📸 Woche auf Instagram teilen";
+
+    }
+
+  }
+
+}
+
 
 /* =========================
    CALENDAR EXPORT
 ========================= */
 
-/*
- * Erstellt eine .ics-Datei für
- * die aktuell geöffnete HYPE-Woche.
- *
- * Die Trainings werden als
- * ganztägige Kalendereinträge
- * exportiert.
- */
+function calendarEscape(
+  value
+) {
 
-function calendarEscape(value) {
-
-  return String(value ?? "")
-    .replace(/\\/g, "\\\\")
-    .replace(/\r?\n/g, "\\n")
-    .replace(/;/g, "\\;")
-    .replace(/,/g, "\\,");
+  return String(
+    value ?? ""
+  )
+    .replace(
+      /\\/g,
+      "\\\\"
+    )
+    .replace(
+      /\r?\n/g,
+      "\\n"
+    )
+    .replace(
+      /;/g,
+      "\\;"
+    )
+    .replace(
+      /,/g,
+      "\\,"
+    );
 
 }
 
-function calendarDate(date) {
+
+function calendarDate(
+  date
+) {
 
   return [
     date.getFullYear(),
-    pad(date.getMonth() + 1),
-    pad(date.getDate())
+    pad(
+      date.getMonth() + 1
+    ),
+    pad(
+      date.getDate()
+    )
   ].join("");
 
 }
 
-function calendarDateTimeUTC(date) {
+
+function calendarDateTimeUTC(
+  date
+) {
 
   return (
     date.getUTCFullYear() +
-    pad(date.getUTCMonth() + 1) +
-    pad(date.getUTCDate()) +
+    pad(
+      date.getUTCMonth() + 1
+    ) +
+    pad(
+      date.getUTCDate()
+    ) +
     "T" +
-    pad(date.getUTCHours()) +
-    pad(date.getUTCMinutes()) +
-    pad(date.getUTCSeconds()) +
+    pad(
+      date.getUTCHours()
+    ) +
+    pad(
+      date.getUTCMinutes()
+    ) +
+    pad(
+      date.getUTCSeconds()
+    ) +
     "Z"
   );
 
 }
 
+
 function createCalendarFile() {
 
   const weekStart =
-    startOfWeek(selected);
+    startOfWeek(
+      selected
+    );
 
   const weekEndExclusive =
     addDays(
@@ -605,8 +1955,12 @@ function createCalendarFile() {
     sessions.filter(
       session => {
 
-        if (!session.date) {
+        if (
+          !session.date
+        ) {
+
           return false;
+
         }
 
         const sessionDate =
@@ -624,7 +1978,9 @@ function createCalendarFile() {
       }
     );
 
-  if (!weekSessions.length) {
+  if (
+    !weekSessions.length
+  ) {
 
     alert(
       "Für diese Woche sind noch keine Trainings geplant."
@@ -656,11 +2012,17 @@ function createCalendarFile() {
           [
             "HYPE Training",
             `Sport: ${meta.label}`,
-            `Dauer: ${session.duration || 0} min`,
-            `Intensität: ${session.intensity || 0}/5`
+            `Dauer: ${
+              session.duration || 0
+            } min`,
+            `Intensität: ${
+              session.intensity || 0
+            }/5`
           ].join("\n");
 
-        if (session.notes) {
+        if (
+          session.notes
+        ) {
 
           description +=
             `\n\n${session.notes}`;
@@ -716,16 +2078,22 @@ function createCalendarFile() {
     );
 
   const url =
-    URL.createObjectURL(blob);
+    URL.createObjectURL(
+      blob
+    );
 
   const link =
-    document.createElement("a");
+    document.createElement(
+      "a"
+    );
 
   link.href =
     url;
 
   link.download =
-    `HYPE-${calendarDate(weekStart)}.ics`;
+    `HYPE-${calendarDate(
+      weekStart
+    )}.ics`;
 
   document.body.appendChild(
     link
@@ -748,6 +2116,7 @@ function createCalendarFile() {
 
 }
 
+
 /* =========================
    PLAN VIEW
 ========================= */
@@ -755,10 +2124,14 @@ function createCalendarFile() {
 function renderPlan() {
 
   const start =
-    startOfWeek(selected);
+    startOfWeek(
+      selected
+    );
 
   const end =
-    endOfWeek(selected);
+    endOfWeek(
+      selected
+    );
 
   const startText =
     new Intl.DateTimeFormat(
@@ -807,7 +2180,9 @@ function renderPlan() {
   renderWeekStrip();
 
   selectedDateLabel.textContent =
-    formatLongDate(selected);
+    formatLongDate(
+      selected
+    );
 
   renderSelectedDay();
 
@@ -815,16 +2190,20 @@ function renderPlan() {
 
 }
 
+
 /* =========================
    WEEK STRIP
 ========================= */
 
 function renderWeekStrip() {
 
-  weekStrip.innerHTML = "";
+  weekStrip.innerHTML =
+    "";
 
   const start =
-    startOfWeek(selected);
+    startOfWeek(
+      selected
+    );
 
   const dayNames = [
     "Mo",
@@ -843,7 +2222,10 @@ function renderWeekStrip() {
   ) {
 
     const date =
-      addDays(start, i);
+      addDays(
+        start,
+        i
+      );
 
     const dateString =
       iso(date);
@@ -911,6 +2293,7 @@ function renderWeekStrip() {
 
 }
 
+
 /* =========================
    SELECTED DAY
 ========================= */
@@ -936,7 +2319,9 @@ function renderSelectedDay() {
 
   sessionsEl.innerHTML =
     list
-      .map(renderSessionCard)
+      .map(
+        renderSessionCard
+      )
       .join("");
 
   attachSessionEvents(
@@ -945,14 +2330,19 @@ function renderSelectedDay() {
 
 }
 
+
 /* =========================
    SESSION CARD
 ========================= */
 
-function renderSessionCard(session) {
+function renderSessionCard(
+  session
+) {
 
   const meta =
-    sportMeta[session.sport] ||
+    sportMeta[
+      session.sport
+    ] ||
     sportMeta.running;
 
   const dots =
@@ -963,7 +2353,8 @@ function renderSessionCard(session) {
         (_, index) =>
           index <
           Number(
-            session.intensity || 0
+            session.intensity ||
+            0
           )
             ? "●"
             : "○"
@@ -989,7 +2380,8 @@ function renderSessionCard(session) {
               ${
                 Number(
                   session.actualIntensity
-                ) === value
+                ) ===
+                value
                   ? "selected"
                   : ""
               }
@@ -1007,7 +2399,9 @@ function renderSessionCard(session) {
           ? "completed"
           : ""
       }"
-      data-id="${esc(session.id)}"
+      data-id="${esc(
+        session.id
+      )}"
     >
 
       <div class="sport-icon">
@@ -1019,7 +2413,9 @@ function renderSessionCard(session) {
         <div class="session-title-row">
 
           <h4>
-            ${esc(session.title)}
+            ${esc(
+              session.title
+            )}
           </h4>
 
           ${
@@ -1036,7 +2432,9 @@ function renderSessionCard(session) {
 
         <p>
           ${meta.label}
-          · ${esc(session.duration)} min
+          · ${esc(
+            session.duration
+          )} min
         </p>
 
         <p>
@@ -1047,7 +2445,9 @@ function renderSessionCard(session) {
           session.notes
             ? `
               <p>
-                ${esc(session.notes)}
+                ${esc(
+                  session.notes
+                )}
               </p>
             `
             : ""
@@ -1082,7 +2482,8 @@ function renderSessionCard(session) {
                     data-action="post-notes"
                     placeholder="z. B. Hat sich heute sehr gut angefühlt …"
                   >${esc(
-                    session.postNotes || ""
+                    session.postNotes ||
+                    ""
                   )}</textarea>
 
                 </label>
@@ -1140,170 +2541,186 @@ function renderSessionCard(session) {
 
 }
 
+
 /* =========================
    SESSION EVENTS
 ========================= */
 
-function attachSessionEvents(container) {
+function attachSessionEvents(
+  container
+) {
 
   container
-    .querySelectorAll(".session")
-    .forEach(card => {
+    .querySelectorAll(
+      ".session"
+    )
+    .forEach(
+      card => {
 
-      const id =
-        card.dataset.id;
+        const id =
+          card.dataset.id;
 
-      const session =
-        sessions.find(
-          item =>
-            item.id === id
-        );
-
-      if (!session) {
-        return;
-      }
-
-      const completeButton =
-        card.querySelector(
-          '[data-action="complete"]'
-        );
-
-      const editButton =
-        card.querySelector(
-          '[data-action="edit"]'
-        );
-
-      const deleteButton =
-        card.querySelector(
-          '[data-action="delete"]'
-        );
-
-      const actualIntensity =
-        card.querySelector(
-          '[data-action="actual-intensity"]'
-        );
-
-      const postNotes =
-        card.querySelector(
-          '[data-action="post-notes"]'
-        );
-
-      completeButton.addEventListener(
-        "click",
-        () => {
-
-          if (
-            !session.completed &&
-            isFutureDate(
-              session.date
-            )
-          ) {
-
-            alert(
-              getFutureMessage(
-                session.date
-              )
-            );
-
-            return;
-
-          }
-
-          session.completed =
-            !session.completed;
-
-          if (!session.completed) {
-
-            session.actualIntensity =
-              null;
-
-            session.postNotes =
-              "";
-
-          }
-
-          save();
-
-          renderAll();
-
-        }
-      );
-
-      editButton.addEventListener(
-        "click",
-        () => {
-
-          openEditDialog(
-            session
+        const session =
+          sessions.find(
+            item =>
+              item.id ===
+              id
           );
 
+        if (!session) {
+          return;
         }
-      );
 
-      deleteButton.addEventListener(
-        "click",
-        () => {
+        const completeButton =
+          card.querySelector(
+            '[data-action="complete"]'
+          );
 
-          const confirmed =
-            window.confirm(
-              "Möchtest du diese Einheit wirklich löschen?\n\n" +
-              session.title
-            );
+        const editButton =
+          card.querySelector(
+            '[data-action="edit"]'
+          );
 
-          if (!confirmed) {
-            return;
-          }
+        const deleteButton =
+          card.querySelector(
+            '[data-action="delete"]'
+          );
 
-          sessions =
-            sessions.filter(
-              item =>
-                item.id !== id
-            );
+        const actualIntensity =
+          card.querySelector(
+            '[data-action="actual-intensity"]'
+          );
 
-          save();
+        const postNotes =
+          card.querySelector(
+            '[data-action="post-notes"]'
+          );
 
-          renderAll();
-
-        }
-      );
-
-      if (actualIntensity) {
-
-        actualIntensity.addEventListener(
-          "change",
+        completeButton.addEventListener(
+          "click",
           () => {
 
-            session.actualIntensity =
-              Number(
-                actualIntensity.value
+            if (
+              !session.completed &&
+              isFutureDate(
+                session.date
+              )
+            ) {
+
+              alert(
+                getFutureMessage(
+                  session.date
+                )
+              );
+
+              return;
+
+            }
+
+            session.completed =
+              !session.completed;
+
+            if (
+              !session.completed
+            ) {
+
+              session.actualIntensity =
+                null;
+
+              session.postNotes =
+                "";
+
+            }
+
+            save();
+
+            renderAll();
+
+          }
+        );
+
+        editButton.addEventListener(
+          "click",
+          () => {
+
+            openEditDialog(
+              session
+            );
+
+          }
+        );
+
+        deleteButton.addEventListener(
+          "click",
+          () => {
+
+            const confirmed =
+              window.confirm(
+                "Möchtest du diese Einheit wirklich löschen?\n\n" +
+                session.title
+              );
+
+            if (!confirmed) {
+              return;
+            }
+
+            sessions =
+              sessions.filter(
+                item =>
+                  item.id !==
+                  id
               );
 
             save();
 
-          }
-        );
-
-      }
-
-      if (postNotes) {
-
-        postNotes.addEventListener(
-          "input",
-          () => {
-
-            session.postNotes =
-              postNotes.value;
-
-            save();
+            renderAll();
 
           }
         );
 
-      }
+        if (
+          actualIntensity
+        ) {
 
-    });
+          actualIntensity.addEventListener(
+            "change",
+            () => {
+
+              session.actualIntensity =
+                Number(
+                  actualIntensity.value
+                );
+
+              save();
+
+            }
+          );
+
+        }
+
+        if (
+          postNotes
+        ) {
+
+          postNotes.addEventListener(
+            "input",
+            () => {
+
+              session.postNotes =
+                postNotes.value;
+
+              save();
+
+            }
+          );
+
+        }
+
+      }
+    );
 
 }
+
 
 /* =========================
    WEEKLY INSIGHT
@@ -1351,12 +2768,15 @@ function renderWeeklyInsight() {
   }
 
   const remaining =
-    planned - completed;
+    planned -
+    completed;
 
   let text =
     `${completed} von ${planned} Einheiten erledigt.`;
 
-  if (remaining > 0) {
+  if (
+    remaining > 0
+  ) {
 
     text +=
       ` ${remaining} ${
@@ -1391,6 +2811,7 @@ function renderWeeklyInsight() {
   `;
 
 }
+
 
 /* =========================
    OVERVIEW
@@ -1431,21 +2852,27 @@ function renderOverview() {
 
 }
 
+
 function renderPeriodButtons() {
 
   document
-    .querySelectorAll(".period-btn")
-    .forEach(button => {
+    .querySelectorAll(
+      ".period-btn"
+    )
+    .forEach(
+      button => {
 
-      button.classList.toggle(
-        "active",
-        button.dataset.period ===
-        overviewPeriod
-      );
+        button.classList.toggle(
+          "active",
+          button.dataset.period ===
+            overviewPeriod
+        );
 
-    });
+      }
+    );
 
 }
+
 
 function renderPeriodNavigation() {
 
@@ -1508,6 +2935,7 @@ function renderPeriodNavigation() {
 
 }
 
+
 /* =========================
    OVERVIEW WEEK
 ========================= */
@@ -1558,7 +2986,9 @@ function renderOverviewWeek() {
         data-date="${dateString}"
         role="button"
         tabindex="0"
-        aria-label="${formatLongDate(date)} öffnen"
+        aria-label="${formatLongDate(
+          date
+        )} öffnen"
       >
 
         <div class="overview-day-head">
@@ -1570,7 +3000,8 @@ function renderOverviewWeek() {
                 new Intl.DateTimeFormat(
                   "de-DE",
                   {
-                    weekday: "long"
+                    weekday:
+                      "long"
                   }
                 ).format(date)
               }
@@ -1578,7 +3009,8 @@ function renderOverviewWeek() {
 
             <span class="overview-day-number">
               ${date.getDate()}.${pad(
-                date.getMonth() + 1
+                date.getMonth() +
+                  1
               )}.
             </span>
 
@@ -1605,7 +3037,9 @@ function renderOverviewWeek() {
         <div class="overview-day-sessions">
     `;
 
-    if (!daySessions.length) {
+    if (
+      !daySessions.length
+    ) {
 
       html += `
         <div class="overview-empty-day">
@@ -1694,9 +3128,6 @@ function renderOverviewWeek() {
 
 }
 
-/* =========================
-   OVERVIEW DAY NAVIGATION
-========================= */
 
 function attachOverviewDayNavigation() {
 
@@ -1762,6 +3193,7 @@ function attachOverviewDayNavigation() {
     );
 
 }
+
 
 /* =========================
    OVERVIEW MONTH
@@ -1870,7 +3302,9 @@ function renderOverviewMonth() {
   const remaining =
     (
       7 -
-      (usedCells % 7)
+      (
+        usedCells % 7
+      )
     ) % 7;
 
   for (
@@ -1883,7 +3317,8 @@ function renderOverviewMonth() {
       new Date(
         year,
         month,
-        daysInMonth + i,
+        daysInMonth +
+          i,
         12
       );
 
@@ -1907,6 +3342,7 @@ function renderOverviewMonth() {
 
 }
 
+
 function renderMonthCell(
   date,
   otherMonth
@@ -1926,7 +3362,8 @@ function renderMonthCell(
         session.completed
     ).length;
 
-  let dots = "";
+  let dots =
+    "";
 
   daySessions
     .slice(0, 5)
@@ -1983,6 +3420,7 @@ function renderMonthCell(
 
 }
 
+
 /* =========================
    MONTH WEEK NAVIGATION
 ========================= */
@@ -2017,7 +3455,9 @@ function attachMonthWeekNavigation() {
         i + 7
       );
 
-    if (!weekCells.length) {
+    if (
+      !weekCells.length
+    ) {
       continue;
     }
 
@@ -2030,7 +3470,8 @@ function attachMonthWeekNavigation() {
     const lastDate =
       parseDate(
         weekCells[
-          weekCells.length - 1
+          weekCells.length -
+            1
         ].dataset.date
       );
 
@@ -2060,17 +3501,20 @@ function attachMonthWeekNavigation() {
 
     const lastRect =
       weekCells[
-        weekCells.length - 1
+        weekCells.length -
+          1
       ].getBoundingClientRect();
 
     const gridRect =
       grid.getBoundingClientRect();
 
     weekButton.style.top =
-      `${firstRect.top - gridRect.top}px`;
+      `${firstRect.top -
+        gridRect.top}px`;
 
     weekButton.style.height =
-      `${lastRect.bottom - firstRect.top}px`;
+      `${lastRect.bottom -
+        firstRect.top}px`;
 
     weekButton.addEventListener(
       "click",
@@ -2098,6 +3542,7 @@ function attachMonthWeekNavigation() {
   }
 
 }
+
 
 /* =========================
    OVERVIEW YEAR
@@ -2181,6 +3626,7 @@ function renderOverviewYear() {
 
 }
 
+
 function renderYearMonth(
   year,
   month
@@ -2243,7 +3689,9 @@ function renderYearMonth(
               {
                 month: "long"
               }
-            ).format(firstDay)
+            ).format(
+              firstDay
+            )
           }
         </span>
 
@@ -2252,7 +3700,8 @@ function renderYearMonth(
           ${monthSessions.length}
 
           ${
-            monthSessions.length === 1
+            monthSessions.length ===
+            1
               ? "Einheit"
               : "Einheiten"
           }
@@ -2307,7 +3756,8 @@ function renderYearMonth(
       );
 
     const hasTraining =
-      daySessions.length > 0;
+      daySessions.length >
+      0;
 
     const allCompleted =
       hasTraining &&
@@ -2345,6 +3795,7 @@ function renderYearMonth(
 
 }
 
+
 function attachYearMonthNavigation() {
 
   overviewContent
@@ -2360,12 +3811,14 @@ function attachYearMonthNavigation() {
 
             const year =
               Number(
-                monthButton.dataset.year
+                monthButton.dataset
+                  .year
               );
 
             const month =
               Number(
-                monthButton.dataset.month
+                monthButton.dataset
+                  .month
               );
 
             overviewDate =
@@ -2389,6 +3842,7 @@ function attachYearMonthNavigation() {
 
 }
 
+
 /* =========================
    TODAY VIEW
 ========================= */
@@ -2408,7 +3862,9 @@ function renderToday() {
       iso(today)
     );
 
-  if (!todaySessions.length) {
+  if (
+    !todaySessions.length
+  ) {
 
     todayContent.innerHTML = `
       <div class="today-empty">
@@ -2465,11 +3921,14 @@ function renderToday() {
 
 }
 
+
 /* =========================
    VIEW SWITCHING
 ========================= */
 
-function setView(view) {
+function setView(
+  view
+) {
 
   currentView =
     view;
@@ -2484,10 +3943,25 @@ function setView(view) {
     view !== "overview"
   );
 
+  profileView.classList.toggle(
+    "hidden",
+    view !== "profile"
+  );
+
   todayView.classList.toggle(
     "hidden",
     view !== "today"
   );
+
+
+  if (bottomNav) {
+
+    bottomNav.classList.remove(
+      "hidden"
+    );
+
+  }
+
 
   document
     .querySelectorAll(
@@ -2505,6 +3979,7 @@ function setView(view) {
       }
     );
 
+
   if (
     view ===
     "plan"
@@ -2514,6 +3989,7 @@ function setView(view) {
 
   }
 
+
   if (
     view ===
     "overview"
@@ -2522,6 +3998,17 @@ function setView(view) {
     renderOverview();
 
   }
+
+
+  if (
+    view ===
+    "profile"
+  ) {
+
+    renderProfile();
+
+  }
+
 
   if (
     view ===
@@ -2533,6 +4020,7 @@ function setView(view) {
   }
 
 }
+
 
 /* =========================
    DIALOG
@@ -2563,12 +4051,15 @@ function openNewDialog() {
 
   setTimeout(
     () => {
+
       titleInput.focus();
+
     },
     50
   );
 
 }
+
 
 function openEditDialog(
   session
@@ -2593,7 +4084,8 @@ function openEditDialog(
     session.intensity;
 
   notesInput.value =
-    session.notes || "";
+    session.notes ||
+    "";
 
   updateTitlePlaceholder();
 
@@ -2601,12 +4093,15 @@ function openEditDialog(
 
   setTimeout(
     () => {
+
       titleInput.focus();
+
     },
     50
   );
 
 }
+
 
 function closeDialog() {
 
@@ -2616,6 +4111,7 @@ function closeDialog() {
     null;
 
 }
+
 
 function updateTitlePlaceholder() {
 
@@ -2629,6 +4125,7 @@ function updateTitlePlaceholder() {
     meta.placeholder;
 
 }
+
 
 /* =========================
    FORM
@@ -2747,15 +4244,18 @@ trainingForm.addEventListener(
   }
 );
 
+
 sportInput.addEventListener(
   "change",
   updateTitlePlaceholder
 );
 
+
 closeDialogBtn.addEventListener(
   "click",
   closeDialog
 );
+
 
 trainingDialog.addEventListener(
   "click",
@@ -2772,6 +4272,7 @@ trainingDialog.addEventListener(
 
   }
 );
+
 
 /* =========================
    NAVIGATION
@@ -2798,6 +4299,7 @@ document
     }
   );
 
+
 /* =========================
    WEEK NAVIGATION
 ========================= */
@@ -2817,6 +4319,7 @@ weekPrevBtn.addEventListener(
   }
 );
 
+
 weekNextBtn.addEventListener(
   "click",
   () => {
@@ -2831,6 +4334,7 @@ weekNextBtn.addEventListener(
 
   }
 );
+
 
 /* =========================
    TODAY JUMP
@@ -2854,6 +4358,7 @@ todayJumpBtn.addEventListener(
 
   }
 );
+
 
 /* =========================
    OVERVIEW PERIOD BUTTONS
@@ -2880,6 +4385,7 @@ document
 
     }
   );
+
 
 /* =========================
    OVERVIEW PERIOD NAVIGATION
@@ -2933,6 +4439,7 @@ periodPrevBtn.addEventListener(
   }
 );
 
+
 periodNextBtn.addEventListener(
   "click",
   () => {
@@ -2981,6 +4488,7 @@ periodNextBtn.addEventListener(
   }
 );
 
+
 periodTodayBtn.addEventListener(
   "click",
   () => {
@@ -3000,6 +4508,7 @@ periodTodayBtn.addEventListener(
   }
 );
 
+
 /* =========================
    ADD TRAINING
 ========================= */
@@ -3013,11 +4522,14 @@ addTrainingBtn.addEventListener(
   }
 );
 
+
 /* =========================
    CALENDAR BUTTON
 ========================= */
 
-if (calendarExportBtn) {
+if (
+  calendarExportBtn
+) {
 
   calendarExportBtn.addEventListener(
     "click",
@@ -3025,6 +4537,58 @@ if (calendarExportBtn) {
   );
 
 }
+
+
+/* =========================
+   PROFILE BUTTONS
+========================= */
+
+if (
+  shareWeekBtn
+) {
+
+  shareWeekBtn.addEventListener(
+    "click",
+    shareLastWeek
+  );
+
+}
+
+
+if (
+  shareHypeProfileBtn
+) {
+
+  shareHypeProfileBtn.addEventListener(
+    "click",
+    shareHype
+  );
+
+}
+
+
+if (
+  logoutBtn
+) {
+
+  logoutBtn.addEventListener(
+    "click",
+    async () => {
+
+      if (
+        typeof logout ===
+        "function"
+      ) {
+
+        await logout();
+
+      }
+
+    }
+  );
+
+}
+
 
 /* =========================
    GLOBAL RENDER
@@ -3045,6 +4609,15 @@ function renderAll() {
 
   if (
     currentView ===
+    "profile"
+  ) {
+
+    renderProfile();
+
+  }
+
+  if (
+    currentView ===
     "today"
   ) {
 
@@ -3053,6 +4626,55 @@ function renderAll() {
   }
 
 }
+
+
+/* =========================
+   AUTH STATE
+========================= */
+
+if (
+  typeof supabaseClient !==
+  "undefined"
+) {
+
+  supabaseClient.auth
+    .onAuthStateChange(
+      (
+        event,
+        session
+      ) => {
+
+        if (session) {
+
+          if (
+            bottomNav
+          ) {
+
+            bottomNav.classList.remove(
+              "hidden"
+            );
+
+          }
+
+        } else {
+
+          if (
+            bottomNav
+          ) {
+
+            bottomNav.classList.add(
+              "hidden"
+            );
+
+          }
+
+        }
+
+      }
+    );
+
+}
+
 
 /* =========================
    PWA
@@ -3068,7 +4690,9 @@ if (
     () => {
 
       navigator.serviceWorker
-        .register("sw.js")
+        .register(
+          "sw.js"
+        )
         .catch(
           error => {
 
@@ -3084,6 +4708,7 @@ if (
   );
 
 }
+
 
 /* =========================
    INITIAL RENDER
