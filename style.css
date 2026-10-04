@@ -1,13 +1,10 @@
 :root {
 
   --bg: #0b0d10;
-
   --panel: #14171c;
-
   --panel2: #1a1e24;
 
   --text: #f5f6f7;
-
   --muted: #8d949e;
 
   --line: #292e36;
@@ -105,8 +102,7 @@ button {
 
 
 .eyebrow,
-.muted,
-.score span {
+.muted {
 
   font-size:
     11px;
@@ -137,7 +133,7 @@ h1 {
 }
 
 
-/* SMALL HYPE LOGO */
+/* HYPE LOGO */
 
 .hype-logo {
 
@@ -165,7 +161,7 @@ h1 {
 }
 
 
-.hype-logo i {
+.hype-logo span {
 
   display:
     block;
@@ -173,30 +169,35 @@ h1 {
   width:
     4px;
 
-  height:
-    13px;
-
   border-radius:
     3px;
 
   background:
     var(--accent);
 
+  box-shadow:
+    0 0 7px rgba(
+      215,
+      255,
+      63,
+      .25
+    );
+
 }
 
 
-.hype-logo i:nth-child(1) {
-  height: 9px;
+.hype-logo span:nth-child(1) {
+  height: 10px;
 }
 
 
-.hype-logo i:nth-child(2) {
-  height: 15px;
+.hype-logo span:nth-child(2) {
+  height: 17px;
 }
 
 
-.hype-logo i:nth-child(3) {
-  height: 11px;
+.hype-logo span:nth-child(3) {
+  height: 12px;
 }
 
 
@@ -277,7 +278,7 @@ h2 {
 }
 
 
-/* YEAR */
+/* 2026 */
 
 .hero-year {
 
@@ -285,7 +286,7 @@ h2 {
     absolute;
 
   top:
-    13px;
+    17px;
 
   right:
     20px;
@@ -294,45 +295,21 @@ h2 {
     var(--muted);
 
   font-size:
-    10px;
+    11px;
 
   font-weight:
-    700;
+    800;
 
   letter-spacing:
     .1em;
 
   opacity:
-    .7;
+    .75;
 
 }
 
 
-/* LOAD */
-
-.score {
-
-  text-align:
-    right;
-
-}
-
-
-.score strong {
-
-  display:
-    block;
-
-  font-size:
-    30px;
-
-  color:
-    var(--accent);
-
-}
-
-
-/* WEEK STRIP */
+/* WEEK DAYS */
 
 .week-strip {
 
@@ -482,12 +459,12 @@ h2 {
 }
 
 
-/* SELECTED DATE */
+/* AUSGEWÄHLTES DATUM */
 
 .selected-date {
 
   color:
-    var(--accent);
+    var(--accent) !important;
 
 }
 
@@ -547,9 +524,7 @@ h2 {
     grid;
 
   grid-template-columns:
-    48px
-    1fr
-    auto;
+    48px 1fr auto;
 
   gap:
     12px;
@@ -961,26 +936,18 @@ textarea:focus {
 @media (min-width: 700px) {
 
   .app {
-
     padding-top:
       32px;
-
   }
-
 
   .week-strip {
-
     gap:
       10px;
-
   }
 
-
   .day {
-
     padding:
       13px 5px;
-
   }
 
 }
