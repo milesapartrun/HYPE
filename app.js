@@ -80,33 +80,6 @@ overviewDate.setHours(
 
 
 /* =========================
-   CALENDAR BRIDGE
-========================= */
-
-/*
- * calendar.js kann hierüber auf
- * das aktuell ausgewählte HYPE-Datum
- * zugreifen.
- *
- * Dadurch exportiert der Kalender
- * wirklich die Woche, die der Nutzer
- * gerade in HYPE geöffnet hat.
- */
-
-Object.defineProperty(
-  window,
-  "hypeSelectedDate",
-  {
-    configurable: true,
-
-    get() {
-      return new Date(selected);
-    }
-  }
-);
-
-
-/* =========================
    DOM
 ========================= */
 
@@ -152,6 +125,9 @@ const weeklyInsight =
 
 const addTrainingBtn =
   document.getElementById("addTrainingBtn");
+
+const calendarExportBtn =
+  document.getElementById("calendarExportBtn");
 
 
 const overviewContent =
@@ -595,6 +571,237 @@ function sessionsForYear(year) {
       parseDate(
         session.date
       ).getFullYear() === year
+  );
+
+}
+
+
+/* =========================
+   CALENDAR EXPORT
+========================= */
+
+/*
+ * Erstellt eine .ics-Datei für
+ * die aktuell geöffnete HYPE-Woche.
+ *
+ * Die Trainings werden als
+ * ganztägige Kalendereinträge
+ * exportiert.
+ */
+
+function calendarEscape(value) {
+
+  return String(value ?? "")
+    .replace(/\\/g, "\\\\")
+    .replace(/\r?\n/g, "\\n")
+    .replace(/;/g, "\\;")
+    .replace(/,/g, "\\,");
+
+}
+
+
+function calendarDate(date) {
+
+  return [
+    date.getFullYear(),
+    pad(date.getMonth() + 1),
+    pad(date.getDate())
+  ].join("");
+
+}
+
+
+function calendarDateTimeUTC(date) {
+
+  return (
+    date.getUTCFullYear() +
+    pad(date.getUTCMonth() + 1) +
+    pad(date.getUTCDate()) +
+    "T" +
+    pad(date.getUTCHours()) +
+    pad(date.getUTCMinutes()) +
+    pad(date.getUTCSeconds()) +
+    "Z"
+  );
+
+}
+
+
+function createCalendarFile() {
+
+  const weekStart =
+    startOfWeek(selected);
+
+  const weekEndExclusive =
+    addDays(
+      weekStart,
+      7
+    );
+
+
+  const weekSessions =
+    sessions.filter(
+      session => {
+
+        if (!session.date) {
+          return false;
+        }
+
+        const sessionDate =
+          parseDate(
+            session.date
+          );
+
+        return (
+          sessionDate >=
+            weekStart &&
+          sessionDate <
+            weekEndExclusive
+        );
+
+      }
+    );
+
+
+  if (!weekSessions.length) {
+
+    alert(
+      "Für diese Woche sind noch keine Trainings geplant."
+    );
+
+    return;
+
+  }
+
+
+  const dtStamp =
+    calendarDateTimeUTC(
+      new Date()
+    );
+
+
+  const events =
+    weekSessions.map(
+      session => {
+
+        const meta =
+          sportMeta[
+            session.sport
+          ] ||
+          sportMeta.running;
+
+
+        const title =
+          `${meta.label} · ${session.title}`;
+
+
+        let description =
+          [
+            "HYPE Training",
+            `Sport: ${meta.label}`,
+            `Dauer: ${session.duration || 0} min`,
+            `Intensität: ${session.intensity || 0}/5`
+          ].join("\n");
+
+
+        if (session.notes) {
+
+          description +=
+            `\n\n${session.notes}`;
+
+        }
+
+
+        const start =
+          parseDate(
+            session.date
+          );
+
+
+        const end =
+          addDays(
+            start,
+            1
+          );
+
+
+        const uid =
+          `hype-${session.id}@hype`;
+
+
+        return [
+          "BEGIN:VEVENT",
+          `UID:${calendarEscape(uid)}`,
+          `DTSTAMP:${dtStamp}`,
+          `DTSTART;VALUE=DATE:${calendarDate(start)}`,
+          `DTEND;VALUE=DATE:${calendarDate(end)}`,
+          `SUMMARY:${calendarEscape(title)}`,
+          `DESCRIPTION:${calendarEscape(description)}`,
+          "END:VEVENT"
+        ].join("\r\n");
+
+      }
+    );
+
+
+  const calendar =
+    [
+      "BEGIN:VCALENDAR",
+      "VERSION:2.0",
+      "PRODID:-//HYPE//Training Planner//DE",
+      "CALSCALE:GREGORIAN",
+      "METHOD:PUBLISH",
+      ...events,
+      "END:VCALENDAR"
+    ].join("\r\n");
+
+
+  const blob =
+    new Blob(
+      [calendar],
+      {
+        type:
+          "text/calendar;charset=utf-8"
+      }
+    );
+
+
+  const url =
+    URL.createObjectURL(blob);
+
+
+  const link =
+    document.createElement("a");
+
+
+  link.href =
+    url;
+
+
+  link.download =
+    `HYPE-${calendarDate(weekStart)}.ics`;
+
+
+  document.body.appendChild(
+    link
+  );
+
+
+  link.click();
+
+
+  link.remove();
+
+
+  setTimeout(
+    () => {
+
+      URL.revokeObjectURL(
+        url
+      );
+
+    },
+    1000
   );
 
 }
@@ -3102,6 +3309,20 @@ addTrainingBtn.addEventListener(
 
   }
 );
+
+
+/* =========================
+   CALENDAR BUTTON
+========================= */
+
+if (calendarExportBtn) {
+
+  calendarExportBtn.addEventListener(
+    "click",
+    createCalendarFile
+  );
+
+}
 
 
 /* =========================
