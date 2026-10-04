@@ -1,3 +1,167 @@
+/* =========================================================
+   HYPE DOM COMPATIBILITY FIX
+   Passt app.js an die bestehende index.html an.
+========================================================= */
+
+(() => {
+  const renameId = (oldId, newId) => {
+    const element =
+      document.getElementById(oldId);
+
+    if (
+      element &&
+      !document.getElementById(newId)
+    ) {
+      element.id = newId;
+    }
+  };
+
+  /* PLAN */
+  renameId(
+    "sessions",
+    "trainingList"
+  );
+
+  /* TRAINING DIALOG */
+  renameId(
+    "trainingDialog",
+    "sessionDialog"
+  );
+
+  renameId(
+    "trainingForm",
+    "sessionForm"
+  );
+
+  renameId(
+    "sportInput",
+    "sessionSport"
+  );
+
+  renameId(
+    "titleInput",
+    "sessionTitle"
+  );
+
+  renameId(
+    "durationInput",
+    "sessionDuration"
+  );
+
+  renameId(
+    "notesInput",
+    "sessionNotes"
+  );
+
+  renameId(
+    "closeDialogBtn",
+    "closeSessionDialogBtn"
+  );
+
+  /* DIE INDEX.HTML HAT KEIN SICHTBARES DATUMSFELD.
+     Deshalb wird es intern angelegt. */
+  if (
+    !document.getElementById(
+      "sessionDate"
+    )
+  ) {
+    const dateInput =
+      document.createElement(
+        "input"
+      );
+
+    dateInput.type =
+      "hidden";
+
+    dateInput.id =
+      "sessionDate";
+
+    document.body.appendChild(
+      dateInput
+    );
+  }
+
+  /* WOCHE */
+  if (
+    !document.getElementById(
+      "weekRange"
+    )
+  ) {
+    const weekRange =
+      document.createElement(
+        "span"
+      );
+
+    weekRange.id =
+      "weekRange";
+
+    weekRange.hidden =
+      true;
+
+    document.body.appendChild(
+      weekRange
+    );
+  }
+
+  /* HEUTE */
+  renameId(
+    "todayJumpBtn",
+    "todayBtn"
+  );
+
+  /* ÜBERSICHT */
+  renameId(
+    "periodPrevBtn",
+    "overviewPrevBtn"
+  );
+
+  renameId(
+    "periodNextBtn",
+    "overviewNextBtn"
+  );
+
+  renameId(
+    "periodTodayBtn",
+    "overviewTodayBtn"
+  );
+
+  /* ÜBERSICHT-PERIODEN */
+  document
+    .querySelectorAll(
+      "[data-period]"
+    )
+    .forEach(button => {
+      if (
+        !button.dataset
+          .overviewPeriod
+      ) {
+        button.dataset
+          .overviewPeriod =
+          button.dataset.period;
+      }
+    });
+
+  /* ÜBERSICHT-CONTENT */
+  const overviewContent =
+    document.getElementById(
+      "overviewContent"
+    );
+
+  if (overviewContent) {
+    overviewContent.dataset
+      .overviewContent = "";
+  }
+
+  const periodTitle =
+    document.getElementById(
+      "periodTitle"
+    );
+
+  if (periodTitle) {
+    periodTitle.dataset
+      .overviewTitle = "";
+  }
+})();
 const KEY = "hype_sessions_v1";
 
 const sportMeta = {
