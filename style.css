@@ -9,7 +9,6 @@
 
   --line: #292e36;
 
-  /* HYPE LIME */
   --accent: #d7ff3f;
 
   --danger: #ff6b6b;
@@ -134,8 +133,6 @@ h1 {
 }
 
 
-/* HYPE SYMBOL */
-
 .hype-logo {
 
   width:
@@ -156,7 +153,7 @@ h1 {
 }
 
 
-/* SETTINGS BUTTON */
+/* SETTINGS */
 
 .icon-btn {
 
@@ -414,13 +411,6 @@ h2 {
 }
 
 
-/*
-  AUSGEWÄHLTES DATUM
-
-  Exakt dieselbe HYPE-Lime-Farbe
-  wie der restliche Accent.
-*/
-
 .selected-date {
 
   color:
@@ -432,7 +422,7 @@ h2 {
 }
 
 
-/* PRIMARY BUTTON */
+/* PRIMARY */
 
 .primary {
 
@@ -493,7 +483,7 @@ h2 {
     12px;
 
   align-items:
-    center;
+    start;
 
   padding:
     15px;
@@ -506,6 +496,45 @@ h2 {
 
   border-radius:
     18px;
+
+  transition:
+    border-color .2s ease,
+    background .2s ease;
+
+}
+
+
+/* COMPLETED SESSION */
+
+.session.completed {
+
+  border-color:
+    rgba(
+      215,
+      255,
+      63,
+      .55
+    );
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(
+        215,
+        255,
+        63,
+        .07
+      ),
+      var(--panel)
+    );
+
+}
+
+
+.session.completed h4 {
+
+  color:
+    var(--accent);
 
 }
 
@@ -536,6 +565,31 @@ h2 {
 }
 
 
+.session-content {
+
+  min-width:
+    0;
+
+}
+
+
+.session-title-row {
+
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  gap:
+    8px;
+
+  flex-wrap:
+    wrap;
+
+}
+
+
 .session h4 {
 
   margin:
@@ -550,13 +604,187 @@ h2 {
 .session p {
 
   margin:
-    0;
+    0 0 3px;
 
   color:
     var(--muted);
 
   font-size:
     13px;
+
+}
+
+
+.completed-label {
+
+  font-size:
+    8px;
+
+  font-weight:
+    900;
+
+  letter-spacing:
+    .08em;
+
+  color:
+    var(--accent);
+
+  border:
+    1px solid rgba(
+      215,
+      255,
+      63,
+      .35
+    );
+
+  padding:
+    3px 6px;
+
+  border-radius:
+    6px;
+
+}
+
+
+/* SESSION ACTIONS */
+
+.session-actions {
+
+  display:
+    flex;
+
+  flex-direction:
+    column;
+
+  align-items:
+    flex-end;
+
+  gap:
+    6px;
+
+}
+
+
+.complete-btn {
+
+  width:
+    32px;
+
+  height:
+    32px;
+
+  border:
+    1px solid var(--line);
+
+  border-radius:
+    10px;
+
+  background:
+    var(--panel2);
+
+  color:
+    var(--muted);
+
+  font-size:
+    18px;
+
+  font-weight:
+    800;
+
+}
+
+
+.complete-btn.is-completed {
+
+  background:
+    var(--accent);
+
+  border-color:
+    var(--accent);
+
+  color:
+    #111;
+
+}
+
+
+.edit-btn {
+
+  border:
+    0;
+
+  background:
+    transparent;
+
+  color:
+    var(--muted);
+
+  font-size:
+    11px;
+
+  padding:
+    3px 0;
+
+}
+
+
+.edit-btn:hover {
+
+  color:
+    var(--text);
+
+}
+
+
+/* ACTUAL INTENSITY */
+
+.actual-intensity {
+
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  gap:
+    8px;
+
+  margin-top:
+    10px;
+
+}
+
+
+.actual-intensity span {
+
+  color:
+    var(--muted);
+
+  font-size:
+    11px;
+
+}
+
+
+.actual-intensity-select {
+
+  width:
+    auto;
+
+  min-width:
+    145px;
+
+  margin:
+    0;
+
+  padding:
+    7px 9px;
+
+  border-radius:
+    9px;
+
+  font-size:
+    11px;
 
 }
 
@@ -758,8 +986,10 @@ dialog::backdrop {
 
 
 form {
+
   padding:
     20px;
+
 }
 
 
@@ -899,18 +1129,24 @@ textarea:focus {
 @media (min-width: 700px) {
 
   .app {
+
     padding-top:
       32px;
+
   }
 
   .week-strip {
+
     gap:
       10px;
+
   }
 
   .day {
+
     padding:
       13px 5px;
+
   }
 
 }
