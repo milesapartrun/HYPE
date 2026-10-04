@@ -42,6 +42,11 @@ button {
   display: none !important;
 }
 
+
+/* =========================
+   APP
+========================= */
+
 .app {
   width: min(760px, 100%);
   margin: auto;
@@ -109,21 +114,12 @@ h1 {
 
 .hero {
   position: relative;
-
   display: flex;
   align-items: center;
   justify-content: space-between;
-
   margin: 34px 0 22px;
   padding: 20px;
-
-  background:
-    linear-gradient(
-      135deg,
-      #171b20,
-      #101318
-    );
-
+  background: linear-gradient(135deg, #171b20, #101318);
   border: 1px solid var(--line);
   border-radius: 22px;
 }
@@ -138,7 +134,6 @@ h2 {
   position: absolute;
   top: 17px;
   right: 20px;
-
   color: var(--muted);
   font-size: 11px;
   font-weight: 800;
@@ -154,19 +149,13 @@ h2 {
 .week-navigation {
   display: grid;
   grid-template-columns: 42px minmax(0, 1fr) 42px;
-
   align-items: center;
   gap: 8px;
-
-  margin-top: 10px;
-
   width: 100%;
+  margin-top: 10px;
 }
 
-
-/* LEFT + RIGHT ARROWS */
-
-.week-nav-btn,
+.week-nav-arrow,
 #weekPrevBtn,
 #weekNextBtn {
   appearance: none;
@@ -174,7 +163,6 @@ h2 {
 
   width: 42px;
   height: 42px;
-
   min-width: 42px;
   min-height: 42px;
 
@@ -205,7 +193,7 @@ h2 {
     transform .15s ease;
 }
 
-.week-nav-btn:hover,
+.week-nav-arrow:hover,
 #weekPrevBtn:hover,
 #weekNextBtn:hover {
   border-color: #414750;
@@ -213,13 +201,13 @@ h2 {
   background-color: var(--panel2);
 }
 
-.week-nav-btn:active,
+.week-nav-arrow:active,
 #weekPrevBtn:active,
 #weekNextBtn:active {
   transform: scale(.95);
 }
 
-.week-nav-btn:focus,
+.week-nav-arrow:focus,
 #weekPrevBtn:focus,
 #weekNextBtn:focus {
   outline: none;
@@ -227,156 +215,105 @@ h2 {
 
 
 /* =========================
-   CURRENT WEEK
-========================= */
-
-/*
- * Der mittlere Button war die Ursache
- * für das helle/weiße Feld.
- *
- * Wir setzen hier absichtlich ALLE
- * Browser-Button-Eigenschaften zurück.
- */
-
-.week-today-btn,
-#weekTodayBtn,
-.week-navigation > button:nth-child(2) {
-  appearance: none;
-  -webkit-appearance: none;
-
-  justify-self: center;
-
-  width: auto;
-  min-width: 0;
-  max-width: 100%;
-
-  height: auto;
-  min-height: 0;
-
-  padding: 8px 12px;
-  margin: 0;
-
-  border: 0;
-  border-width: 0;
-
-  background: transparent !important;
-  background-color: transparent !important;
-
-  color: var(--text);
-
-  border-radius: 10px;
-
-  box-shadow: none !important;
-  outline: none !important;
-
-  text-align: center;
-
-  font-family: inherit;
-  font-weight: inherit;
-
-  overflow: visible;
-
-  white-space: nowrap;
-
-  transition:
-    background .15s ease,
-    color .15s ease;
-}
-
-
-/* Kein Safari-Button-Hintergrund */
-
-.week-today-btn::-webkit-focus-inner,
-#weekTodayBtn::-webkit-focus-inner,
-.week-navigation > button:nth-child(2)::-webkit-focus-inner {
-  border: 0;
-  padding: 0;
-}
-
-
-/* Hover */
-
-.week-today-btn:hover,
-#weekTodayBtn:hover,
-.week-navigation > button:nth-child(2):hover {
-  background: rgba(215,255,63,.06) !important;
-  background-color: rgba(215,255,63,.06) !important;
-
-  color: var(--text);
-}
-
-
-/* Active */
-
-.week-today-btn:active,
-#weekTodayBtn:active,
-.week-navigation > button:nth-child(2):active {
-  background: rgba(215,255,63,.08) !important;
-  background-color: rgba(215,255,63,.08) !important;
-
-  color: var(--text);
-
-  transform: none;
-}
-
-
-/* Focus */
-
-.week-today-btn:focus,
-#weekTodayBtn:focus,
-.week-navigation > button:nth-child(2):focus,
-.week-today-btn:focus-visible,
-#weekTodayBtn:focus-visible,
-.week-navigation > button:nth-child(2):focus-visible {
-  outline: none !important;
-  box-shadow: none !important;
-}
-
-
-/* =========================
    WEEK TITLE
 ========================= */
 
-.week-today-btn h2,
-#weekTodayBtn h2,
-.week-navigation > button:nth-child(2) h2 {
+.week-title-area {
+  min-width: 0;
+  text-align: center;
+  justify-self: center;
+}
+
+.week-title-area .eyebrow {
+  margin: 0;
+}
+
+.week-title-area h2 {
   margin: 5px 0 0;
 
   color: var(--text);
 
   font-size: 30px;
   font-weight: 800;
-
   line-height: 1.05;
+
   letter-spacing: -.04em;
 
   white-space: nowrap;
 }
 
-.week-today-btn .eyebrow,
-#weekTodayBtn .eyebrow,
-.week-navigation > button:nth-child(2) .eyebrow {
-  color: var(--muted);
+
+/* =========================
+   HEUTE BUTTON
+========================= */
+
+.week-today-action,
+#weekTodayBtn {
+  appearance: none;
+  -webkit-appearance: none;
+
+  position: absolute;
+
+  right: 20px;
+  bottom: 16px;
+
+  width: auto;
+  min-width: 0;
+  height: auto;
+
+  padding: 4px 8px;
+  margin: 0;
+
+  border: 0;
+
+  background: transparent !important;
+  background-color: transparent !important;
+
+  color: var(--accent);
+
+  font-size: 10px;
+  font-weight: 900;
+  line-height: 1;
+
+  letter-spacing: .12em;
+
+  border-radius: 7px;
+
+  box-shadow: none !important;
+  outline: none !important;
+
+  cursor: pointer;
+
+  transition:
+    background .15s ease,
+    color .15s ease;
 }
 
+.week-today-action:hover,
+#weekTodayBtn:hover {
+  background: rgba(215,255,63,.08) !important;
+  background-color: rgba(215,255,63,.08) !important;
+}
 
-/* Falls die Jahreszahl innerhalb
-   des mittleren Buttons sitzt */
+.week-today-action:active,
+#weekTodayBtn:active {
+  background: rgba(215,255,63,.12) !important;
+  background-color: rgba(215,255,63,.12) !important;
+  transform: none;
+}
 
-.week-today-btn .hero-year,
-#weekTodayBtn .hero-year,
-.week-navigation > button:nth-child(2) .hero-year {
-  position: static;
+.week-today-action:focus,
+#weekTodayBtn:focus,
+.week-today-action:focus-visible,
+#weekTodayBtn:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}
 
-  top: auto;
-  right: auto;
-
-  color: var(--muted);
-
-  font-size: 11px;
-  font-weight: 800;
-
-  letter-spacing: .1em;
+.week-today-action.is-current,
+#weekTodayBtn.is-current {
+  opacity: .45;
+  pointer-events: none;
 }
 
 
@@ -395,12 +332,9 @@ h2 {
   border: 1px solid var(--line);
   background: var(--panel);
   border-radius: 15px;
-
   padding: 11px 3px;
-
   text-align: center;
   color: var(--muted);
-
   transition:
     transform .15s ease,
     border-color .15s ease,
@@ -420,13 +354,10 @@ h2 {
 
 .today-label {
   display: block;
-
   font-size: 8px;
   font-weight: 900;
   letter-spacing: .08em;
-
   margin-top: 5px;
-
   color: var(--accent);
 }
 
@@ -448,11 +379,8 @@ h2 {
   width: 5px;
   height: 5px;
   border-radius: 50%;
-
   background: var(--accent);
-
   display: block;
-
   margin: 7px auto 0;
 }
 
@@ -465,7 +393,6 @@ h2 {
   display: flex;
   align-items: center;
   justify-content: space-between;
-
   margin-bottom: 14px;
 }
 
@@ -486,9 +413,7 @@ h2 {
   border: 0;
   background: #d7ff3f;
   color: #111;
-
   font-weight: 800;
-
   padding: 11px 15px;
   border-radius: 13px;
 }
@@ -517,13 +442,10 @@ h2 {
   grid-template-columns: 48px 1fr auto;
   gap: 12px;
   align-items: start;
-
   padding: 15px;
-
   background: var(--panel);
   border: 1px solid var(--line);
   border-radius: 18px;
-
   transition:
     border-color .2s ease,
     background .2s ease;
@@ -531,7 +453,6 @@ h2 {
 
 .session.completed {
   border-color: rgba(215,255,63,.55);
-
   background:
     linear-gradient(
       135deg,
@@ -547,14 +468,10 @@ h2 {
 .sport-icon {
   width: 48px;
   height: 48px;
-
   border-radius: 14px;
-
   background: var(--panel2);
-
   display: grid;
   place-items: center;
-
   font-size: 22px;
 }
 
@@ -576,7 +493,6 @@ h2 {
 
 .session p {
   margin: 0 0 3px;
-
   color: var(--muted);
   font-size: 13px;
 }
@@ -585,11 +501,8 @@ h2 {
   font-size: 8px;
   font-weight: 900;
   letter-spacing: .08em;
-
   color: var(--accent);
-
   border: 1px solid rgba(215,255,63,.35);
-
   padding: 3px 6px;
   border-radius: 6px;
 }
@@ -604,13 +517,10 @@ h2 {
 .complete-btn {
   width: 32px;
   height: 32px;
-
   border: 1px solid var(--line);
   border-radius: 10px;
-
   background: var(--panel2);
   color: var(--muted);
-
   font-size: 18px;
   font-weight: 800;
 }
@@ -624,9 +534,7 @@ h2 {
 .edit-btn {
   border: 0;
   background: transparent;
-
   color: var(--muted);
-
   font-size: 11px;
   padding: 3px 0;
 }
@@ -644,7 +552,6 @@ h2 {
   display: flex;
   align-items: center;
   gap: 8px;
-
   margin-top: 10px;
 }
 
@@ -656,10 +563,8 @@ h2 {
 .actual-intensity-select {
   width: auto;
   min-width: 145px;
-
   margin: 0;
   padding: 7px 9px;
-
   border-radius: 9px;
   font-size: 11px;
 }
@@ -680,7 +585,6 @@ h2 {
 .post-training-notes textarea {
   min-height: 70px;
   resize: vertical;
-
   font-size: 12px;
   line-height: 1.4;
 }
@@ -693,13 +597,10 @@ h2 {
 .insight {
   display: flex;
   gap: 12px;
-
   margin-top: 18px;
   padding: 16px;
-
   border: 1px solid var(--line);
   background: var(--panel);
-
   border-radius: 18px;
 }
 
@@ -710,9 +611,7 @@ h2 {
 
 .insight p {
   color: var(--muted);
-
   margin: 5px 0 0;
-
   font-size: 13px;
   line-height: 1.45;
 }
@@ -738,27 +637,19 @@ h2 {
 .period-switch {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-
   padding: 4px;
-
   background: var(--panel);
-
   border: 1px solid var(--line);
   border-radius: 15px;
-
   margin-bottom: 14px;
 }
 
 .period-btn {
   border: 0;
   background: transparent;
-
   color: var(--muted);
-
   padding: 9px 6px;
-
   border-radius: 11px;
-
   font-size: 12px;
   font-weight: 800;
 }
@@ -776,24 +667,18 @@ h2 {
 .period-navigation {
   display: grid;
   grid-template-columns: 42px 1fr 42px;
-
   align-items: center;
   gap: 8px;
-
   margin-bottom: 14px;
 }
 
 .period-arrow {
   width: 42px;
   height: 42px;
-
   border: 1px solid var(--line);
-
   border-radius: 13px;
-
   background: var(--panel);
   color: var(--text);
-
   font-size: 25px;
   line-height: 1;
 }
@@ -804,15 +689,11 @@ h2 {
 
 .period-title-button {
   min-width: 0;
-
   border: 0;
   background: transparent;
-
   color: var(--text);
-
   font-size: 14px;
   font-weight: 800;
-
   padding: 8px;
 }
 
@@ -828,11 +709,8 @@ h2 {
 
 .overview-day {
   background: var(--panel);
-
   border: 1px solid var(--line);
-
   border-radius: 18px;
-
   overflow: hidden;
 }
 
@@ -844,9 +722,7 @@ h2 {
   display: flex;
   align-items: center;
   justify-content: space-between;
-
   padding: 13px 15px;
-
   border-bottom: 1px solid var(--line);
 }
 
@@ -883,13 +759,9 @@ h2 {
 .overview-mini-session {
   display: grid;
   grid-template-columns: 30px 1fr auto;
-
   gap: 9px;
-
   align-items: center;
-
   padding: 9px 5px;
-
   border-bottom: 1px solid rgba(41,46,54,.55);
 }
 
@@ -900,47 +772,34 @@ h2 {
 .mini-icon {
   width: 30px;
   height: 30px;
-
   border-radius: 9px;
-
   background: var(--panel2);
-
   display: grid;
   place-items: center;
-
   font-size: 15px;
 }
 
 .mini-title {
   min-width: 0;
-
   color: var(--text);
-
   font-size: 12px;
   font-weight: 700;
 }
 
 .mini-meta {
   color: var(--muted);
-
   font-size: 10px;
-
   margin-top: 2px;
 }
 
 .mini-status {
   width: 22px;
   height: 22px;
-
   border-radius: 7px;
-
   display: grid;
   place-items: center;
-
   border: 1px solid var(--line);
-
   color: var(--muted);
-
   font-size: 12px;
 }
 
@@ -952,9 +811,7 @@ h2 {
 
 .overview-empty-day {
   padding: 13px 15px;
-
   color: #626973;
-
   font-size: 11px;
 }
 
@@ -965,13 +822,9 @@ h2 {
 
 .month-calendar {
   background: var(--panel);
-
   border: 1px solid var(--line);
-
   border-radius: 20px;
-
   padding: 12px;
-
   position: relative;
 }
 
@@ -988,12 +841,9 @@ h2 {
 
 .month-weekday {
   text-align: center;
-
   color: var(--muted);
-
   font-size: 9px;
   font-weight: 800;
-
   padding: 5px 0;
 }
 
@@ -1003,21 +853,13 @@ h2 {
 
 .month-cell {
   min-height: 58px;
-
   background: #111419;
-
   border: 1px solid transparent;
-
   border-radius: 10px;
-
   padding: 6px;
-
   position: relative;
-
   overflow: hidden;
-
   z-index: 2;
-
   pointer-events: none;
 }
 
@@ -1033,7 +875,6 @@ h2 {
   font-size: 10px;
   font-weight: 800;
   color: var(--muted);
-
   position: relative;
   z-index: 3;
 }
@@ -1046,9 +887,7 @@ h2 {
   display: flex;
   flex-wrap: wrap;
   gap: 3px;
-
   margin-top: 7px;
-
   position: relative;
   z-index: 3;
 }
@@ -1056,9 +895,7 @@ h2 {
 .month-dot {
   width: 6px;
   height: 6px;
-
   border-radius: 50%;
-
   background: #6d747d;
 }
 
@@ -1068,44 +905,31 @@ h2 {
 
 .month-count {
   position: absolute;
-
   right: 5px;
   bottom: 4px;
-
   color: #68707a;
-
   font-size: 8px;
   font-weight: 800;
-
   z-index: 3;
 }
 
 
 /*
  * Klickbare Fläche über der kompletten Woche.
- * Dadurch reicht ein Klick irgendwo in der
- * Kalenderwoche.
+ * Dadurch reicht ein Klick irgendwo in der Kalenderwoche.
  */
+
 .month-week-hit-area {
   position: absolute;
-
   left: 0;
   right: 0;
-
   border: 0;
-
   background: transparent;
-
   padding: 0;
-
   cursor: pointer;
-
   z-index: 5;
-
   border-radius: 10px;
-
-  transition:
-    background .15s ease;
+  transition: background .15s ease;
 }
 
 .month-week-hit-area:hover {
@@ -1134,31 +958,23 @@ h2 {
 
 .year-stat {
   background: var(--panel);
-
   border: 1px solid var(--line);
-
   border-radius: 15px;
-
   padding: 13px 10px;
 }
 
 .year-stat strong {
   display: block;
-
   font-size: 21px;
   letter-spacing: -.03em;
 }
 
 .year-stat span {
   display: block;
-
   margin-top: 3px;
-
   color: var(--muted);
-
   font-size: 9px;
   font-weight: 700;
-
   letter-spacing: .04em;
   text-transform: uppercase;
 }
@@ -1169,31 +985,17 @@ h2 {
   gap: 9px;
 }
 
-
-/*
- * Monatskarten sind jetzt echte Buttons,
- * damit der komplette Monat anklickbar ist.
- */
 .year-month {
   appearance: none;
   -webkit-appearance: none;
-
   width: 100%;
-
   background: var(--panel);
-
   border: 1px solid var(--line);
-
   border-radius: 17px;
-
   padding: 12px;
-
   color: var(--text);
-
   text-align: left;
-
   cursor: pointer;
-
   transition:
     border-color .15s ease,
     background .15s ease,
@@ -1213,7 +1015,6 @@ h2 {
   display: flex;
   justify-content: space-between;
   align-items: center;
-
   margin-bottom: 9px;
 }
 
@@ -1235,19 +1036,14 @@ h2 {
 
 .year-weekday {
   color: #555c65;
-
   text-align: center;
-
   font-size: 7px;
-
   padding-bottom: 2px;
 }
 
 .year-day {
   aspect-ratio: 1;
-
   border-radius: 3px;
-
   background: #1c2026;
 }
 
@@ -1280,13 +1076,9 @@ h2 {
 
 .today-empty {
   padding: 28px 18px;
-
   border: 1px dashed var(--line);
-
   border-radius: 18px;
-
   text-align: center;
-
   color: var(--muted);
 }
 
@@ -1302,41 +1094,26 @@ h2 {
 
 .bottom-nav {
   position: fixed;
-
   bottom: 12px;
   left: 50%;
-
   transform: translateX(-50%);
-
   width: min(460px, calc(100% - 28px));
-
   display: grid;
-
   grid-template-columns: repeat(2, 1fr);
-
   padding: 7px;
-
   background: rgba(20,23,28,.92);
-
   backdrop-filter: blur(18px);
-
   border: 1px solid var(--line);
-
   border-radius: 20px;
-
   z-index: 20;
 }
 
 .nav-item {
   border: 0;
   background: transparent;
-
   color: var(--muted);
-
   padding: 9px 8px;
-
   border-radius: 14px;
-
   transition:
     background .15s ease,
     color .15s ease;
@@ -1344,11 +1121,10 @@ h2 {
 
 .nav-item.active {
   background: rgba(215,255,63,.10);
-
   color: var(--accent);
-
   box-shadow:
-    inset 0 0 0 1px rgba(215,255,63,.18);
+    inset 0 0 0 1px
+    rgba(215,255,63,.18);
 }
 
 .nav-item.active .nav-icon {
@@ -1363,9 +1139,7 @@ h2 {
 
 .nav-item span {
   display: block;
-
   font-size: 10px;
-
   margin-top: 2px;
 }
 
@@ -1382,17 +1156,11 @@ h2 {
 
 dialog {
   border: 1px solid var(--line);
-
   background: #111419;
-
   color: var(--text);
-
   border-radius: 24px;
-
   width: min(500px, calc(100% - 28px));
-
   padding: 0;
-
   box-shadow: 0 30px 100px #000;
 }
 
@@ -1412,20 +1180,15 @@ form {
 
 h3 {
   margin: 5px 0 0;
-
   font-size: 22px;
-
   letter-spacing: -.03em;
 }
 
 label {
   display: block;
-
   color: #c8cbd0;
-
   font-size: 13px;
   font-weight: 650;
-
   margin: 15px 0;
 }
 
@@ -1433,21 +1196,13 @@ input,
 select,
 textarea {
   display: block;
-
   width: 100%;
-
   margin-top: 7px;
-
   padding: 12px;
-
   border-radius: 12px;
-
   border: 1px solid var(--line);
-
   background: var(--panel);
-
   color: var(--text);
-
   outline: none;
 }
 
@@ -1459,19 +1214,14 @@ textarea:focus {
 
 .two {
   display: grid;
-
   grid-template-columns: 1fr 1fr;
-
   gap: 12px;
 }
 
 .close {
   font-size: 25px;
-
   background: transparent;
-
   border: 0;
-
   color: var(--text);
 }
 
@@ -1482,13 +1232,9 @@ textarea:focus {
 
 .empty {
   padding: 30px 15px;
-
   text-align: center;
-
   color: var(--muted);
-
   border: 1px dashed var(--line);
-
   border-radius: 18px;
 }
 
@@ -1524,46 +1270,54 @@ textarea:focus {
     min-height: 50px;
   }
 
+
   .year-months {
     grid-template-columns: 1fr 1fr;
   }
+
 
   .year-stat strong {
     font-size: 18px;
   }
 
 
-  /* =========================
-     MOBILE WEEK NAVIGATION
-  ========================= */
+  /* WEEK NAVIGATION MOBILE */
 
   .week-navigation {
-    grid-template-columns: 38px minmax(0, 1fr) 38px;
+    grid-template-columns:
+      38px
+      minmax(0, 1fr)
+      38px;
+
     gap: 6px;
   }
 
-  .week-nav-btn,
+
+  .week-nav-arrow,
   #weekPrevBtn,
   #weekNextBtn {
     width: 38px;
     height: 38px;
-
     min-width: 38px;
     min-height: 38px;
 
     font-size: 20px;
   }
 
-  .week-today-btn,
-  #weekTodayBtn,
-  .week-navigation > button:nth-child(2) {
-    padding: 6px 4px;
+
+  .week-title-area h2 {
+    font-size: 25px;
   }
 
-  .week-today-btn h2,
-  #weekTodayBtn h2,
-  .week-navigation > button:nth-child(2) h2 {
-    font-size: 25px;
+
+  .week-today-action,
+  #weekTodayBtn {
+    right: 18px;
+    bottom: 14px;
+
+    padding: 4px 7px;
+
+    font-size: 9px;
   }
 
 }
