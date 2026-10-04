@@ -523,6 +523,63 @@
 
       <section class="profile-card profile-account-card">
 
+        <!-- PROFILE AVATAR -->
+
+        <div class="profile-avatar-area">
+
+          <button
+            id="profileAvatarButton"
+            class="profile-avatar-button"
+            type="button"
+            aria-label="Profilbild ändern"
+          >
+
+            <img
+              id="profileAvatar"
+              class="profile-avatar"
+              src=""
+              alt=""
+            >
+
+            <span
+              id="profileAvatarFallback"
+              class="profile-avatar-fallback"
+              aria-hidden="true"
+            >
+              ?
+            </span>
+
+            <span class="profile-avatar-edit">
+              +
+            </span>
+
+          </button>
+
+
+          <input
+            id="profileAvatarInput"
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            hidden
+          >
+
+          <button
+            id="profileAvatarUploadBtn"
+            class="profile-avatar-upload"
+            type="button"
+          >
+            Profilbild ändern
+          </button>
+
+          <div
+            id="profileAvatarMessage"
+            class="profile-avatar-message"
+            aria-live="polite"
+          ></div>
+
+        </div>
+
+
         <div class="profile-card-head">
 
           <div class="profile-card-title">
