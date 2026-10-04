@@ -80,6 +80,33 @@ overviewDate.setHours(
 
 
 /* =========================
+   CALENDAR BRIDGE
+========================= */
+
+/*
+ * calendar.js kann hierüber auf
+ * das aktuell ausgewählte HYPE-Datum
+ * zugreifen.
+ *
+ * Dadurch exportiert der Kalender
+ * wirklich die Woche, die der Nutzer
+ * gerade in HYPE geöffnet hat.
+ */
+
+Object.defineProperty(
+  window,
+  "hypeSelectedDate",
+  {
+    configurable: true,
+
+    get() {
+      return new Date(selected);
+    }
+  }
+);
+
+
+/* =========================
    DOM
 ========================= */
 
