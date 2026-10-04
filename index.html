@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0b0d10">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="style.css">
+  <title>FORGE — Training Planner</title>
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <div>
+        <div class="eyebrow">ATHLETE PLANNER</div>
+        <h1>FORGE</h1>
+      </div>
+      <button class="icon-btn" id="settingsBtn" aria-label="Einstellungen">⚙</button>
+    </header>
+
+    <section class="hero">
+      <div>
+        <span class="muted">Diese Woche</span>
+        <h2 id="weekTitle">Woche</h2>
+      </div>
+      <div class="score">
+        <span>LOAD</span>
+        <strong id="loadScore">0</strong>
+      </div>
+    </section>
+
+    <section class="week-strip" id="weekStrip"></section>
+
+    <section class="section-head">
+      <div>
+        <span class="muted">TRAININGSPLAN</span>
+        <h3 id="selectedDateLabel">Heute</h3>
+      </div>
+      <button class="primary" id="addBtn">+ Training</button>
+    </section>
+
+    <section id="sessions" class="sessions"></section>
+
+    <section class="insight">
+      <div class="insight-icon">✦</div>
+      <div>
+        <strong>Wochen-Check</strong>
+        <p id="insightText">Füge Trainings hinzu, um deine Belastung zu sehen.</p>
+      </div>
+    </section>
+
+    <nav class="bottom-nav">
+      <button class="nav-item active">▦<span>Plan</span></button>
+      <button class="nav-item" id="todayBtn">◉<span>Heute</span></button>
+      <button class="nav-item" id="allBtn">◫<span>Alle</span></button>
+    </nav>
+  </main>
+
+  <dialog id="sessionDialog">
+    <form method="dialog" id="sessionForm">
+      <div class="dialog-head">
+        <div>
+          <span class="muted">NEUES TRAINING</span>
+          <h3>Einheit planen</h3>
+        </div>
+        <button type="button" class="close" id="closeDialog">×</button>
+      </div>
+
+      <label>Sportart
+        <select id="sport">
+          <option value="running">🏃 Laufen</option>
+          <option value="strength">🏋️ Gym</option>
+          <option value="hyrox">🔥 HYROX</option>
+          <option value="cycling">🚴 Rad</option>
+          <option value="swimming">🏊 Schwimmen</option>
+          <option value="mobility">🧘 Mobility</option>
+          <option value="rest">😴 Recovery</option>
+        </select>
+      </label>
+
+      <label>Titel
+        <input id="title" required placeholder="z. B. Intervall 6 × 800 m">
+      </label>
+
+      <div class="two">
+        <label>Dauer (min)
+          <input id="duration" type="number" min="1" value="60">
+        </label>
+        <label>Intensität
+          <select id="intensity">
+            <option value="1">1 — easy</option>
+            <option value="2">2 — locker</option>
+            <option value="3" selected>3 — moderat</option>
+            <option value="4">4 — hart</option>
+            <option value="5">5 — sehr hart</option>
+          </select>
+        </label>
+      </div>
+
+      <label>Notiz
+        <textarea id="notes" rows="3" placeholder="Ziel, Übungen, Pace, Distanz …"></textarea>
+      </label>
+
+      <button class="primary full" type="submit">Training speichern</button>
+    </form>
+  </dialog>
+
+  <script src="app.js"></script>
+</body>
+</html>
