@@ -2,28 +2,76 @@
 <html lang="de">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 
-  <meta name="theme-color" content="#0b0d10">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, viewport-fit=cover"
+  >
 
-  <link rel="manifest" href="manifest.json">
-  <link rel="stylesheet" href="style.css">
+  <meta
+    name="theme-color"
+    content="#0b0d10"
+  >
+
+  <meta
+    name="apple-mobile-web-app-capable"
+    content="yes"
+  >
+
+  <meta
+    name="apple-mobile-web-app-status-bar-style"
+    content="black-translucent"
+  >
+
+  <link
+    rel="manifest"
+    href="manifest.json"
+  >
+
+  <link
+    rel="stylesheet"
+    href="style.css"
+  >
 
   <title>HYPE — Training Planner</title>
 </head>
+
 
 <body>
 
   <main class="app">
 
+
     <!-- HEADER -->
+
     <header class="topbar">
-      <div>
-        <div class="eyebrow">ATHLETE PLANNER</div>
-        <h1>HYPE</h1>
+
+      <div class="brand">
+
+        <div class="eyebrow">
+          ATHLETE PLANNER
+        </div>
+
+
+        <div class="brand-row">
+
+          <h1>
+            HYPE
+          </h1>
+
+          <span
+            class="hype-logo"
+            aria-hidden="true"
+          >
+            <i></i>
+            <i></i>
+            <i></i>
+          </span>
+
+        </div>
+
       </div>
+
 
       <button
         class="icon-btn"
@@ -32,52 +80,71 @@
       >
         ⚙
       </button>
+
     </header>
 
 
     <!-- WEEK HERO -->
+
     <section class="hero">
+
       <div>
-        <span class="muted">Diese Woche</span>
-        <h2 id="weekTitle">Woche</h2>
+
+        <span class="muted">
+          Diese Woche
+        </span>
+
+        <h2 id="weekTitle">
+          Woche
+        </h2>
+
       </div>
 
-      <div class="score">
-        <span>LOAD</span>
-        <strong id="loadScore">0</strong>
+
+      <div class="hero-year">
+        2026
       </div>
+
+
+      <div class="score">
+
+        <span>
+          LOAD
+        </span>
+
+        <strong id="loadScore">
+          0
+        </strong>
+
+      </div>
+
     </section>
 
 
-    <!-- LARGE WEEK DAYS -->
+    <!-- WEEK DAYS -->
+
     <section
       class="week-strip"
       id="weekStrip"
     ></section>
 
 
-    <!-- SMALL WEEK OVERVIEW -->
-    <section class="week-overview">
-
-      <div class="overview-head">
-        <span class="muted">DEINE WOCHE</span>
-      </div>
-
-      <div
-        class="overview-days"
-        id="weekOverview"
-      ></div>
-
-    </section>
-
-
     <!-- TRAINING PLAN -->
+
     <section class="section-head">
 
       <div>
-        <span class="muted">TRAININGSPLAN</span>
-        <h3 id="selectedDateLabel">Heute</h3>
+
+        <span class="muted">
+          TRAININGSPLAN
+        </span>
+
+        <h3 id="selectedDateLabel">
+          Heute
+        </h3>
+
       </div>
+
 
       <button
         class="primary"
@@ -90,6 +157,7 @@
 
 
     <!-- SESSIONS -->
+
     <section
       id="sessions"
       class="sessions"
@@ -97,43 +165,69 @@
 
 
     <!-- WEEKLY INSIGHT -->
+
     <section class="insight">
 
-      <div class="insight-icon">✦</div>
+      <div class="insight-icon">
+        ✦
+      </div>
+
 
       <div>
-        <strong>Wochen-Check</strong>
+
+        <strong>
+          Wochen-Check
+        </strong>
 
         <p id="insightText">
           Füge Trainings hinzu, um deine Belastung zu sehen.
         </p>
+
       </div>
 
     </section>
 
 
     <!-- BOTTOM NAVIGATION -->
+
     <nav class="bottom-nav">
 
       <button class="nav-item active">
+
         ▦
-        <span>Plan</span>
+
+        <span>
+          Plan
+        </span>
+
       </button>
+
 
       <button
         class="nav-item"
         id="todayBtn"
       >
+
         ◉
-        <span>Heute</span>
+
+        <span>
+          Heute
+        </span>
+
       </button>
+
 
       <button
         class="nav-item"
         id="allBtn"
       >
+
         ◫
-        <span>Alle</span>
+
+        <span>
+          Alle
+        </span>
+
       </button>
 
     </nav>
@@ -142,6 +236,7 @@
 
 
   <!-- NEW TRAINING DIALOG -->
+
   <dialog id="sessionDialog">
 
     <form
@@ -149,12 +244,21 @@
       id="sessionForm"
     >
 
+
       <div class="dialog-head">
 
         <div>
-          <span class="muted">NEUES TRAINING</span>
-          <h3>Einheit planen</h3>
+
+          <span class="muted">
+            NEUES TRAINING
+          </span>
+
+          <h3>
+            Einheit planen
+          </h3>
+
         </div>
+
 
         <button
           type="button"
@@ -168,7 +272,9 @@
 
 
       <!-- SPORT -->
+
       <label>
+
         Sportart
 
         <select id="sport">
@@ -207,7 +313,9 @@
 
 
       <!-- TITLE -->
+
       <label>
+
         Titel
 
         <input
@@ -220,9 +328,11 @@
 
 
       <!-- DURATION + INTENSITY -->
+
       <div class="two">
 
         <label>
+
           Dauer (min)
 
           <input
@@ -236,6 +346,7 @@
 
 
         <label>
+
           Intensität
 
           <select id="intensity">
@@ -271,7 +382,9 @@
 
 
       <!-- NOTES -->
+
       <label>
+
         Notiz
 
         <textarea
@@ -284,12 +397,14 @@
 
 
       <!-- SAVE -->
+
       <button
         class="primary full"
         type="submit"
       >
         Training speichern
       </button>
+
 
     </form>
 
