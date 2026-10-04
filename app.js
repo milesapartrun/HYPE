@@ -47,8 +47,7 @@ let sessions =
   );
 
 
-let selected =
-  new Date();
+let selected = new Date();
 
 selected.setHours(
   12,
@@ -137,7 +136,6 @@ function render() {
   const days =
     weekDays();
 
-
   const today =
     iso(new Date());
 
@@ -185,17 +183,12 @@ function render() {
     );
 
 
-  /*
-    Markierung für das
-    aktuell ausgewählte Datum.
-  */
-
   selectedLabel.classList.add(
     "selected-date"
   );
 
 
-  /* LARGE WEEK STRIP */
+  /* WEEK DAYS */
 
   const strip =
     document.getElementById(
@@ -296,41 +289,7 @@ function render() {
     });
 
 
-  /* TRAININGS */
-
   renderSessions();
-
-
-  /* WEEK LOAD */
-
-  const weekLoad =
-    sessions
-      .filter(s =>
-        days.some(
-          d =>
-            iso(d) === s.date
-        )
-      )
-      .reduce(
-        (
-          total,
-          s
-        ) =>
-          total +
-          Number(
-            s.duration || 0
-          ) *
-          Number(
-            s.intensity || 0
-          ),
-        0
-      );
-
-
-  document.getElementById(
-    "loadScore"
-  ).textContent =
-    weekLoad;
 
 
   /* WEEKLY INSIGHT */
@@ -348,8 +307,8 @@ function render() {
     "insightText"
   ).textContent =
     count === 0
-      ? "Füge Trainings hinzu, um deine Belastung zu sehen."
-      : `${count} Einheiten geplant. Deine Wochenbelastung liegt bei ${weekLoad} Punkten.`;
+      ? "Füge Trainings hinzu, um deine Woche zu planen."
+      : `${count} Einheiten geplant. Deine Woche ist in Bewegung.`;
 
 }
 
@@ -375,8 +334,6 @@ function renderSessions() {
       "sessions"
     );
 
-
-  /* NO TRAINING */
 
   if (!list.length) {
 
@@ -411,8 +368,6 @@ function renderSessions() {
 
   }
 
-
-  /* TRAINING CARDS */
 
   el.innerHTML =
     list.map(s => {
@@ -490,8 +445,6 @@ function renderSessions() {
     }).join("");
 
 
-  /* DELETE */
-
   el
     .querySelectorAll(".delete")
     .forEach(button => {
@@ -559,15 +512,11 @@ function openDialog() {
 }
 
 
-/* ADD */
-
 document.getElementById(
   "addBtn"
 ).onclick =
   openDialog;
 
-
-/* CLOSE */
 
 document.getElementById(
   "closeDialog"
@@ -575,8 +524,6 @@ document.getElementById(
   () =>
     dialog.close();
 
-
-/* SAVE */
 
 document
   .getElementById(
@@ -688,7 +635,7 @@ document.getElementById(
   () => {
 
     alert(
-      "V1: Trainings werden lokal auf diesem Gerät gespeichert. Als Nächstes kommen Profil, Ziele, Apple Health und KI-Plananpassung."
+      "V1: Trainings werden lokal auf diesem Gerät gespeichert."
     );
 
   };
@@ -706,7 +653,5 @@ if (
 
 }
 
-
-/* INITIAL */
 
 render();
