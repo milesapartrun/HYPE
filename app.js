@@ -21,7 +21,7 @@ const sportMeta = {
 
   cardio: {
     icon: "❤️",
-    label: "Sonstige Cardioeinheit",
+    label: "Cardioeinheit",
     placeholder: "z. B. Crosstrainer"
   },
 
@@ -240,7 +240,7 @@ function ensureSportOptions() {
           "cardio";
 
         cardioOption.textContent =
-          "❤️ Sonstige Cardioeinheit";
+          "❤️ Cardioeinheit";
 
         const hyroxOption =
           select.querySelector(
@@ -259,7 +259,7 @@ function ensureSportOptions() {
         }
       } else {
         cardioOption.textContent =
-          "❤️ Sonstige Cardioeinheit";
+          "❤️ Cardioeinheit";
       }
     }
   );
