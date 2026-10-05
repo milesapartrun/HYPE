@@ -6846,6 +6846,8 @@ function setView(
 ========================= */
 
 function openNewDialog() {
+  ensureSportOptions();
+
   editingId =
     null;
 
