@@ -212,6 +212,36 @@ const metricValueLabel =
   document.getElementById(
     "metricValueLabel"
   );
+  
+  /* =========================
+   SPORT-AUSWAHL ERGÄNZEN
+========================= */
+
+function ensureSportOptions() {
+  if (!sportInput) {
+    return;
+  }
+
+  const existingCardioOption =
+    sportInput.querySelector(
+      'option[value="cardio"]'
+    );
+
+  if (!existingCardioOption) {
+    const cardioOption =
+      document.createElement("option");
+
+    cardioOption.value =
+      "cardio";
+
+    cardioOption.textContent =
+      "❤️ Sonstige Cardioeinheit";
+
+    sportInput.appendChild(
+      cardioOption
+    );
+  }
+}
 
 /* =========================
    PROFILE DOM
