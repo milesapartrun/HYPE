@@ -7815,6 +7815,8 @@ ensureShareWeekNavigation();
 
 cleanupProfileHeadings();
 
+ensureSportOptions();
+
 shareWeekStart =
   startOfWeek(
     new Date()
