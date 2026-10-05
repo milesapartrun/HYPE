@@ -212,35 +212,57 @@ const metricValueLabel =
   document.getElementById(
     "metricValueLabel"
   );
-  
-  /* =========================
+
+/* =========================
    SPORT-AUSWAHL ERGÄNZEN
 ========================= */
 
 function ensureSportOptions() {
-  if (!sportInput) {
-    return;
-  }
-
-  const existingCardioOption =
-    sportInput.querySelector(
-      'option[value="cardio"]'
+  const sportInputs =
+    document.querySelectorAll(
+      'select#sportInput'
     );
 
-  if (!existingCardioOption) {
-    const cardioOption =
-      document.createElement("option");
+  sportInputs.forEach(
+    select => {
+      let cardioOption =
+        select.querySelector(
+          'option[value="cardio"]'
+        );
 
-    cardioOption.value =
-      "cardio";
+      if (!cardioOption) {
+        cardioOption =
+          document.createElement(
+            "option"
+          );
 
-    cardioOption.textContent =
-      "❤️ Sonstige Cardioeinheit";
+        cardioOption.value =
+          "cardio";
 
-    sportInput.appendChild(
-      cardioOption
-    );
-  }
+        cardioOption.textContent =
+          "❤️ Sonstige Cardioeinheit";
+
+        const hyroxOption =
+          select.querySelector(
+            'option[value="hyrox"]'
+          );
+
+        if (hyroxOption) {
+          hyroxOption.insertAdjacentElement(
+            "afterend",
+            cardioOption
+          );
+        } else {
+          select.appendChild(
+            cardioOption
+          );
+        }
+      } else {
+        cardioOption.textContent =
+          "❤️ Sonstige Cardioeinheit";
+      }
+    }
+  );
 }
 
 /* =========================
