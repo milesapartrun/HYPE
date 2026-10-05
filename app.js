@@ -19,6 +19,12 @@ const sportMeta = {
     placeholder: "z. B. HYROX Intervals"
   },
 
+  cardio: {
+    icon: "❤️",
+    label: "Sonstige Cardioeinheit",
+    placeholder: "z. B. Crosstrainer"
+  },
+
   cycling: {
     icon: "🚴",
     label: "Rad",
@@ -2248,7 +2254,8 @@ function polishProfileLayout() {
             .toUpperCase();
 
         if (
-          text === "ACCOUNT"
+          text ===
+          "ACCOUNT"
         ) {
           element.classList.add(
             "hype-account-label"
@@ -2371,9 +2378,21 @@ function getSportIcon(session) {
   return meta.icon;
 }
 
+function sportSupportsDistance(
+  sport
+) {
+  return (
+    sport === "running" ||
+    sport === "hyrox" ||
+    sport === "cardio"
+  );
+}
+
 function getSessionMetricText(session) {
   if (
-    session?.sport === "running" &&
+    sportSupportsDistance(
+      session?.sport
+    ) &&
     session?.runMetric === "distance"
   ) {
     return `${formatNumber(
@@ -2388,7 +2407,9 @@ function getSessionMetricText(session) {
 
 function getSessionDurationMinutes(session) {
   if (
-    session?.sport === "running" &&
+    sportSupportsDistance(
+      session?.sport
+    ) &&
     session?.runMetric === "distance"
   ) {
     return 0;
@@ -2401,7 +2422,9 @@ function getSessionDurationMinutes(session) {
 
 function getSessionRunningDistance(session) {
   if (
-    session?.sport === "running" &&
+    sportSupportsDistance(
+      session?.sport
+    ) &&
     session?.runMetric === "distance"
   ) {
     return Number(
@@ -2418,8 +2441,10 @@ function updateTrainingInputVisibility(
   const sport =
     sportInput?.value || "running";
 
-  const isRunning =
-    sport === "running";
+  const supportsDistance =
+    sportSupportsDistance(
+      sport
+    );
 
   const isOther =
     sport === "other";
@@ -2439,11 +2464,11 @@ function updateTrainingInputVisibility(
   if (runningMetricInput) {
     runningMetricInput.parentElement?.classList.toggle(
       "hidden",
-      !isRunning
+      !supportsDistance
     );
   }
 
-  if (isRunning) {
+  if (supportsDistance) {
     const metric =
       runningMetricInput?.value ||
       "duration";
@@ -3400,8 +3425,9 @@ function loadSessions() {
           runMetric:
             session.runMetric ||
             (
-              session.sport ===
-                "running" &&
+              sportSupportsDistance(
+                session.sport
+              ) &&
               session.distance !==
                 undefined &&
               session.distance !==
@@ -6869,8 +6895,9 @@ function openEditDialog(
     runningMetricInput
   ) {
     runningMetricInput.value =
-      session.sport ===
-      "running"
+      sportSupportsDistance(
+        session.sport
+      )
         ? (
             session.runMetric ||
             "duration"
@@ -6879,8 +6906,9 @@ function openEditDialog(
   }
 
   if (
-    session.sport ===
-      "running" &&
+    sportSupportsDistance(
+      session.sport
+    ) &&
     session.runMetric ===
       "distance"
   ) {
@@ -6980,8 +7008,7 @@ function validateTrainingForm() {
     )
   ) {
     alert(
-      sport ===
-        "running" &&
+      sportSupportsDistance(sport) &&
       runningMetricInput?.value ===
         "distance"
         ? "Bitte gib die Kilometer ein."
@@ -6997,8 +7024,7 @@ function validateTrainingForm() {
     value <= 0
   ) {
     alert(
-      sport ===
-        "running" &&
+      sportSupportsDistance(sport) &&
       runningMetricInput?.value ===
         "distance"
         ? "Die Kilometer müssen größer als 0 sein."
@@ -7011,8 +7037,7 @@ function validateTrainingForm() {
   }
 
   if (
-    sport ===
-      "running" &&
+    sportSupportsDistance(sport) &&
     runningMetricInput?.value ===
       "duration" &&
     !Number.isInteger(
@@ -7029,8 +7054,7 @@ function validateTrainingForm() {
   }
 
   if (
-    sport ===
-      "running" &&
+    sportSupportsDistance(sport) &&
     runningMetricInput?.value ===
       "distance" &&
     value > 1000
@@ -7071,8 +7095,9 @@ function validateTrainingForm() {
         : "",
 
     runMetric:
-      sport ===
-      "running"
+      sportSupportsDistance(
+        sport
+      )
         ? (
             runningMetricInput?.value ||
             "duration"
@@ -7124,8 +7149,9 @@ trainingForm.addEventListener(
           formData.customSport;
 
         if (
-          formData.sport ===
-            "running" &&
+          sportSupportsDistance(
+            formData.sport
+          ) &&
           formData.runMetric ===
             "distance"
         ) {
@@ -7140,8 +7166,9 @@ trainingForm.addEventListener(
 
         } else {
           session.runMetric =
-            formData.sport ===
-              "running"
+            sportSupportsDistance(
+              formData.sport
+            )
               ? "duration"
               : null;
 
@@ -7170,24 +7197,27 @@ trainingForm.addEventListener(
           formData.title,
 
         duration:
-          formData.sport ===
-            "running" &&
+          sportSupportsDistance(
+            formData.sport
+          ) &&
           formData.runMetric ===
             "distance"
             ? null
             : formData.value,
 
         distance:
-          formData.sport ===
-            "running" &&
+          sportSupportsDistance(
+            formData.sport
+          ) &&
           formData.runMetric ===
             "distance"
             ? formData.value
             : null,
 
         runMetric:
-          formData.sport ===
-            "running"
+          sportSupportsDistance(
+            formData.sport
+          )
             ? formData.runMetric
             : null,
 
