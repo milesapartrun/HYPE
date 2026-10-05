@@ -1,430 +1,4032 @@
-/* =========================================================
-   FINAL PROFILE LAYOUT FIXES
-   1. Empfehlungsüberschrift immer einzeilig
-   2. Profilbild rechts in der Account-Karte
-========================================================= */
+const KEY = "hype_sessions_v1";
 
-(function applyFinalProfileLayoutFixes() {
+const sportMeta = {
+  running: {
+    icon: "🏃",
+    label: "Laufen",
+    placeholder: "z. B. Easy Run"
+  },
 
-  const styleId =
-    "hype-final-profile-layout-fixes";
+  strength: {
+    icon: "🏋️",
+    label: "Krafttraining",
+    placeholder: "z. B. Upper Body"
+  },
 
+  hyrox: {
+    icon: "⚡",
+    label: "HYROX",
+    placeholder: "z. B. HYROX Intervals"
+  },
+
+  cycling: {
+    icon: "🚴",
+    label: "Rad",
+    placeholder: "z. B. Zone 2 Ride"
+  },
+
+  swimming: {
+    icon: "🏊",
+    label: "Schwimmen",
+    placeholder: "z. B. Technik & Ausdauer"
+  },
+
+  mobility: {
+    icon: "🧘",
+    label: "Mobility",
+    placeholder: "z. B. 20 min Mobility"
+  },
+
+  rest: {
+    icon: "😴",
+    label: "Erholung",
+    placeholder: "z. B. Rest Day"
+  },
+
+  other: {
+    icon: "🏅",
+    label: "Sonstige Sportart",
+    placeholder: "z. B. Tennis"
+  }
+};
+
+/* =========================
+   STATE
+========================= */
+
+let sessions = loadSessions();
+
+let selected = new Date();
+selected.setHours(12, 0, 0, 0);
+
+let editingId = null;
+
+let currentView = "plan";
+
+let overviewPeriod = "week";
+
+let overviewDate = new Date();
+overviewDate.setHours(12, 0, 0, 0);
+
+let shareWeekStart = startOfWeek(
+  new Date()
+);
+
+let profileDisplayName = "";
+
+/* =========================
+   PROFILE IMAGE STATE
+========================= */
+
+const PROFILE_IMAGE_KEY_PREFIX =
+  "hype_profile_image_v1:";
+
+let pendingProfileImage = null;
+
+/* =========================
+   DOM
+========================= */
+
+const planView =
+  document.getElementById("planView");
+
+const overviewView =
+  document.getElementById("overviewView");
+
+const profileView =
+  document.getElementById("profileView");
+
+const todayView =
+  document.getElementById("todayView");
+
+const bottomNav =
+  document.getElementById("bottomNav");
+
+const weekTitle =
+  document.getElementById("weekTitle");
+
+const heroYear =
+  document.getElementById("heroYear");
+
+const weekPrevBtn =
+  document.getElementById("weekPrevBtn");
+
+const weekNextBtn =
+  document.getElementById("weekNextBtn");
+
+const todayJumpBtn =
+  document.getElementById("todayJumpBtn");
+
+const weekStrip =
+  document.getElementById("weekStrip");
+
+const sessionsEl =
+  document.getElementById("sessions");
+
+const selectedDateLabel =
+  document.getElementById("selectedDateLabel");
+
+const weeklyInsight =
+  document.getElementById("weeklyInsight");
+
+const addTrainingBtn =
+  document.getElementById("addTrainingBtn");
+
+const calendarExportBtn =
+  document.getElementById("calendarExportBtn");
+
+const overviewContent =
+  document.getElementById("overviewContent");
+
+const periodTitle =
+  document.getElementById("periodTitle");
+
+const periodPrevBtn =
+  document.getElementById("periodPrevBtn");
+
+const periodNextBtn =
+  document.getElementById("periodNextBtn");
+
+const periodTodayBtn =
+  document.getElementById("periodTodayBtn");
+
+const todayTitle =
+  document.getElementById("todayTitle");
+
+const todayContent =
+  document.getElementById("todayContent");
+
+const trainingDialog =
+  document.getElementById("trainingDialog");
+
+const trainingForm =
+  document.getElementById("trainingForm");
+
+const dialogTitle =
+  document.getElementById("dialogTitle");
+
+const closeDialogBtn =
+  document.getElementById("closeDialogBtn");
+
+const sportInput =
+  document.getElementById("sportInput");
+
+const titleInput =
+  document.getElementById("titleInput");
+
+const durationInput =
+  document.getElementById("durationInput");
+
+const intensityInput =
+  document.getElementById("intensityInput");
+
+const notesInput =
+  document.getElementById("notesInput");
+
+/* =========================
+   TRAININGS-FELDER
+========================= */
+
+const customSportField =
+  document.getElementById(
+    "customSportField"
+  );
+
+const customSportInput =
+  document.getElementById(
+    "customSportInput"
+  );
+
+const runningMetricInput =
+  document.getElementById(
+    "runningMetricInput"
+  );
+
+const metricValueLabel =
+  document.getElementById(
+    "metricValueLabel"
+  );
+
+/* =========================
+   PROFILE DOM
+========================= */
+
+const profileGreeting =
+  document.getElementById(
+    "profileGreeting"
+  );
+
+const profileName =
+  document.getElementById(
+    "profileName"
+  );
+
+const profileEmail =
+  document.getElementById(
+    "profileEmail"
+  );
+
+const editProfileBtn =
+  document.getElementById(
+    "editProfileBtn"
+  );
+
+const profileDialog =
+  document.getElementById(
+    "profileDialog"
+  );
+
+const profileForm =
+  document.getElementById(
+    "profileForm"
+  );
+
+const profileFirstNameInput =
+  document.getElementById(
+    "profileFirstNameInput"
+  );
+
+const profileEmailEdit =
+  document.getElementById(
+    "profileEmailEdit"
+  );
+
+const closeProfileDialogBtn =
+  document.getElementById(
+    "closeProfileDialogBtn"
+  );
+
+const weeklyShareName =
+  document.getElementById(
+    "weeklyShareName"
+  );
+
+const weeklyShareRange =
+  document.getElementById(
+    "weeklyShareRange"
+  );
+
+const weeklyShareDays =
+  document.getElementById(
+    "weeklyShareDays"
+  );
+
+const weeklyShareSummary =
+  document.getElementById(
+    "weeklyShareSummary"
+  );
+
+const weeklyShareCard =
+  document.getElementById(
+    "weeklyShareCard"
+  );
+
+const weeklyShareFooter =
+  document.getElementById(
+    "weeklyShareFooter"
+  );
+
+const shareWeekTitle =
+  document.getElementById(
+    "shareWeekTitle"
+  );
+
+const shareWeekPrevBtn =
+  document.getElementById(
+    "shareWeekPrevBtn"
+  );
+
+const shareWeekNextBtn =
+  document.getElementById(
+    "shareWeekNextBtn"
+  );
+
+const shareWeekCurrentBtn =
+  document.getElementById(
+    "shareWeekCurrentBtn"
+  );
+
+const shareWeekBtn =
+  document.getElementById(
+    "shareWeekBtn"
+  );
+
+const shareHypeProfileBtn =
+  document.getElementById(
+    "shareHypeProfileBtn"
+  );
+
+const logoutBtn =
+  document.getElementById(
+    "logoutBtn"
+  );
+
+/* =========================
+   PROFILE CLEANUP
+========================= */
+
+function cleanupProfileHeadings() {
+  if (!profileView) {
+    return;
+  }
+
+  const elements =
+    profileView.querySelectorAll(
+      "h1, h2, h3, h4, .eyebrow, .section-label, .section-title"
+    );
+
+  elements.forEach(
+    element => {
+      const text =
+        element.textContent
+          .replace(/\s+/g, " ")
+          .trim()
+          .toUpperCase();
+
+      if (text === "DEIN HYPE") {
+        element.remove();
+        return;
+      }
+
+      if (
+        weeklyShareCard &&
+        weeklyShareCard.contains(
+          element
+        ) &&
+        text === "HYPE" &&
+        !element.closest("button") &&
+        !element.closest("a")
+      ) {
+        element.remove();
+      }
+    }
+  );
+
+  if (weeklyShareCard) {
+    weeklyShareCard
+      .querySelectorAll("*")
+      .forEach(
+        element => {
+          const text =
+            element.textContent
+              .replace(/\s+/g, " ")
+              .trim()
+              .toUpperCase();
+
+          if (
+            text === "HYPE" &&
+            element.children.length === 0 &&
+            !element.closest("button") &&
+            !element.closest("a")
+          ) {
+            element.remove();
+          }
+        }
+      );
+  }
+}
+
+/* =========================
+   PROFILE / SHARE STYLES
+========================= */
+
+function ensureProfileShareStyles() {
   if (
-    !document.getElementById(styleId)
+    document.getElementById(
+      "hypeProfileShareStyles"
+    )
   ) {
-    const style =
-      document.createElement("style");
+    return;
+  }
 
-    style.id = styleId;
+  const style =
+    document.createElement("style");
 
-    style.textContent = `
+  style.id =
+    "hypeProfileShareStyles";
 
-      /* =====================================================
-         1. HYPE WEITEREMPFEHLEN
-         IMMER EINE EINZIGE ZEILE
-      ===================================================== */
+  style.textContent = `
+    #profileView #profileGreeting {
+      margin-bottom: 28px;
+    }
+
+    #profileView #profileName {
+      display: block;
+      margin: 0 0 7px 0;
+      line-height: 1.15;
+    }
+
+    #profileView #profileEmail {
+      display: block;
+      margin: 0;
+      line-height: 1.45;
+      overflow-wrap: anywhere;
+    }
+
+    #profileView #profileEmailEdit {
+      display: block;
+      margin: 10px 0 0 0;
+      line-height: 1.4;
+      overflow-wrap: anywhere;
+    }
+
+    #profileView #editProfileBtn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 18px;
+      white-space: nowrap;
+    }
+
+    #profileView #weeklyShareCard {
+      overflow: hidden;
+    }
+
+    /* =========================
+       ACCOUNT
+    ========================= */
+
+    #profileView .hype-account-details {
+      position: relative;
+      display: block;
+      width: 100%;
+      box-sizing: border-box;
+      min-height: 210px;
+      margin-top: 18px;
+      padding: 26px 155px 26px 26px;
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 20px;
+      background:
+        linear-gradient(
+          180deg,
+          rgba(255,255,255,.025),
+          rgba(255,255,255,.012)
+        ),
+        #12151a;
+      text-align: left;
+    }
+
+    #profileView .hype-account-details .hype-account-label {
+      display: block;
+      margin: 0 0 10px 0;
+      color: #8d949e;
+      font-size: 10px;
+      line-height: 1;
+      font-weight: 850;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      text-align: left;
+    }
+
+    #profileView .hype-account-details #profileName {
+      display: block;
+      margin: 0 0 8px 0;
+      color: #f5f6f7;
+      font-size: clamp(25px, 6vw, 34px);
+      line-height: 1.05;
+      font-weight: 900;
+      letter-spacing: -.035em;
+      text-align: left;
+    }
+
+    #profileView .hype-account-details #profileEmail {
+      display: block;
+      margin: 0;
+      color: #9aa1aa;
+      font-size: 14px;
+      line-height: 1.45;
+      overflow-wrap: anywhere;
+      text-align: left;
+    }
+
+    #profileView .hype-account-details #editProfileBtn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      width: auto;
+      margin: 18px 0 0 0;
+      padding: 0 20px;
+      border: 1px solid rgba(215,255,63,.42);
+      border-radius: 12px;
+      background: rgba(215,255,63,.055);
+      color: #d7ff3f;
+      box-shadow: none;
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 850;
+      line-height: 1;
+      white-space: nowrap;
+      cursor: pointer;
+      text-align: center;
+    }
+
+    #profileView .hype-account-details #editProfileBtn:hover {
+      background: rgba(215,255,63,.10);
+      border-color: rgba(215,255,63,.65);
+    }
+
+    #profileView .hype-profile-avatar-display {
+      position: absolute;
+      top: 26px;
+      right: 26px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 104px;
+      height: 104px;
+      margin: 0;
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 50%;
+      background:
+        linear-gradient(
+          180deg,
+          rgba(255,255,255,.035),
+          rgba(255,255,255,.01)
+        ),
+        #181b20;
+      color: #737b86;
+      font-size: 38px;
+      line-height: 1;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0,0,0,.20);
+      z-index: 2;
+    }
+
+    #profileView .hype-profile-avatar-display img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+
+    #profileView .hype-profile-image-button,
+    #profileView .hype-profile-file,
+    #profileView .hype-profile-avatar-button {
+      display: none !important;
+    }
+
+    /* =========================
+       PROFIL-DIALOG
+    ========================= */
+
+    #profileDialog .hype-profile-image-editor {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      margin: 18px 0 20px;
+      padding: 18px;
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 16px;
+      background: rgba(255,255,255,.018);
+    }
+
+    #profileDialog .hype-profile-dialog-preview {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 88px;
+      height: 88px;
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 50%;
+      background: #181b20;
+      color: #737b86;
+      font-size: 30px;
+      overflow: hidden;
+    }
+
+    #profileDialog .hype-profile-dialog-preview img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    #profileDialog .hype-profile-image-editor-label {
+      color: #8d949e;
+      font-size: 11px;
+      line-height: 1.35;
+      text-align: center;
+    }
+
+    #profileDialog .hype-profile-image-editor input[type="file"] {
+      display: block;
+      width: 100%;
+      max-width: 100%;
+      min-height: 44px;
+      padding: 5px;
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 12px;
+      background: #12151a;
+      color: #8d949e;
+      font-family: inherit;
+      font-size: 11px;
+      line-height: 32px;
+      box-sizing: border-box;
+    }
+
+    #profileDialog .hype-profile-image-editor input[type="file"]::file-selector-button {
+      margin-right: 10px;
+      padding: 8px 13px;
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 9px;
+      background: #1b1f25;
+      color: #f5f6f7;
+      font-family: inherit;
+      font-size: 11px;
+      font-weight: 750;
+      cursor: pointer;
+    }
+
+    /* =========================
+       WOCHEN-SHARE NAVIGATION
+    ========================= */
+
+    #profileView .hype-share-week-navigation {
+      display: grid;
+      grid-template-columns: 44px minmax(0, 1fr) 44px;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      margin-top: 18px;
+      margin-bottom: 14px;
+    }
+
+    #profileView .hype-share-week-arrow {
+      appearance: none;
+      -webkit-appearance: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      padding: 0;
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: 13px;
+      background: #15181d;
+      color: #f5f6f7;
+      box-shadow: none;
+      font-family: inherit;
+      font-size: 26px;
+      font-weight: 500;
+      line-height: 1;
+      cursor: pointer;
+      transition:
+        background .15s ease,
+        border-color .15s ease,
+        color .15s ease,
+        transform .15s ease;
+    }
+
+    #profileView .hype-share-week-arrow:hover {
+      background: #1d2127;
+      border-color: rgba(215,255,63,.35);
+      color: #d7ff3f;
+    }
+
+    #profileView .hype-share-week-arrow:active {
+      transform: scale(.96);
+    }
+
+    #profileView .hype-share-week-center {
+      min-width: 0;
+      text-align: center;
+    }
+
+    #profileView .hype-share-week-label {
+      display: block;
+      margin-bottom: 7px;
+      color: #6f7680;
+      font-size: 9px;
+      line-height: 1;
+      font-weight: 850;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+    }
+
+    #profileView .hype-share-week-value {
+      display: block;
+      color: #f5f6f7;
+      font-size: clamp(14px, 4vw, 17px);
+      line-height: 1.25;
+      font-weight: 850;
+      letter-spacing: -.015em;
+    }
+
+    #profileView .hype-share-current-week {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 30px;
+    }
+
+    #profileView .hype-share-current-week button {
+      appearance: none;
+      -webkit-appearance: none;
+      min-height: 34px;
+      padding: 0 14px;
+      border: 1px solid rgba(215,255,63,.18);
+      border-radius: 999px;
+      background: rgba(215,255,63,.055);
+      color: #d7ff3f;
+      box-shadow: none;
+      font-family: inherit;
+      font-size: 9px;
+      line-height: 1;
+      font-weight: 850;
+      letter-spacing: .11em;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+
+    #profileView .hype-share-current-week button:hover {
+      background: rgba(215,255,63,.10);
+      border-color: rgba(215,255,63,.35);
+    }
+
+    #profileView .hype-share-legacy-control {
+      display: none !important;
+    }
+
+    #profileView #weeklyShareName,
+    #profileView #weeklyShareRange {
+      display: none !important;
+      visibility: hidden !important;
+      height: 0 !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      overflow: hidden !important;
+    }
+
+    /* =========================
+       7 TAGE – NUR EMOJIS
+    ========================= */
+
+    #profileView #weeklyShareDays {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: 7px;
+      width: 100%;
+      margin: 0;
+    }
+
+    #profileView .weekly-share-day {
+      min-width: 0;
+      min-height: 154px;
+      padding: 12px 7px 11px;
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: 15px;
+      background:
+        linear-gradient(
+          180deg,
+          rgba(255,255,255,.018),
+          rgba(255,255,255,.005)
+        ),
+        #12151a;
+      overflow: hidden;
+      box-sizing: border-box;
+    }
+
+    #profileView .weekly-share-day.completed {
+      border-color: rgba(215,255,63,.45);
+      background:
+        linear-gradient(
+          180deg,
+          rgba(215,255,63,.09),
+          rgba(215,255,63,.025)
+        ),
+        #12151a;
+    }
+
+    #profileView .weekly-share-day-top {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      margin-bottom: 18px;
+      text-align: center;
+    }
+
+    #profileView .weekly-share-day-top span {
+      color: #858c96;
+      font-size: 8px;
+      line-height: 1;
+      font-weight: 850;
+      letter-spacing: .07em;
+      text-transform: uppercase;
+    }
+
+    #profileView .weekly-share-day-top strong {
+      color: #f5f6f7;
+      font-size: 21px;
+      line-height: 1;
+      font-weight: 900;
+    }
+
+    #profileView .weekly-share-day-training {
+      display: flex;
+      flex-wrap: wrap;
+      align-content: flex-start;
+      justify-content: center;
+      gap: 9px;
+      min-width: 0;
+      min-height: 72px;
+    }
+
+    #profileView .weekly-share-day-training-item {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 0;
+      padding: 0;
+    }
+
+    #profileView .weekly-share-day-training-main {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      min-width: 0;
+    }
+
+    #profileView .weekly-share-day-training-icon {
+      display: block;
+      flex: 0 0 auto;
+      font-size: 25px;
+      line-height: 1;
+    }
+
+    #profileView .weekly-share-day-training-title,
+    #profileView .weekly-share-day-training-meta,
+    #profileView .weekly-share-day-training .more-training {
+      display: none !important;
+    }
+
+    #profileView .weekly-share-day-training .empty-day {
+      display: none !important;
+    }
+
+    #profileView .weekly-share-day-training-item.completed-training-item
+    .weekly-share-day-training-icon {
+      filter: drop-shadow(0 0 5px rgba(215,255,63,.28));
+    }
+
+    /* =========================
+       SUMMARY
+    ========================= */
+
+    #profileView #weeklyShareSummary {
+      margin-top: 16px;
+    }
+
+    #profileView .weekly-share-stats {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    #profileView .weekly-share-stats.has-distance {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    #profileView .weekly-share-stat {
+      min-width: 0;
+      padding: 15px 14px;
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 14px;
+      background: #12151a;
+    }
+
+    #profileView .weekly-share-stat strong {
+      display: block;
+      margin: 0 0 4px;
+      color: #d7ff3f;
+      font-size: 22px;
+      line-height: 1;
+      font-weight: 900;
+    }
+
+    #profileView .weekly-share-stat span {
+      display: block;
+      color: #8d949e;
+      font-size: 9px;
+      line-height: 1.2;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    #profileView .weekly-share-empty {
+      padding: 17px 16px;
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 14px;
+      background: #12151a;
+    }
+
+    #profileView .weekly-share-empty strong {
+      display: block;
+      margin: 0 0 5px;
+      color: #f5f6f7;
+      font-size: 14px;
+      line-height: 1.3;
+      font-weight: 850;
+    }
+
+    #profileView .weekly-share-empty span {
+      display: block;
+      color: #8d949e;
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    #profileView #weeklyShareFooter {
+      display: none !important;
+    }
+
+    #profileView #shareWeekBtn {
+      width: 100%;
+      margin-top: 18px;
+      min-height: 48px;
+      border-radius: 13px;
+    }
+
+    #profileView #shareHypeProfileBtn {
+      width: 100%;
+      min-height: 48px;
+      border-radius: 13px;
+    }
+
+    /* =========================
+       INSTAGRAM-VORSCHAU
+    ========================= */
+
+    #profileView .weekly-share-image-preview {
+      margin-top: 18px;
+      padding: 14px;
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 16px;
+      background: #111419;
+    }
+
+    #profileView .weekly-share-image-preview-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    #profileView .weekly-share-image-preview-head > div {
+      min-width: 0;
+    }
+
+    #profileView .weekly-share-image-preview-head strong {
+      display: block;
+      margin-top: 5px;
+      color: #f5f6f7;
+      font-size: 14px;
+      line-height: 1.2;
+    }
+
+    #profileView .weekly-share-preview-close {
+      flex: 0 0 auto;
+      width: 34px;
+      height: 34px;
+      padding: 0;
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: 10px;
+      background: #181b20;
+      color: #f5f6f7;
+      font-size: 20px;
+      line-height: 1;
+    }
+
+    #profileView .weekly-share-image {
+      display: block;
+      width: 100%;
+      height: auto;
+      border-radius: 12px;
+      background: #0b0d10;
+    }
+
+    /* =========================
+       EMPFEHLEN – EINE ZEILE
+    ========================= */
+
+    #profileView .hype-referral-title {
+      display: block !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      margin: 0 0 22px 0 !important;
+      padding: 0 !important;
+      color: #f5f6f7 !important;
+      font-size: clamp(10px, 3.35vw, 30px) !important;
+      line-height: 1 !important;
+      font-weight: 900 !important;
+      letter-spacing: -.045em !important;
+      white-space: nowrap !important;
+      word-break: keep-all !important;
+      overflow-wrap: normal !important;
+      overflow: hidden !important;
+      text-overflow: clip !important;
+    }
+
+    @media (max-width: 620px) {
+      #profileView .hype-account-details {
+        min-height: 175px !important;
+        padding: 22px 122px 22px 20px !important;
+      }
+
+      #profileView .hype-account-details .hype-profile-avatar-display {
+        top: 22px !important;
+        right: 20px !important;
+        width: 82px !important;
+        height: 82px !important;
+      }
+
+      #profileView .hype-account-details #profileName {
+        font-size: clamp(25px, 7vw, 34px) !important;
+      }
+
+      #profileView .hype-account-details #editProfileBtn {
+        margin-top: 16px !important;
+      }
 
       #profileView .hype-referral-title {
-        display: block !important;
+        font-size: clamp(10px, 3.35vw, 25px) !important;
+      }
+    }
 
-        width: 100% !important;
-        max-width: 100% !important;
-
-        margin: 0 0 22px 0 !important;
-        padding: 0 !important;
-
-        white-space: nowrap !important;
-        word-break: keep-all !important;
-        overflow-wrap: normal !important;
-
-        overflow: hidden !important;
-        text-overflow: clip !important;
-
-        line-height: 1 !important;
-
-        /*
-         * Klein genug, damit der komplette Satz
-         * auch auf schmalen Smartphones in
-         * EINER Zeile bleibt.
-         */
-        font-size: clamp(
-          10px,
-          3.35vw,
-          30px
-        ) !important;
-
-        letter-spacing: -0.045em !important;
+    @media (max-width: 520px) {
+      #profileView .hype-share-week-navigation {
+        grid-template-columns: 40px minmax(0, 1fr) 40px;
+        gap: 9px;
       }
 
+      #profileView .hype-share-week-arrow {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+      }
 
-      /* =====================================================
-         2. ACCOUNT-KARTE
-         PROFILBILD RECHTS
-      ===================================================== */
+      #profileView #weeklyShareDays {
+        gap: 5px;
+      }
 
+      #profileView .weekly-share-day {
+        min-height: 148px;
+        padding: 11px 5px 9px;
+        border-radius: 12px;
+      }
+
+      #profileView .weekly-share-day-top {
+        margin-bottom: 16px;
+      }
+
+      #profileView .weekly-share-day-top span {
+        font-size: 8px;
+      }
+
+      #profileView .weekly-share-day-top strong {
+        font-size: 18px;
+      }
+
+      #profileView .weekly-share-day-training {
+        gap: 7px;
+      }
+
+      #profileView .weekly-share-day-training-icon {
+        font-size: 22px;
+      }
+
+      #profileView .weekly-share-stats {
+        gap: 7px;
+      }
+
+      #profileView .weekly-share-stats.has-distance {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 390px) {
       #profileView .hype-account-details {
-
-        position: relative !important;
-
-        display: block !important;
-
-        width: 100% !important;
-        box-sizing: border-box !important;
-
-        min-height: 210px !important;
-
-        padding: 26px 155px 26px 26px !important;
-
-        text-align: left !important;
+        min-height: 160px !important;
+        padding: 20px 108px 20px 17px !important;
       }
 
-
-      /* Account-Überschrift */
-
-      #profileView
-      .hype-account-details
-      .hype-account-label {
-
-        display: block !important;
-
-        margin: 0 0 10px 0 !important;
-
-        text-align: left !important;
+      #profileView .hype-account-details .hype-profile-avatar-display {
+        top: 20px !important;
+        right: 17px !important;
+        width: 74px !important;
+        height: 74px !important;
       }
 
-
-      /* Name */
-
-      #profileView
-      .hype-account-details
-      #profileName {
-
-        display: block !important;
-
-        margin: 0 0 8px 0 !important;
-
-        text-align: left !important;
+      #profileView #weeklyShareDays {
+        gap: 4px;
       }
 
-
-      /* E-Mail */
-
-      #profileView
-      .hype-account-details
-      #profileEmail {
-
-        display: block !important;
-
-        margin: 0 !important;
-
-        text-align: left !important;
+      #profileView .weekly-share-day {
+        padding-left: 4px;
+        padding-right: 4px;
       }
 
-
-      /* Profil bearbeiten */
-
-      #profileView
-      .hype-account-details
-      #editProfileBtn {
-
-        display: inline-flex !important;
-
-        width: auto !important;
-
-        margin: 18px 0 0 0 !important;
-
-        text-align: center !important;
+      #profileView .weekly-share-day-training-icon {
+        font-size: 20px;
       }
 
+      #profileView .hype-referral-title {
+        font-size: 10px !important;
+        letter-spacing: -.05em !important;
+      }
+    }
+  `;
 
-      /* =====================================================
-         PROFILBILD RECHTS OBEN
-      ===================================================== */
+  document.head.appendChild(style);
+}
 
-      #profileView
-      .hype-account-details
-      .hype-profile-avatar-display {
+/* =========================
+   PROFILE IMAGE STORAGE
+========================= */
 
-        position: absolute !important;
+function getProfileImageKey(userId) {
+  return `${PROFILE_IMAGE_KEY_PREFIX}${userId}`;
+}
 
-        top: 26px !important;
-        right: 26px !important;
+function getSavedProfileImage(userId) {
+  if (!userId) {
+    return "";
+  }
 
-        display: flex !important;
+  try {
+    return (
+      localStorage.getItem(
+        getProfileImageKey(userId)
+      ) || ""
+    );
+  } catch (error) {
+    console.error(
+      "HYPE profile image read error:",
+      error
+    );
 
-        align-items: center !important;
-        justify-content: center !important;
+    return "";
+  }
+}
 
-        width: 104px !important;
-        height: 104px !important;
+function saveProfileImage(
+  userId,
+  dataUrl
+) {
+  if (!userId) {
+    return;
+  }
 
-        margin: 0 !important;
+  try {
+    if (dataUrl) {
+      localStorage.setItem(
+        getProfileImageKey(userId),
+        dataUrl
+      );
+    } else {
+      localStorage.removeItem(
+        getProfileImageKey(userId)
+      );
+    }
+  } catch (error) {
+    console.error(
+      "HYPE profile image save error:",
+      error
+    );
 
-        flex: none !important;
+    throw new Error(
+      "Das Profilbild konnte nicht gespeichert werden."
+    );
+  }
+}
 
-        border-radius: 50% !important;
+function compressProfileImage(file) {
+  return new Promise(
+    (
+      resolve,
+      reject
+    ) => {
+      if (!file) {
+        reject(
+          new Error(
+            "Keine Bilddatei ausgewählt."
+          )
+        );
 
-        overflow: hidden !important;
-
-        z-index: 2 !important;
+        return;
       }
 
+      if (
+        !file.type.startsWith(
+          "image/"
+        )
+      ) {
+        reject(
+          new Error(
+            "Bitte wähle eine Bilddatei aus."
+          )
+        );
 
-      #profileView
-      .hype-account-details
-      .hype-profile-avatar-display img {
-
-        display: block !important;
-
-        width: 100% !important;
-        height: 100% !important;
-
-        object-fit: cover !important;
-
-        border-radius: 50% !important;
+        return;
       }
 
+      const reader =
+        new FileReader();
 
-      /* =====================================================
-         MOBILE
-      ===================================================== */
+      reader.onload =
+        event => {
+          const image =
+            new Image();
 
-      @media (max-width: 620px) {
+          image.onload =
+            () => {
+              const maxSize =
+                512;
 
-        #profileView
-        .hype-account-details {
+              const scale =
+                Math.min(
+                  1,
+                  maxSize /
+                    Math.max(
+                      image.width,
+                      image.height
+                    )
+                );
 
-          min-height: 175px !important;
+              const width =
+                Math.max(
+                  1,
+                  Math.round(
+                    image.width *
+                      scale
+                  )
+                );
 
-          padding:
-            22px 122px 22px 20px !important;
+              const height =
+                Math.max(
+                  1,
+                  Math.round(
+                    image.height *
+                      scale
+                  )
+                );
+
+              const canvas =
+                document.createElement(
+                  "canvas"
+                );
+
+              canvas.width =
+                width;
+
+              canvas.height =
+                height;
+
+              const ctx =
+                canvas.getContext(
+                  "2d"
+                );
+
+              if (!ctx) {
+                reject(
+                  new Error(
+                    "Das Bild konnte nicht verarbeitet werden."
+                  )
+                );
+
+                return;
+              }
+
+              ctx.fillStyle =
+                "#181b20";
+
+              ctx.fillRect(
+                0,
+                0,
+                width,
+                height
+              );
+
+              ctx.drawImage(
+                image,
+                0,
+                0,
+                width,
+                height
+              );
+
+              resolve(
+                canvas.toDataURL(
+                  "image/jpeg",
+                  0.82
+                )
+              );
+            };
+
+          image.onerror =
+            () => {
+              reject(
+                new Error(
+                  "Das Bild konnte nicht gelesen werden."
+                )
+              );
+            };
+
+          image.src =
+            event.target.result;
+        };
+
+      reader.onerror =
+        () => {
+          reject(
+            new Error(
+              "Die Bilddatei konnte nicht gelesen werden."
+            )
+          );
+        };
+
+      reader.readAsDataURL(
+        file
+      );
+    }
+  );
+}
+
+/* =========================
+   PROFILE IMAGE EDITOR
+========================= */
+
+function ensureProfileImageEditor(
+  currentImage = ""
+) {
+  if (
+    !profileDialog ||
+    !profileForm
+  ) {
+    return null;
+  }
+
+  let editor =
+    profileDialog.querySelector(
+      ".hype-profile-image-editor"
+    );
+
+  if (!editor) {
+    editor =
+      document.createElement(
+        "div"
+      );
+
+    editor.className =
+      "hype-profile-image-editor";
+
+    const preview =
+      document.createElement(
+        "div"
+      );
+
+    preview.className =
+      "hype-profile-dialog-preview";
+
+    const label =
+      document.createElement(
+        "div"
+      );
+
+    label.className =
+      "hype-profile-image-editor-label";
+
+    label.textContent =
+      "Profilbild auswählen";
+
+    const input =
+      document.createElement(
+        "input"
+      );
+
+    input.type =
+      "file";
+
+    input.accept =
+      "image/*";
+
+    input.id =
+      "profileImageInput";
+
+    editor.appendChild(
+      preview
+    );
+
+    editor.appendChild(
+      label
+    );
+
+    editor.appendChild(
+      input
+    );
+
+    const submitButton =
+      profileForm.querySelector(
+        'button[type="submit"]'
+      );
+
+    if (submitButton) {
+      profileForm.insertBefore(
+        editor,
+        submitButton
+      );
+    } else {
+      profileForm.appendChild(
+        editor
+      );
+    }
+
+    input.addEventListener(
+      "change",
+      async event => {
+        const file =
+          event.target.files?.[0];
+
+        if (!file) {
+          return;
         }
 
+        try {
+          pendingProfileImage =
+            await compressProfileImage(
+              file
+            );
 
-        #profileView
-        .hype-account-details
-        .hype-profile-avatar-display {
+          updateProfileImageDialogPreview(
+            pendingProfileImage
+          );
+        } catch (error) {
+          console.error(
+            "HYPE profile image error:",
+            error
+          );
 
-          top: 22px !important;
-          right: 20px !important;
+          alert(
+            error.message ||
+            "Das Profilbild konnte nicht geladen werden."
+          );
 
-          width: 82px !important;
-          height: 82px !important;
-        }
-
-
-        #profileView
-        .hype-account-details
-        #profileName {
-
-          font-size:
-            clamp(
-              25px,
-              7vw,
-              34px
-            ) !important;
-        }
-
-
-        #profileView
-        .hype-account-details
-        #editProfileBtn {
-
-          margin-top: 16px !important;
-        }
-
-
-        #profileView
-        .hype-referral-title {
-
-          font-size:
-            clamp(
-              10px,
-              3.35vw,
-              25px
-            ) !important;
+          input.value =
+            "";
         }
       }
-
-
-      @media (max-width: 390px) {
-
-        #profileView
-        .hype-account-details {
-
-          padding:
-            20px 108px 20px 17px !important;
-        }
-
-
-        #profileView
-        .hype-account-details
-        .hype-profile-avatar-display {
-
-          top: 20px !important;
-          right: 17px !important;
-
-          width: 74px !important;
-          height: 74px !important;
-        }
-
-
-        #profileView
-        .hype-referral-title {
-
-          font-size: 10px !important;
-          letter-spacing: -0.05em !important;
-        }
-      }
-
-    `;
-
-    document.head.appendChild(
-      style
     );
   }
 
+  updateProfileImageDialogPreview(
+    pendingProfileImage ||
+      currentImage
+  );
 
-  /* =====================================================
-     PROFILBILD SICHER IN ACCOUNT-KARTE EINSETZEN
-  ===================================================== */
+  return editor;
+}
 
-  function repositionProfileAvatar() {
+function updateProfileImageDialogPreview(
+  image
+) {
+  const preview =
+    profileDialog?.querySelector(
+      ".hype-profile-dialog-preview"
+    );
 
-    const profileView =
-      document.getElementById(
-        "profileView"
+  if (!preview) {
+    return;
+  }
+
+  if (image) {
+    preview.innerHTML = `
+      <img
+        src="${esc(image)}"
+        alt="Profilbild Vorschau"
+      >
+    `;
+
+    return;
+  }
+
+  preview.innerHTML =
+    "👤";
+}
+
+/* =========================
+   PROFILE ACCOUNT IMAGE
+========================= */
+
+function renderProfileAccountImage(
+  image
+) {
+  if (!profileView) {
+    return;
+  }
+
+  let details =
+    profileView.querySelector(
+      ".hype-account-details"
+    );
+
+  if (!details) {
+    return;
+  }
+
+  let avatar =
+    details.querySelector(
+      ".hype-profile-avatar-display"
+    );
+
+  if (!avatar) {
+    avatar =
+      document.createElement(
+        "div"
       );
 
-    if (!profileView) {
-      return;
-    }
+    avatar.className =
+      "hype-profile-avatar-display";
 
-    const accountDetails =
-      profileView.querySelector(
+    details.insertBefore(
+      avatar,
+      details.firstChild
+    );
+  }
+
+  if (image) {
+    avatar.classList.remove(
+      "is-empty"
+    );
+
+    avatar.innerHTML = `
+      <img
+        src="${esc(image)}"
+        alt="Profilbild"
+      >
+    `;
+  } else {
+    avatar.classList.add(
+      "is-empty"
+    );
+
+    avatar.innerHTML =
+      "👤";
+  }
+}
+
+/* =========================
+   PROFILE POLISH
+========================= */
+
+function polishProfileLayout() {
+  if (!profileView) {
+    return;
+  }
+
+  /* =========================
+     ACCOUNT BLOCK
+  ========================= */
+
+  if (
+    profileName &&
+    profileEmail &&
+    editProfileBtn
+  ) {
+    const parent =
+      profileName.parentElement;
+
+    if (
+      parent &&
+      profileEmail.parentElement === parent &&
+      editProfileBtn.parentElement === parent &&
+      !parent.querySelector(
         ".hype-account-details"
-      );
-
-    if (!accountDetails) {
-      return;
-    }
-
-    let avatar =
-      accountDetails.querySelector(
-        ".hype-profile-avatar-display"
-      );
-
-    /*
-     * Falls das Profilbild noch nicht existiert,
-     * erstellen wir den Platzhalter.
-     */
-    if (!avatar) {
-
-      avatar =
-        document.createElement(
-          "div"
-        );
-
-      avatar.className =
-        "hype-profile-avatar-display";
-
-      avatar.innerHTML =
-        "👤";
-
-      accountDetails.insertBefore(
-        avatar,
-        accountDetails.firstChild
-      );
-    }
-
-    /*
-     * Das Profilbild ganz nach vorne setzen.
-     * Die CSS-Regeln positionieren es anschließend
-     * rechts oben.
-     */
-    if (
-      avatar.parentElement ===
-      accountDetails
+      )
     ) {
-      accountDetails.insertBefore(
-        avatar,
-        accountDetails.firstChild
+      const details =
+        document.createElement("div");
+
+      details.className =
+        "hype-account-details";
+
+      parent.insertBefore(
+        details,
+        profileName
       );
-    }
 
+      details.appendChild(
+        profileName
+      );
 
-    /*
-     * Gespeichertes Profilbild erneut laden.
-     */
-    if (
-      typeof getProfileUser ===
-      "function" &&
-      typeof getSavedProfileImage ===
-      "function"
-    ) {
+      details.appendChild(
+        profileEmail
+      );
 
-      getProfileUser()
-        .then(
-          user => {
-
-            if (!user) {
-              return;
-            }
-
-            const image =
-              getSavedProfileImage(
-                user.id
-              );
-
-            if (
-              image
-            ) {
-
-              avatar.innerHTML = `
-                <img
-                  src="${esc(image)}"
-                  alt="Profilbild"
-                >
-              `;
-
-            } else {
-
-              avatar.innerHTML =
-                "👤";
-            }
-          }
-        )
-        .catch(
-          error => {
-            console.error(
-              "HYPE profile avatar error:",
-              error
-            );
-          }
-        );
+      details.appendChild(
+        editProfileBtn
+      );
     }
   }
 
+  let accountDetails =
+    profileView.querySelector(
+      ".hype-account-details"
+    );
 
-  /*
-   * Beim Laden ausführen.
-   */
-  repositionProfileAvatar();
+  if (accountDetails) {
+    let accountLabel =
+      accountDetails.querySelector(
+        ".hype-account-label"
+      );
 
+    if (!accountLabel) {
+      const possibleLabel =
+        Array.from(
+          profileView.querySelectorAll(
+            "h1, h2, h3, h4, p, span, div"
+          )
+        ).find(
+          element => {
+            const text =
+              element.textContent
+                .replace(/\s+/g, " ")
+                .trim()
+                .toUpperCase();
 
-  /*
-   * Falls renderProfile() später die
-   * Account-Karte neu aufbaut:
-   * nach dem Rendern erneut anwenden.
-   */
-  setTimeout(
-    repositionProfileAvatar,
-    100
+            return (
+              text === "ACCOUNT" &&
+              !element.closest(
+                ".weekly-share-card"
+              )
+            );
+          }
+        );
+
+      if (
+        possibleLabel &&
+        possibleLabel !==
+          accountDetails &&
+        possibleLabel.parentElement
+      ) {
+        accountLabel =
+          possibleLabel;
+
+        accountDetails.insertBefore(
+          accountLabel,
+          profileName
+        );
+      }
+    }
+
+    if (accountLabel) {
+      accountLabel.classList.add(
+        "hype-account-label"
+      );
+    }
+
+    renderProfileAccountImage(
+      ""
+    );
+  }
+
+  /* =========================
+     ACCOUNT LABEL / REFERRAL
+  ========================= */
+
+  profileView
+    .querySelectorAll(
+      "h1, h2, h3, h4, p, span, div"
+    )
+    .forEach(
+      element => {
+        const text =
+          element.textContent
+            .replace(/\s+/g, " ")
+            .trim()
+            .toUpperCase();
+
+        if (
+          text === "ACCOUNT"
+        ) {
+          element.classList.add(
+            "hype-account-label"
+          );
+        }
+
+        if (
+          text ===
+          "TRAINIERT JEMAND GENAU SO GERNE WIE DU?" ||
+          text ===
+          "TRAINIERT JEMAND GENAU SO GERNE WIE DU"
+        ) {
+          element.classList.add(
+            "hype-referral-title"
+          );
+        }
+      }
+    );
+
+  /* =========================
+     PROFILBILD / DATEI
+  ========================= */
+
+  profileView
+    .querySelectorAll(
+      'input[type="file"]'
+    )
+    .forEach(
+      input => {
+        if (
+          input.closest(
+            ".hype-profile-image-editor"
+          )
+        ) {
+          return;
+        }
+
+        input.classList.add(
+          "hype-profile-file"
+        );
+
+        input.style.display =
+          "none";
+      }
+    );
+
+  profileView
+    .querySelectorAll("button")
+    .forEach(
+      button => {
+        const text =
+          button.textContent
+            .replace(/\s+/g, " ")
+            .trim();
+
+        if (
+          text.includes(
+            "Profilbild ändern"
+          )
+        ) {
+          button.classList.add(
+            "hype-profile-image-button"
+          );
+
+          button.style.display =
+            "none";
+        }
+
+        if (
+          /^\?\s*\+$/.test(
+            text
+          )
+        ) {
+          button.classList.add(
+            "hype-profile-avatar-button"
+          );
+
+          button.style.display =
+            "none";
+        }
+      }
+    );
+}
+
+/* =========================
+   TRAINING INPUT HELPERS
+========================= */
+
+function formatNumber(value) {
+  const number =
+    Number(value);
+
+  if (!Number.isFinite(number)) {
+    return "0";
+  }
+
+  return number.toLocaleString(
+    "de-DE",
+    {
+      maximumFractionDigits: 2
+    }
+  );
+}
+
+function getSportLabel(session) {
+  if (
+    session?.sport === "other"
+  ) {
+    const custom =
+      String(
+        session.customSport || ""
+      ).trim();
+
+    return (
+      custom ||
+      "Sonstige Sportart"
+    );
+  }
+
+  const meta =
+    sportMeta[
+      session?.sport
+    ] ||
+    sportMeta.running;
+
+  return meta.label;
+}
+
+function getSportIcon(session) {
+  const meta =
+    sportMeta[
+      session?.sport
+    ] ||
+    sportMeta.running;
+
+  return meta.icon;
+}
+
+function getSessionMetricText(session) {
+  if (
+    session?.sport === "running" &&
+    session?.runMetric === "distance"
+  ) {
+    return `${formatNumber(
+      session.distance
+    )} km`;
+  }
+
+  return `${formatNumber(
+    session?.duration
+  )} min`;
+}
+
+function getSessionDurationMinutes(session) {
+  if (
+    session?.sport === "running" &&
+    session?.runMetric === "distance"
+  ) {
+    return 0;
+  }
+
+  return Number(
+    session?.duration || 0
+  );
+}
+
+function getSessionRunningDistance(session) {
+  if (
+    session?.sport === "running" &&
+    session?.runMetric === "distance"
+  ) {
+    return Number(
+      session?.distance || 0
+    );
+  }
+
+  return 0;
+}
+
+function updateTrainingInputVisibility(
+  resetValue = false
+) {
+  const sport =
+    sportInput?.value || "running";
+
+  const isRunning =
+    sport === "running";
+
+  const isOther =
+    sport === "other";
+
+  if (customSportField) {
+    customSportField.classList.toggle(
+      "hidden",
+      !isOther
+    );
+  }
+
+  if (customSportInput) {
+    customSportInput.required =
+      isOther;
+  }
+
+  if (runningMetricInput) {
+    runningMetricInput.parentElement?.classList.toggle(
+      "hidden",
+      !isRunning
+    );
+  }
+
+  if (isRunning) {
+    const metric =
+      runningMetricInput?.value ||
+      "duration";
+
+    if (metricValueLabel) {
+      metricValueLabel.textContent =
+        metric === "distance"
+          ? "Kilometer"
+          : "Dauer";
+    }
+
+    durationInput.min =
+      metric === "distance"
+        ? "0.1"
+        : "1";
+
+    durationInput.step =
+      metric === "distance"
+        ? "0.1"
+        : "1";
+
+    if (
+      resetValue &&
+      runningMetricInput
+    ) {
+      if (
+        metric === "distance"
+      ) {
+        durationInput.value =
+          "";
+      } else {
+        durationInput.value =
+          45;
+      }
+    }
+  } else {
+    if (metricValueLabel) {
+      metricValueLabel.textContent =
+        "Dauer";
+    }
+
+    durationInput.min =
+      "1";
+
+    durationInput.step =
+      "1";
+  }
+}
+
+function updateTitlePlaceholder() {
+  const meta =
+    sportMeta[
+      sportInput.value
+    ] ||
+    sportMeta.running;
+
+  if (
+    sportInput.value === "other" &&
+    customSportInput &&
+    customSportInput.value.trim()
+  ) {
+    titleInput.placeholder =
+      `z. B. ${customSportInput.value.trim()}`;
+  } else {
+    titleInput.placeholder =
+      meta.placeholder;
+  }
+
+  updateTrainingInputVisibility();
+}
+
+/* =========================
+   SHARE WOCHEN-NAVIGATION
+========================= */
+
+function ensureShareWeekNavigation() {
+  if (!weeklyShareCard) {
+    return;
+  }
+
+  if (
+    document.getElementById(
+      "hypeShareWeekNavigation"
+    )
+  ) {
+    return;
+  }
+
+  [
+    shareWeekPrevBtn,
+    shareWeekNextBtn,
+    shareWeekCurrentBtn,
+    shareWeekTitle
+  ].forEach(
+    element => {
+      if (!element) {
+        return;
+      }
+
+      element.classList.add(
+        "hype-share-legacy-control"
+      );
+    }
   );
 
-  setTimeout(
-    repositionProfileAvatar,
-    500
+  const navigation =
+    document.createElement("div");
+
+  navigation.id =
+    "hypeShareWeekNavigation";
+
+  navigation.className =
+    "hype-share-week-navigation";
+
+  const previousButton =
+    document.createElement("button");
+
+  previousButton.type =
+    "button";
+
+  previousButton.className =
+    "hype-share-week-arrow";
+
+  previousButton.textContent =
+    "‹";
+
+  previousButton.setAttribute(
+    "aria-label",
+    "Vorherige Woche"
   );
 
-})();
+  previousButton.addEventListener(
+    "click",
+    () => {
+      moveShareWeek(-1);
+    }
+  );
+
+  const center =
+    document.createElement("div");
+
+  center.className =
+    "hype-share-week-center";
+
+  const label =
+    document.createElement("span");
+
+  label.className =
+    "hype-share-week-label";
+
+  label.textContent =
+    "AUSGEWÄHLTE WOCHE";
+
+  const value =
+    document.createElement("strong");
+
+  value.id =
+    "hypeShareWeekValue";
+
+  value.className =
+    "hype-share-week-value";
+
+  center.appendChild(label);
+  center.appendChild(value);
+
+  const nextButton =
+    document.createElement("button");
+
+  nextButton.type =
+    "button";
+
+  nextButton.className =
+    "hype-share-week-arrow";
+
+  nextButton.textContent =
+    "›";
+
+  nextButton.setAttribute(
+    "aria-label",
+    "Nächste Woche"
+  );
+
+  nextButton.addEventListener(
+    "click",
+    () => {
+      moveShareWeek(1);
+    }
+  );
+
+  navigation.appendChild(
+    previousButton
+  );
+
+  navigation.appendChild(
+    center
+  );
+
+  navigation.appendChild(
+    nextButton
+  );
+
+  const currentWeekRow =
+    document.createElement("div");
+
+  currentWeekRow.id =
+    "hypeShareCurrentWeek";
+
+  currentWeekRow.className =
+    "hype-share-current-week";
+
+  const currentWeekButton =
+    document.createElement("button");
+
+  currentWeekButton.type =
+    "button";
+
+  currentWeekButton.textContent =
+    "Aktuelle Woche";
+
+  currentWeekButton.setAttribute(
+    "aria-label",
+    "Aktuelle Woche auswählen"
+  );
+
+  currentWeekButton.addEventListener(
+    "click",
+    () => {
+      shareWeekStart =
+        startOfWeek(
+          new Date()
+        );
+
+      renderWeeklySharePreview();
+    }
+  );
+
+  currentWeekRow.appendChild(
+    currentWeekButton
+  );
+
+  if (weeklyShareName) {
+    weeklyShareName.parentNode.insertBefore(
+      navigation,
+      weeklyShareName
+    );
+
+    weeklyShareName.parentNode.insertBefore(
+      currentWeekRow,
+      weeklyShareName
+    );
+  } else {
+    weeklyShareCard.appendChild(
+      navigation
+    );
+
+    weeklyShareCard.appendChild(
+      currentWeekRow
+    );
+  }
+}
+
+/* =========================
+   HELPERS
+========================= */
+
+function pad(value) {
+  return String(value).padStart(
+    2,
+    "0"
+  );
+}
+
+function iso(date) {
+  return [
+    date.getFullYear(),
+    pad(date.getMonth() + 1),
+    pad(date.getDate())
+  ].join("-");
+}
+
+function parseDate(value) {
+  const [
+    year,
+    month,
+    day
+  ] = value.split("-").map(
+    Number
+  );
+
+  return new Date(
+    year,
+    month - 1,
+    day,
+    12,
+    0,
+    0,
+    0
+  );
+}
+
+function startOfWeek(date) {
+  const d =
+    new Date(date);
+
+  d.setHours(
+    12,
+    0,
+    0,
+    0
+  );
+
+  const day =
+    d.getDay();
+
+  const diff =
+    day === 0
+      ? -6
+      : 1 - day;
+
+  d.setDate(
+    d.getDate() + diff
+  );
+
+  return d;
+}
+
+function endOfWeek(date) {
+  const d =
+    startOfWeek(date);
+
+  d.setDate(
+    d.getDate() + 6
+  );
+
+  return d;
+}
+
+function addDays(
+  date,
+  amount
+) {
+  const d =
+    new Date(date);
+
+  d.setDate(
+    d.getDate() + amount
+  );
+
+  return d;
+}
+
+function addMonths(
+  date,
+  amount
+) {
+  const d =
+    new Date(date);
+
+  d.setDate(1);
+
+  d.setMonth(
+    d.getMonth() + amount
+  );
+
+  return d;
+}
+
+function addYears(
+  date,
+  amount
+) {
+  const d =
+    new Date(date);
+
+  d.setDate(1);
+  d.setMonth(0);
+
+  d.setFullYear(
+    d.getFullYear() + amount
+  );
+
+  return d;
+}
+
+function esc(value) {
+  return String(value ?? "")
+    .replace(
+      /&/g,
+      "&amp;"
+    )
+    .replace(
+      /</g,
+      "&lt;"
+    )
+    .replace(
+      />/g,
+      "&gt;"
+    )
+    .replace(
+      /"/g,
+      "&quot;"
+    )
+    .replace(
+      /'/g,
+      "&#039;"
+    );
+}
+
+function formatLongDate(date) {
+  return new Intl.DateTimeFormat(
+    "de-DE",
+    {
+      weekday: "long",
+      day: "numeric",
+      month: "long"
+    }
+  ).format(date);
+}
+
+function formatShortDate(date) {
+  return new Intl.DateTimeFormat(
+    "de-DE",
+    {
+      day: "numeric",
+      month: "short"
+    }
+  ).format(date);
+}
+
+function formatMonthYear(date) {
+  return new Intl.DateTimeFormat(
+    "de-DE",
+    {
+      month: "long",
+      year: "numeric"
+    }
+  ).format(date);
+}
+
+function formatShareWeek(date) {
+  const start =
+    startOfWeek(date);
+
+  const end =
+    endOfWeek(date);
+
+  const startText =
+    new Intl.DateTimeFormat(
+      "de-DE",
+      {
+        day: "numeric",
+        month: "short"
+      }
+    ).format(start);
+
+  const endText =
+    new Intl.DateTimeFormat(
+      "de-DE",
+      {
+        day: "numeric",
+        month: "short"
+      }
+    ).format(end);
+
+  return `${startText} – ${endText}`;
+}
+
+function isToday(date) {
+  return (
+    iso(date) ===
+    iso(new Date())
+  );
+}
+
+function isFutureDate(
+  dateString
+) {
+  const today =
+    new Date();
+
+  today.setHours(
+    0,
+    0,
+    0,
+    0
+  );
+
+  const target =
+    parseDate(dateString);
+
+  target.setHours(
+    0,
+    0,
+    0,
+    0
+  );
+
+  return target > today;
+}
+
+function getFutureMessage(
+  dateString
+) {
+  const date =
+    parseDate(dateString);
+
+  if (
+    iso(
+      addDays(
+        new Date(),
+        1
+      )
+    ) === dateString
+  ) {
+    return "Diese Einheit kommt erst morgen. Du kannst sie noch nicht abhaken.";
+  }
+
+  return `Diese Einheit kommt erst am ${formatLongDate(
+    date
+  )}. Du kannst sie noch nicht abhaken.`;
+}
+
+/* =========================
+   USER / PROFILE
+========================= */
+
+async function getProfileUser() {
+  if (
+    typeof supabaseClient ===
+    "undefined"
+  ) {
+    return null;
+  }
+
+  try {
+    const {
+      data,
+      error
+    } =
+      await supabaseClient.auth.getUser();
+
+    if (error) {
+      console.error(
+        "HYPE user lookup error:",
+        error
+      );
+
+      return null;
+    }
+
+    return data?.user || null;
+
+  } catch (error) {
+    console.error(
+      "HYPE profile error:",
+      error
+    );
+
+    return null;
+  }
+}
+
+async function getUserFirstName() {
+  const user =
+    await getProfileUser();
+
+  const firstName =
+    user?.user_metadata?.first_name;
+
+  return firstName
+    ? String(
+        firstName
+      ).trim()
+    : "";
+}
+
+/* =========================
+   PROFILE
+========================= */
+
+async function renderProfile() {
+  const user =
+    await getProfileUser();
+
+  if (!user) {
+    return;
+  }
+
+  shareWeekStart =
+    startOfWeek(
+      new Date()
+    );
+
+  cleanupProfileHeadings();
+
+  ensureProfileShareStyles();
+
+  const firstName =
+    user?.user_metadata?.first_name
+      ? String(
+          user.user_metadata.first_name
+        ).trim()
+      : "";
+
+  const displayName =
+    firstName ||
+    "Deine";
+
+  profileDisplayName =
+    displayName;
+
+  if (profileGreeting) {
+    profileGreeting.textContent =
+      firstName
+        ? `Hallo ${firstName} 👋`
+        : "Hallo 👋";
+  }
+
+  if (profileName) {
+    profileName.textContent =
+      firstName ||
+      "Vorname hinzufügen";
+  }
+
+  if (profileEmail) {
+    profileEmail.textContent =
+      user.email || "";
+  }
+
+  if (profileEmailEdit) {
+    profileEmailEdit.textContent =
+      user.email
+        ? `E-Mail: ${user.email}`
+        : "";
+  }
+
+  if (profileFirstNameInput) {
+    profileFirstNameInput.value =
+      firstName;
+  }
+
+  renderWeeklySharePreview(
+    displayName
+  );
+
+  polishProfileLayout();
+
+  const savedImage =
+    getSavedProfileImage(
+      user.id
+    );
+
+  renderProfileAccountImage(
+    savedImage
+  );
+
+  if (profileDialog) {
+    ensureProfileImageEditor(
+      savedImage
+    );
+  }
+
+  if (!firstName) {
+    setTimeout(
+      () => {
+        openProfileDialog(
+          true
+        );
+      },
+      150
+    );
+  }
+}
+
+/* =========================
+   PROFILE EDIT
+========================= */
+
+async function openProfileDialog(
+  focusInput = false
+) {
+  if (!profileDialog) {
+    return;
+  }
+
+  pendingProfileImage =
+    null;
+
+  const user =
+    await getProfileUser();
+
+  const savedImage =
+    user
+      ? getSavedProfileImage(
+          user.id
+        )
+      : "";
+
+  ensureProfileImageEditor(
+    savedImage
+  );
+
+  if (profileFirstNameInput) {
+    const firstName =
+      await getUserFirstName();
+
+    profileFirstNameInput.value =
+      firstName || "";
+
+    if (focusInput) {
+      setTimeout(
+        () => {
+          profileFirstNameInput.focus();
+        },
+        100
+      );
+    }
+  }
+
+  if (
+    typeof profileDialog.showModal ===
+    "function"
+  ) {
+    if (!profileDialog.open) {
+      profileDialog.showModal();
+    }
+  } else {
+    profileDialog.setAttribute(
+      "open",
+      ""
+    );
+  }
+}
+
+function closeProfileDialog() {
+  if (!profileDialog) {
+    return;
+  }
+
+  pendingProfileImage =
+    null;
+
+  if (
+    typeof profileDialog.close ===
+    "function"
+  ) {
+    profileDialog.close();
+  } else {
+    profileDialog.removeAttribute(
+      "open"
+    );
+  }
+}
+
+async function saveProfileName() {
+  if (!profileFirstNameInput) {
+    return;
+  }
+
+  const firstName =
+    profileFirstNameInput.value.trim();
+
+  if (!firstName) {
+    alert(
+      "Bitte gib deinen Vornamen ein."
+    );
+
+    profileFirstNameInput.focus();
+
+    return;
+  }
+
+  if (firstName.length > 40) {
+    alert(
+      "Der Vorname darf maximal 40 Zeichen haben."
+    );
+
+    return;
+  }
+
+  if (
+    typeof updateProfileFirstName !==
+    "function"
+  ) {
+    alert(
+      "Die Profilfunktion ist momentan nicht verfügbar."
+    );
+
+    return;
+  }
+
+  const submitButton =
+    profileForm?.querySelector(
+      'button[type="submit"]'
+    );
+
+  if (submitButton) {
+    submitButton.disabled =
+      true;
+
+    submitButton.textContent =
+      "Speichern …";
+  }
+
+  try {
+    const result =
+      await updateProfileFirstName(
+        firstName
+      );
+
+    if (!result?.success) {
+      throw new Error(
+        result?.error ||
+        "Der Name konnte nicht gespeichert werden."
+      );
+    }
+
+    const user =
+      await getProfileUser();
+
+    if (
+      user &&
+      pendingProfileImage
+    ) {
+      saveProfileImage(
+        user.id,
+        pendingProfileImage
+      );
+    }
+
+    pendingProfileImage =
+      null;
+
+    closeProfileDialog();
+
+    await renderProfile();
+
+  } catch (error) {
+    console.error(
+      "HYPE profile save error:",
+      error
+    );
+
+    alert(
+      error.message ||
+      "Der Name konnte nicht gespeichert werden."
+    );
+
+  } finally {
+    if (submitButton) {
+      submitButton.disabled =
+        false;
+
+      submitButton.textContent =
+        "Profil speichern";
+    }
+  }
+}
+
+/* =========================
+   STORAGE
+========================= */
+
+function loadSessions() {
+  try {
+    const raw =
+      localStorage.getItem(
+        KEY
+      );
+
+    if (!raw) {
+      return [];
+    }
+
+    const data =
+      JSON.parse(raw);
+
+    if (!Array.isArray(data)) {
+      return [];
+    }
+
+    return data.map(
+      session => {
+        return {
+          ...session,
+
+          completed:
+            Boolean(
+              session.completed
+            ),
+
+          actualIntensity:
+            session.actualIntensity ===
+            undefined
+              ? null
+              : session.actualIntensity,
+
+          postNotes:
+            session.postNotes || "",
+
+          customSport:
+            session.customSport || "",
+
+          distance:
+            session.distance ===
+              undefined ||
+            session.distance ===
+              null
+              ? null
+              : Number(
+                  session.distance
+                ),
+
+          duration:
+            session.duration ===
+              undefined ||
+            session.duration ===
+              null
+              ? null
+              : Number(
+                  session.duration
+                ),
+
+          runMetric:
+            session.runMetric ||
+            (
+              session.sport ===
+                "running" &&
+              session.distance !==
+                undefined &&
+              session.distance !==
+                null
+                ? "distance"
+                : "duration"
+            )
+        };
+      }
+    );
+
+  } catch (error) {
+    console.error(
+      "HYPE storage error:",
+      error
+    );
+
+    return [];
+  }
+}
+
+function save() {
+  localStorage.setItem(
+    KEY,
+    JSON.stringify(
+      sessions
+    )
+  );
+}
+
+/* =========================
+   SESSION QUERIES
+========================= */
+
+function sessionsForDate(
+  dateString
+) {
+  return sessions
+    .filter(
+      session =>
+        session.date ===
+        dateString
+    )
+    .sort(
+      (a, b) =>
+        Number(
+          a.createdAt || 0
+        ) -
+        Number(
+          b.createdAt || 0
+        )
+    );
+}
+
+function sessionsForWeek(
+  date
+) {
+  const start =
+    startOfWeek(date);
+
+  const end =
+    endOfWeek(date);
+
+  const startIso =
+    iso(start);
+
+  const endIso =
+    iso(end);
+
+  return sessions.filter(
+    session =>
+      session.date >=
+        startIso &&
+      session.date <=
+        endIso
+  );
+}
+
+function sessionsForMonth(
+  date
+) {
+  const year =
+    date.getFullYear();
+
+  const month =
+    date.getMonth();
+
+  return sessions.filter(
+    session => {
+      const d =
+        parseDate(
+          session.date
+        );
+
+      return (
+        d.getFullYear() ===
+          year &&
+        d.getMonth() ===
+          month
+      );
+    }
+  );
+}
+
+function sessionsForYear(
+  year
+) {
+  return sessions.filter(
+    session =>
+      parseDate(
+        session.date
+      ).getFullYear() ===
+      year
+  );
+}
+
+/* =========================
+   SHARE WEEK
+========================= */
+
+function setShareWeek(
+  date
+) {
+  shareWeekStart =
+    startOfWeek(date);
+
+  renderWeeklySharePreview();
+}
+
+function moveShareWeek(
+  amount
+) {
+  shareWeekStart =
+    addDays(
+      shareWeekStart,
+      amount * 7
+    );
+
+  renderWeeklySharePreview();
+}
+
+function renderWeeklySharePreview(
+  displayName
+) {
+  ensureProfileShareStyles();
+  ensureShareWeekNavigation();
+  cleanupProfileHeadings();
+
+  const weekStart =
+    startOfWeek(
+      shareWeekStart
+    );
+
+  const weekEnd =
+    endOfWeek(
+      weekStart
+    );
+
+  const weekSessions =
+    sessionsForWeek(
+      weekStart
+    );
+
+  const completed =
+    weekSessions.filter(
+      session =>
+        session.completed
+    );
+
+  const totalMinutes =
+    completed.reduce(
+      (
+        sum,
+        session
+      ) =>
+        sum +
+        getSessionDurationMinutes(
+          session
+        ),
+      0
+    );
+
+  const totalDistance =
+    completed.reduce(
+      (
+        sum,
+        session
+      ) =>
+        sum +
+        getSessionRunningDistance(
+          session
+        ),
+      0
+    );
+
+  const cleanName =
+    displayName ||
+    profileDisplayName ||
+    "Deine";
+
+  profileDisplayName =
+    cleanName;
+
+  const newWeekValue =
+    document.getElementById(
+      "hypeShareWeekValue"
+    );
+
+  if (newWeekValue) {
+    newWeekValue.textContent =
+      formatShareWeek(
+        weekStart
+      );
+  }
+
+  if (shareWeekPrevBtn) {
+    shareWeekPrevBtn.textContent =
+      "‹";
+
+    shareWeekPrevBtn.setAttribute(
+      "aria-label",
+      "Vorherige Woche"
+    );
+  }
+
+  if (shareWeekNextBtn) {
+    shareWeekNextBtn.textContent =
+      "›";
+
+    shareWeekNextBtn.setAttribute(
+      "aria-label",
+      "Nächste Woche"
+    );
+  }
+
+  if (shareWeekCurrentBtn) {
+    shareWeekCurrentBtn.textContent =
+      "Aktuelle Woche";
+
+    shareWeekCurrentBtn.setAttribute(
+      "aria-label",
+      "Aktuelle Woche auswählen"
+    );
+  }
+
+  if (shareWeekTitle) {
+    shareWeekTitle.textContent =
+      "";
+
+    shareWeekTitle.style.display =
+      "none";
+  }
+
+  if (weeklyShareName) {
+    weeklyShareName.textContent =
+      "";
+
+    weeklyShareName.style.display =
+      "none";
+
+    weeklyShareName.style.visibility =
+      "hidden";
+
+    weeklyShareName.style.height =
+      "0";
+
+    weeklyShareName.style.margin =
+      "0";
+
+    weeklyShareName.style.padding =
+      "0";
+  }
+
+  if (weeklyShareRange) {
+    weeklyShareRange.textContent =
+      "";
+
+    weeklyShareRange.style.display =
+      "none";
+
+    weeklyShareRange.style.visibility =
+      "hidden";
+
+    weeklyShareRange.style.height =
+      "0";
+
+    weeklyShareRange.style.margin =
+      "0";
+
+    weeklyShareRange.style.padding =
+      "0";
+  }
+
+  /* =========================
+     7 TAGE
+  ========================= */
+
+  if (weeklyShareDays) {
+    const days = [];
+
+    for (
+      let i = 0;
+      i < 7;
+      i++
+    ) {
+      const date =
+        addDays(
+          weekStart,
+          i
+        );
+
+      const daySessions =
+        sessionsForDate(
+          iso(date)
+        );
+
+      const completedDay =
+        daySessions.filter(
+          session =>
+            session.completed
+        );
+
+      const weekday =
+        new Intl.DateTimeFormat(
+          "de-DE",
+          {
+            weekday:
+              "short"
+          }
+        )
+          .format(date)
+          .replace(
+            ".",
+            ""
+          );
+
+      days.push(`
+        <div
+          class="weekly-share-day ${
+            completedDay.length
+              ? "completed"
+              : ""
+          }"
+        >
+
+          <div class="weekly-share-day-top">
+
+            <span>
+              ${esc(
+                weekday
+              )}
+            </span>
+
+            <strong>
+              ${date.getDate()}
+            </strong>
+
+          </div>
+
+          <div class="weekly-share-day-training">
+
+            ${
+              daySessions.length
+                ? daySessions
+                    .map(
+                      session =>
+                        `
+                          <div
+                            class="
+                              weekly-share-day-training-item
+                              ${
+                                session.completed
+                                  ? "completed-training-item"
+                                  : ""
+                              }
+                            "
+                          >
+
+                            <div class="weekly-share-day-training-main">
+
+                              <span class="weekly-share-day-training-icon">
+                                ${esc(
+                                  getSportIcon(
+                                    session
+                                  )
+                                )}
+                              </span>
+
+                            </div>
+
+                          </div>
+                        `
+                    )
+                    .join("")
+                : ""
+            }
+
+          </div>
+
+        </div>
+      `);
+    }
+
+    weeklyShareDays.innerHTML =
+      days.join("");
+  }
+
+  /* =========================
+     SUMMARY
+  ========================= */
+
+  if (weeklyShareSummary) {
+    if (!weekSessions.length) {
+      weeklyShareSummary.innerHTML = `
+        <div class="weekly-share-empty">
+
+          <strong>
+            Noch kein Training in dieser Woche
+          </strong>
+
+          <span>
+            Für diese Woche sind noch keine Einheiten geplant.
+          </span>
+
+        </div>
+      `;
+
+    } else {
+      weeklyShareSummary.innerHTML = `
+        <div class="weekly-share-stats ${
+          totalDistance > 0
+            ? "has-distance"
+            : ""
+        }">
+
+          <div class="weekly-share-stat">
+
+            <strong>
+              ${completed.length}
+            </strong>
+
+            <span>
+              ${
+                completed.length ===
+                1
+                  ? "Training erledigt"
+                  : "Trainings erledigt"
+              }
+            </span>
+
+          </div>
+
+          <div class="weekly-share-stat">
+
+            <strong>
+              ${formatNumber(
+                totalMinutes
+              )}
+            </strong>
+
+            <span>
+              Minuten erledigt
+            </span>
+
+          </div>
+
+          ${
+            totalDistance > 0
+              ? `
+                <div class="weekly-share-stat">
+
+                  <strong>
+                    ${formatNumber(
+                      totalDistance
+                    )}
+                  </strong>
+
+                  <span>
+                    Kilometer gelaufen
+                  </span>
+
+                </div>
+              `
+              : ""
+          }
+
+        </div>
+      `;
+    }
+  }
+
+  if (weeklyShareFooter) {
+    weeklyShareFooter.innerHTML =
+      "";
+
+    weeklyShareFooter.style.display =
+      "none";
+  }
+
+  polishProfileLayout();
+
+  const userPromise =
+    getProfileUser();
+
+  userPromise
+    .then(
+      user => {
+        if (!user) {
+          return;
+        }
+
+        renderProfileAccountImage(
+          getSavedProfileImage(
+            user.id
+          )
+        );
+      }
+    )
+    .catch(
+      error => {
+        console.error(
+          "HYPE profile image refresh error:",
+          error
+        );
+      }
+    );
+}
+
+/* =========================
+   SHARE HYPE
+========================= */
+
+async function shareHype() {
+  const shareData = {
+    title:
+      "HYPE – HYbrid Plan & Execution",
+
+    text:
+      "Ich nutze HYPE für meine Trainingsplanung. Probier's aus:",
+
+    url:
+      window.location.href
+  };
+
+  try {
+    if (navigator.share) {
+      await navigator.share(
+        shareData
+      );
+
+      return;
+    }
+
+    await copyHypeLink();
+
+    alert(
+      "Der HYPE-Link wurde kopiert. Du kannst ihn jetzt über WhatsApp, Instagram oder Nachrichten verschicken."
+    );
+
+  } catch (error) {
+    if (
+      error?.name ===
+      "AbortError"
+    ) {
+      return;
+    }
+
+    console.error(
+      "HYPE share error:",
+      error
+    );
+
+    await copyHypeLink();
+
+    alert(
+      "Der HYPE-Link wurde kopiert."
+    );
+  }
+}
+
+async function copyHypeLink() {
+  const text =
+    `HYPE – HYbrid Plan & Execution\n${window.location.href}`;
+
+  try {
+    await navigator.clipboard.writeText(
+      text
+    );
+  } catch (error) {
+    console.error(
+      "HYPE clipboard error:",
+      error
+    );
+  }
+}
+
+/* =========================
+   WEEK SHARE IMAGE
+========================= */
+
+async function createWeeklyShareImage() {
+  const firstName =
+    await getUserFirstName();
+
+  const displayName =
+    firstName ||
+    "Athlete";
+
+  const weekStart =
+    startOfWeek(
+      shareWeekStart
+    );
+
+  const weekEnd =
+    endOfWeek(
+      weekStart
+    );
+
+  const weekSessions =
+    sessionsForWeek(
+      weekStart
+    );
+
+  const completed =
+    weekSessions.filter(
+      session =>
+        session.completed
+    );
+
+  const totalMinutes =
+    completed.reduce(
+      (
+        sum,
+        session
+      ) =>
+        sum +
+        getSessionDurationMinutes(
+          session
+        ),
+      0
+    );
+
+  const totalDistance =
+    completed.reduce(
+      (
+        sum,
+        session
+      ) =>
+        sum +
+        getSessionRunningDistance(
+          session
+        ),
+      0
+    );
+
+  const canvas =
+    document.createElement(
+      "canvas"
+    );
+
+  canvas.width = 1080;
+  canvas.height = 1920;
+
+  const ctx =
+    canvas.getContext(
+      "2d"
+    );
+
+  if (!ctx) {
+    throw new Error(
+      "Canvas wird nicht unterstützt."
+    );
+  }
+
+  ctx.fillStyle =
+    "#0b0d10";
+
+  ctx.fillRect(
+    0,
+    0,
+    1080,
+    1920
+  );
+
+  const glow =
+    ctx.createRadialGradient(
+      870,
+      150,
+      0,
+      870,
+      150,
+      720
+    );
+
+  glow.addColorStop(
+    0,
+    "rgba(215,255,63,.18)"
+  );
+
+  glow.addColorStop(
+    0.45,
+    "rgba(215,255,63,.05)"
+  );
+
+  glow.addColorStop(
+    1,
+    "rgba(215,255,63,0)"
+  );
+
+  ctx.fillStyle =
+    glow;
+
+  ctx.fillRect(
+    0,
+    0,
+    1080,
+    1920
+  );
+
+  ctx.fillStyle =
+    "#d7ff3f";
+
+  ctx.fillRect(
+    80,
+    72,
+    120,
+    6
+  );
+
+  ctx.fillStyle =
+    "#f5f6f7";
+
+  ctx.font =
+    "900 74px Arial";
+
+  ctx.fillText(
+    "HYPE",
+    80,
+    155
+  );
+
+  ctx.fillStyle =
+    "#8d949e";
+
+  ctx.font =
+    "700 20px Arial";
+
+  ctx.fillText(
+    "HYBRID PLAN & EXECUTION",
+    83,
+    190
+  );
+
+  ctx.fillStyle =
+    "#d7ff3f";
+
+  ctx.font =
+    "800 20px Arial";
+
+  ctx.fillText(
+    "DEINE WOCHE",
+    80,
+    275
+  );
+
+  ctx.fillStyle =
+    "#f5f6f7";
+
+  ctx.font =
+    "900 58px Arial";
+
+  const nameTitle =
+    `${displayName}s Woche`;
+
+  ctx.fillText(
+    nameTitle,
+    80,
+    350
+  );
+
+  ctx.fillStyle =
+    "#8d949e";
+
+  ctx.font =
+    "600 25px Arial";
+
+  ctx.fillText(
+    `${formatShortDate(
+      weekStart
+    )} – ${formatShortDate(
+      weekEnd
+    )}`,
+    83,
+    395
+  );
+
+  drawShareStat(
+    ctx,
+    70,
+    470,
+    String(
+      completed.length
+    ),
+    "TRAININGS",
+    300
+  );
+
+  drawShareStat(
+    ctx,
+    390,
+    470,
+    formatNumber(
+      totalMinutes
+    ),
+    "MINUTEN",
+    300
+  );
+
+  drawShareStat(
+    ctx,
+    710,
+    470,
+    formatNumber(
+      totalDistance
+    ),
+    "KM LAUFEN",
+    300
+  );
+
+  const dayStartY =
+    690;
+
+  const rowHeight =
+    143;
+
+  for (
+    let i = 0;
+    i < 7;
+    i++
+  ) {
+    const date =
+      addDays(
+        weekStart,
+        i
+      );
+
+    const daySessions =
+      sessionsForDate(
+        iso(date)
+      );
+
+    const y =
+      dayStartY +
+      i * rowHeight;
+
+    const hasCompleted =
+      daySessions.some(
+        session =>
+          session.completed
+      );
+
+    ctx.fillStyle =
+      hasCompleted
+        ? "#151a13"
+        : "#14171c";
+
+    roundRect(
+      ctx,
+      70,
+      y,
+      940,
+      116,
+      22
+    );
+
+    ctx.fill();
+
+    if (hasCompleted) {
+      ctx.fillStyle =
+        "#d7ff3f";
+
+      ctx.fillRect(
+        70,
+        y + 22,
+        5,
+        72
+      );
+    }
+
+    ctx.fillStyle =
+      "#8d949e";
+
+    ctx.font =
+      "800 18px Arial";
+
+    const weekday =
+      new Intl.DateTimeFormat(
+        "de-DE",
+        {
+          weekday:
+            "short"
+        }
+      )
+        .format(date)
+        .replace(
+          ".",
+          ""
+        )
+        .toUpperCase();
+
+    ctx.fillText(
+      weekday,
+      105,
+      y + 42
+    );
+
+    ctx.fillStyle =
+      "#f5f6f7";
+
+    ctx.font =
+      "900 30px Arial";
+
+    ctx.fillText(
+      String(
+        date.getDate()
+      ),
+      106,
+      y + 78
+    );
+
+    if (!daySessions.length) {
+      ctx.fillStyle =
+        "#626973";
+
+      ctx.font =
+        "600 20px Arial";
+
+      ctx.fillText(
+        "Kein Training",
+        270,
+        y + 62
+      );
+
+      continue;
+    }
+
+    const visibleSessions =
+      daySessions.slice(
+        0,
+        2
+      );
+
+    visibleSessions.forEach(
+      (
+        session,
+        index
+      ) => {
+        const lineY =
+          y +
+          39 +
+          index * 37;
+
+        ctx.font =
+          "28px Arial";
+
+        ctx.fillText(
+          getSportIcon(
+            session
+          ),
+          270,
+          lineY
+        );
+
+        ctx.fillStyle =
+          session.completed
+            ? "#d7ff3f"
+            : "#f5f6f7";
+
+        ctx.font =
+          "750 20px Arial";
+
+        const rawTitle =
+          String(
+            session.title ||
+            "Training"
+          );
+
+        const maxTitleWidth =
+          500;
+
+        const title =
+          fitCanvasText(
+            ctx,
+            rawTitle,
+            maxTitleWidth
+          );
+
+        ctx.fillText(
+          title,
+          315,
+          lineY
+        );
+
+        ctx.fillStyle =
+          "#737b86";
+
+        ctx.font =
+          "600 16px Arial";
+
+        ctx.fillText(
+          getSessionMetricText(
+            session
+          ),
+          855,
+          lineY
+        );
+      }
+    );
+
+    if (
+      daySessions.length >
+      2
+    ) {
+      ctx.fillStyle =
+        "#737b86";
+
+      ctx.font =
+        "600 14px Arial";
+
+      ctx.fillText(
+        `+${
+          daySessions.length -
+          2
+        } weitere`,
+        315,
+        y + 101
+      );
+    }
+  }
+
+  ctx.fillStyle =
+    "#d7ff3f";
+
+  ctx.font =
+    "900 24px Arial";
+
+  ctx.fillText(
+    "TRAIN SMART. STAY HYPE.",
+    80,
+    1770
+  );
+
+  return new Promise(
+    (
+      resolve,
+      reject
+    ) => {
+      canvas.toBlob(
+        blob => {
+          if (!blob) {
+            reject(
+              new Error(
+                "Die Share-Grafik konnte nicht erstellt werden."
+              )
+            );
+
+            return;
+          }
+
+          resolve(blob);
+        },
+        "image/png",
+        1
+      );
+    }
+  );
+}
+
+function fitCanvasText(
+  ctx,
+  text,
+  maxWidth
+) {
+  const clean =
+    String(text || "");
+
+  if (
+    ctx.measureText(
+      clean
+    ).width <= maxWidth
+  ) {
+    return clean;
+  }
+
+  let result =
+    clean;
+
+  while (
+    result.length > 1 &&
+    ctx.measureText(
+      `${result}…`
+    ).width > maxWidth
+  ) {
+    result =
+      result.slice(
+        0,
+        -1
+      );
+  }
+
+  return `${result}…`;
+}
+
+function drawShareStat(
+  ctx,
+  x,
+  y,
+  value,
+  label,
+  width = 460
+) {
+  ctx.fillStyle =
+    "#14171c";
+
+  roundRect(
+    ctx,
+    x,
+    y,
+    width,
+    150,
+    24
+  );
+
+  ctx.fill();
+
+  ctx.fillStyle =
+    "#d7ff3f";
+
+  ctx.font =
+    "900 54px Arial";
+
+  ctx.fillText(
+    value,
+    x + 28,
+    y + 68
+  );
+
+  ctx.fillStyle =
+    "#8d949e";
+
+  ctx.font =
+    "800 17px Arial";
+
+  ctx.fillText(
+    label,
+    x + 29,
+    y + 110
+  );
+}
+
+function roundRect(
+  ctx,
+  x,
+  y,
+  width,
+  height,
+  radius
+) {
+  ctx.beginPath();
+
+  ctx.moveTo(
+    x + radius,
+    y
+  );
+
+  ctx.lineTo(
+    x +
+      width -
+      radius,
