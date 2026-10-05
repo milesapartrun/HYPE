@@ -447,19 +447,31 @@ function ensureProfileShareStyles() {
     ========================= */
 
     #profileView .hype-account-details {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) 104px;
+      position: relative !important;
+
+      display: grid !important;
+
+      grid-template-columns:
+        minmax(0, 1fr) 104px !important;
+
       grid-template-areas:
         "label avatar"
         "name avatar"
         "email avatar"
-        "button avatar";
-      align-items: center;
-      column-gap: 22px;
+        "button avatar" !important;
+
+      align-items: center !important;
+
+      column-gap: 24px !important;
+
       margin-top: 18px;
+
       padding: 24px 20px;
+
       border: 1px solid rgba(255,255,255,.08);
+
       border-radius: 20px;
+
       background:
         linear-gradient(
           180deg,
@@ -467,97 +479,194 @@ function ensureProfileShareStyles() {
           rgba(255,255,255,.012)
         ),
         #12151a;
+
       text-align: left;
     }
 
-    #profileView .hype-account-details .hype-account-label {
+    #profileView .hype-account-details
+    .hype-account-label {
       display: block;
+
       grid-area: label;
+
       margin: 0 0 9px;
+
       color: #8d949e;
+
       font-size: 10px;
       line-height: 1;
+
       font-weight: 850;
+
       letter-spacing: .18em;
+
       text-transform: uppercase;
     }
 
-    #profileView .hype-account-details #profileName {
+    #profileView .hype-account-details
+    #profileName {
       grid-area: name;
+
       margin: 0 0 7px;
+
       color: #f5f6f7;
+
       font-size: clamp(25px, 6vw, 34px);
+
       line-height: 1.05;
+
       font-weight: 900;
+
       letter-spacing: -.035em;
     }
 
-    #profileView .hype-account-details #profileEmail {
+    #profileView .hype-account-details
+    #profileEmail {
       grid-area: email;
+
       margin: 0;
+
       color: #9aa1aa;
+
       font-size: 14px;
+
       line-height: 1.45;
+
       overflow-wrap: anywhere;
     }
 
-    #profileView .hype-account-details #editProfileBtn {
+    #profileView .hype-account-details
+    #editProfileBtn {
       grid-area: button;
+
       display: inline-flex;
+
       align-items: center;
+
       justify-content: center;
+
       min-height: 44px;
+
       margin: 18px 0 0;
+
       padding: 0 20px;
+
       border: 1px solid rgba(215,255,63,.42);
+
       border-radius: 12px;
+
       background: rgba(215,255,63,.055);
+
       color: #d7ff3f;
+
       box-shadow: none;
+
       font-family: inherit;
+
       font-size: 12px;
+
       font-weight: 850;
+
       line-height: 1;
+
       white-space: nowrap;
+
       cursor: pointer;
     }
 
-    #profileView .hype-account-details #editProfileBtn:hover {
+    #profileView .hype-account-details
+    #editProfileBtn:hover {
       background: rgba(215,255,63,.10);
-      border-color: rgba(215,255,63,.65);
+
+      border-color:
+        rgba(215,255,63,.65);
     }
 
-    #profileView .hype-profile-avatar-display {
-      grid-area: avatar;
-      align-self: center;
-      justify-self: end;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 104px;
-      height: 104px;
-      margin: 0;
-      border: 1px solid rgba(255,255,255,.12);
-      border-radius: 50%;
+    /* =========================
+       PROFILBILD
+    ========================= */
+
+    #profileView .hype-account-details
+    .hype-profile-avatar-display {
+      grid-area: avatar !important;
+
+      display: flex !important;
+
+      align-items: center !important;
+
+      justify-content: center !important;
+
+      justify-self: end !important;
+
+      align-self: center !important;
+
+      width: 104px !important;
+
+      height: 104px !important;
+
+      min-width: 104px !important;
+
+      min-height: 104px !important;
+
+      margin: 0 !important;
+
+      padding: 0 !important;
+
+      border: 2px solid
+        rgba(255,255,255,.14) !important;
+
+      border-radius: 50% !important;
+
       background:
         linear-gradient(
           180deg,
           rgba(255,255,255,.035),
           rgba(255,255,255,.01)
         ),
-        #181b20;
-      color: #737b86;
-      font-size: 38px;
-      line-height: 1;
-      overflow: hidden;
-      box-shadow: 0 10px 30px rgba(0,0,0,.20);
+        #181b20 !important;
+
+      color: #737b86 !important;
+
+      font-size: 38px !important;
+
+      line-height: 1 !important;
+
+      overflow: hidden !important;
+
+      box-sizing: border-box !important;
+
+      box-shadow:
+        0 10px 30px
+        rgba(0,0,0,.20) !important;
+
+      z-index: 20 !important;
     }
 
-    #profileView .hype-profile-avatar-display img {
-      display: block;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
+    #profileView .hype-account-details
+    .hype-profile-avatar-display img {
+      display: block !important;
+
+      width: 100% !important;
+
+      height: 100% !important;
+
+      min-width: 100% !important;
+
+      min-height: 100% !important;
+
+      object-fit: cover !important;
+
+      border-radius: 50% !important;
+    }
+
+    #profileView .hype-account-details
+    .hype-profile-avatar-display.is-empty {
+      display: flex !important;
+    }
+
+    #profileView .hype-account-details
+    .hype-profile-avatar-display.has-image {
+      background: #181b20 !important;
     }
 
     #profileView .hype-profile-image-button,
@@ -572,70 +681,124 @@ function ensureProfileShareStyles() {
 
     #profileDialog .hype-profile-image-editor {
       display: flex;
+
       flex-direction: column;
+
       align-items: center;
+
       gap: 12px;
+
       margin: 18px 0 20px;
+
       padding: 18px;
-      border: 1px solid rgba(255,255,255,.08);
+
+      border: 1px solid
+        rgba(255,255,255,.08);
+
       border-radius: 16px;
-      background: rgba(255,255,255,.018);
+
+      background:
+        rgba(255,255,255,.018);
     }
 
     #profileDialog .hype-profile-dialog-preview {
       display: flex;
+
       align-items: center;
+
       justify-content: center;
+
       width: 88px;
+
       height: 88px;
-      border: 1px solid rgba(255,255,255,.12);
+
+      border: 1px solid
+        rgba(255,255,255,.12);
+
       border-radius: 50%;
+
       background: #181b20;
+
       color: #737b86;
+
       font-size: 30px;
+
       overflow: hidden;
     }
 
     #profileDialog .hype-profile-dialog-preview img {
       display: block;
+
       width: 100%;
+
       height: 100%;
+
       object-fit: cover;
     }
 
     #profileDialog .hype-profile-image-editor-label {
       color: #8d949e;
+
       font-size: 11px;
+
       line-height: 1.35;
+
       text-align: center;
     }
 
-    #profileDialog .hype-profile-image-editor input[type="file"] {
+    #profileDialog
+    .hype-profile-image-editor
+    input[type="file"] {
       display: block;
+
       width: 100%;
+
       max-width: 100%;
+
       min-height: 44px;
+
       padding: 5px;
-      border: 1px solid rgba(255,255,255,.08);
+
+      border: 1px solid
+        rgba(255,255,255,.08);
+
       border-radius: 12px;
+
       background: #12151a;
+
       color: #8d949e;
+
       font-family: inherit;
+
       font-size: 11px;
+
       line-height: 32px;
+
       box-sizing: border-box;
     }
 
-    #profileDialog .hype-profile-image-editor input[type="file"]::file-selector-button {
+    #profileDialog
+    .hype-profile-image-editor
+    input[type="file"]::file-selector-button {
       margin-right: 10px;
+
       padding: 8px 13px;
-      border: 1px solid rgba(255,255,255,.12);
+
+      border: 1px solid
+        rgba(255,255,255,.12);
+
       border-radius: 9px;
+
       background: #1b1f25;
+
       color: #f5f6f7;
+
       font-family: inherit;
+
       font-size: 11px;
+
       font-weight: 750;
+
       cursor: pointer;
     }
 
@@ -645,33 +808,58 @@ function ensureProfileShareStyles() {
 
     #profileView .hype-share-week-navigation {
       display: grid;
-      grid-template-columns: 44px minmax(0, 1fr) 44px;
+
+      grid-template-columns:
+        44px minmax(0, 1fr) 44px;
+
       align-items: center;
+
       gap: 12px;
+
       width: 100%;
+
       margin-top: 18px;
+
       margin-bottom: 14px;
     }
 
     #profileView .hype-share-week-arrow {
       appearance: none;
       -webkit-appearance: none;
+
       display: flex;
+
       align-items: center;
+
       justify-content: center;
+
       width: 44px;
+
       height: 44px;
+
       padding: 0;
-      border: 1px solid rgba(255,255,255,.10);
+
+      border: 1px solid
+        rgba(255,255,255,.10);
+
       border-radius: 13px;
+
       background: #15181d;
+
       color: #f5f6f7;
+
       box-shadow: none;
+
       font-family: inherit;
+
       font-size: 26px;
+
       font-weight: 500;
+
       line-height: 1;
+
       cursor: pointer;
+
       transition:
         background .15s ease,
         border-color .15s ease,
@@ -681,7 +869,10 @@ function ensureProfileShareStyles() {
 
     #profileView .hype-share-week-arrow:hover {
       background: #1d2127;
-      border-color: rgba(215,255,63,.35);
+
+      border-color:
+        rgba(215,255,63,.35);
+
       color: #d7ff3f;
     }
 
@@ -691,57 +882,91 @@ function ensureProfileShareStyles() {
 
     #profileView .hype-share-week-center {
       min-width: 0;
+
       text-align: center;
     }
 
     #profileView .hype-share-week-label {
       display: block;
+
       margin-bottom: 7px;
+
       color: #6f7680;
+
       font-size: 9px;
+
       line-height: 1;
+
       font-weight: 850;
+
       letter-spacing: .16em;
+
       text-transform: uppercase;
     }
 
     #profileView .hype-share-week-value {
       display: block;
+
       color: #f5f6f7;
+
       font-size: clamp(14px, 4vw, 17px);
+
       line-height: 1.25;
+
       font-weight: 850;
+
       letter-spacing: -.015em;
     }
 
     #profileView .hype-share-current-week {
       display: flex;
+
       justify-content: center;
+
       margin-bottom: 30px;
     }
 
     #profileView .hype-share-current-week button {
       appearance: none;
       -webkit-appearance: none;
+
       min-height: 34px;
+
       padding: 0 14px;
-      border: 1px solid rgba(215,255,63,.18);
+
+      border: 1px solid
+        rgba(215,255,63,.18);
+
       border-radius: 999px;
-      background: rgba(215,255,63,.055);
+
+      background:
+        rgba(215,255,63,.055);
+
       color: #d7ff3f;
+
       box-shadow: none;
+
       font-family: inherit;
+
       font-size: 9px;
+
       line-height: 1;
+
       font-weight: 850;
+
       letter-spacing: .11em;
+
       text-transform: uppercase;
+
       cursor: pointer;
     }
 
     #profileView .hype-share-current-week button:hover {
-      background: rgba(215,255,63,.10);
-      border-color: rgba(215,255,63,.35);
+      background:
+        rgba(215,255,63,.10);
+
+      border-color:
+        rgba(215,255,63,.35);
     }
 
     #profileView .hype-share-legacy-control {
@@ -751,31 +976,47 @@ function ensureProfileShareStyles() {
     #profileView #weeklyShareName,
     #profileView #weeklyShareRange {
       display: none !important;
+
       visibility: hidden !important;
+
       height: 0 !important;
+
       margin: 0 !important;
+
       padding: 0 !important;
+
       overflow: hidden !important;
     }
 
     /* =========================
-       7 TAGE – NUR EMOJIS
+       7 TAGE
     ========================= */
 
     #profileView #weeklyShareDays {
       display: grid;
-      grid-template-columns: repeat(7, minmax(0, 1fr));
+
+      grid-template-columns:
+        repeat(7, minmax(0, 1fr));
+
       gap: 7px;
+
       width: 100%;
+
       margin: 0;
     }
 
     #profileView .weekly-share-day {
       min-width: 0;
+
       min-height: 154px;
+
       padding: 12px 7px 11px;
-      border: 1px solid rgba(255,255,255,.10);
+
+      border: 1px solid
+        rgba(255,255,255,.10);
+
       border-radius: 15px;
+
       background:
         linear-gradient(
           180deg,
@@ -783,12 +1024,16 @@ function ensureProfileShareStyles() {
           rgba(255,255,255,.005)
         ),
         #12151a;
+
       overflow: hidden;
+
       box-sizing: border-box;
     }
 
     #profileView .weekly-share-day.completed {
-      border-color: rgba(215,255,63,.45);
+      border-color:
+        rgba(215,255,63,.45);
+
       background:
         linear-gradient(
           180deg,
@@ -800,59 +1045,89 @@ function ensureProfileShareStyles() {
 
     #profileView .weekly-share-day-top {
       display: flex;
+
       flex-direction: column;
+
       align-items: center;
+
       gap: 5px;
+
       margin-bottom: 18px;
+
       text-align: center;
     }
 
     #profileView .weekly-share-day-top span {
       color: #858c96;
+
       font-size: 8px;
+
       line-height: 1;
+
       font-weight: 850;
+
       letter-spacing: .07em;
+
       text-transform: uppercase;
     }
 
     #profileView .weekly-share-day-top strong {
       color: #f5f6f7;
+
       font-size: 21px;
+
       line-height: 1;
+
       font-weight: 900;
     }
 
     #profileView .weekly-share-day-training {
       display: flex;
+
       flex-wrap: wrap;
+
       align-content: flex-start;
+
       justify-content: center;
+
       gap: 9px;
+
       min-width: 0;
+
       min-height: 72px;
     }
 
     #profileView .weekly-share-day-training-item {
       display: flex;
+
       align-items: center;
+
       justify-content: center;
+
       min-width: 0;
+
       padding: 0;
     }
 
     #profileView .weekly-share-day-training-main {
       display: flex;
+
       align-items: center;
+
       justify-content: center;
+
       gap: 0;
+
       min-width: 0;
     }
 
     #profileView .weekly-share-day-training-icon {
       display: block;
+
       flex: 0 0 auto;
+
       font-size: 25px;
+
       line-height: 1;
     }
 
@@ -866,9 +1141,20 @@ function ensureProfileShareStyles() {
       display: none !important;
     }
 
-    #profileView .weekly-share-day-training-item.completed-training-item
+    #profileView
+    .weekly-share-day-training-item
     .weekly-share-day-training-icon {
-      filter: drop-shadow(0 0 5px rgba(215,255,63,.28));
+      filter: none;
+    }
+
+    #profileView
+    .weekly-share-day-training-item.completed-training-item
+    .weekly-share-day-training-icon {
+      filter:
+        drop-shadow(
+          0 0 5px
+          rgba(215,255,63,.28)
+        );
     }
 
     /* =========================
@@ -881,61 +1167,93 @@ function ensureProfileShareStyles() {
 
     #profileView .weekly-share-stats {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+
+      grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
       gap: 10px;
     }
 
     #profileView .weekly-share-stats.has-distance {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns:
+        repeat(3, minmax(0, 1fr));
     }
 
     #profileView .weekly-share-stat {
       min-width: 0;
+
       padding: 15px 14px;
-      border: 1px solid rgba(255,255,255,.08);
+
+      border: 1px solid
+        rgba(255,255,255,.08);
+
       border-radius: 14px;
+
       background: #12151a;
     }
 
     #profileView .weekly-share-stat strong {
       display: block;
+
       margin: 0 0 4px;
+
       color: #d7ff3f;
+
       font-size: 22px;
+
       line-height: 1;
+
       font-weight: 900;
     }
 
     #profileView .weekly-share-stat span {
       display: block;
+
       color: #8d949e;
+
       font-size: 9px;
+
       line-height: 1.2;
+
       font-weight: 800;
+
       letter-spacing: .08em;
+
       text-transform: uppercase;
     }
 
     #profileView .weekly-share-empty {
       padding: 17px 16px;
-      border: 1px solid rgba(255,255,255,.08);
+
+      border: 1px solid
+        rgba(255,255,255,.08);
+
       border-radius: 14px;
+
       background: #12151a;
     }
 
     #profileView .weekly-share-empty strong {
       display: block;
+
       margin: 0 0 5px;
+
       color: #f5f6f7;
+
       font-size: 14px;
+
       line-height: 1.3;
+
       font-weight: 850;
     }
 
     #profileView .weekly-share-empty span {
       display: block;
+
       color: #8d949e;
+
       font-size: 12px;
+
       line-height: 1.45;
     }
 
@@ -945,14 +1263,19 @@ function ensureProfileShareStyles() {
 
     #profileView #shareWeekBtn {
       width: 100%;
+
       margin-top: 18px;
+
       min-height: 48px;
+
       border-radius: 13px;
     }
 
     #profileView #shareHypeProfileBtn {
       width: 100%;
+
       min-height: 48px;
+
       border-radius: 13px;
     }
 
@@ -962,104 +1285,165 @@ function ensureProfileShareStyles() {
 
     #profileView .weekly-share-image-preview {
       margin-top: 18px;
+
       padding: 14px;
-      border: 1px solid rgba(255,255,255,.08);
+
+      border: 1px solid
+        rgba(255,255,255,.08);
+
       border-radius: 16px;
+
       background: #111419;
     }
 
     #profileView .weekly-share-image-preview-head {
       display: flex;
+
       align-items: center;
+
       justify-content: space-between;
+
       gap: 12px;
+
       margin-bottom: 12px;
     }
 
-    #profileView .weekly-share-image-preview-head > div {
+    #profileView
+    .weekly-share-image-preview-head > div {
       min-width: 0;
     }
 
-    #profileView .weekly-share-image-preview-head strong {
+    #profileView
+    .weekly-share-image-preview-head strong {
       display: block;
+
       margin-top: 5px;
+
       color: #f5f6f7;
+
       font-size: 14px;
+
       line-height: 1.2;
     }
 
     #profileView .weekly-share-preview-close {
       flex: 0 0 auto;
+
       width: 34px;
+
       height: 34px;
+
       padding: 0;
-      border: 1px solid rgba(255,255,255,.10);
+
+      border: 1px solid
+        rgba(255,255,255,.10);
+
       border-radius: 10px;
+
       background: #181b20;
+
       color: #f5f6f7;
+
       font-size: 20px;
+
       line-height: 1;
     }
 
     #profileView .weekly-share-image {
       display: block;
+
       width: 100%;
+
       height: auto;
+
       border-radius: 12px;
+
       background: #0b0d10;
     }
 
     /* =========================
-       EMPFEHLEN – EINE ZEILE
+       EMPFEHLEN
     ========================= */
 
     #profileView .hype-referral-title {
       display: block !important;
+
       width: 100% !important;
+
       max-width: 100% !important;
+
       margin-bottom: 22px !important;
+
       color: #f5f6f7 !important;
-      font-size: clamp(13px, 3.8vw, 30px) !important;
+
+      font-size:
+        clamp(13px, 3.8vw, 30px) !important;
+
       line-height: 1 !important;
+
       font-weight: 900 !important;
+
       letter-spacing: -.045em !important;
+
       white-space: nowrap !important;
+
       overflow: hidden !important;
+
       text-overflow: clip !important;
+
       word-break: keep-all !important;
     }
 
     @media (max-width: 620px) {
       #profileView .hype-account-details {
-        grid-template-columns: minmax(0, 1fr) 88px;
-        column-gap: 15px;
-        padding: 21px 17px 20px;
+        grid-template-columns:
+          minmax(0, 1fr) 88px !important;
+
+        column-gap: 16px !important;
+
+        padding:
+          21px 17px 20px;
       }
 
-      #profileView .hype-account-details #editProfileBtn {
+      #profileView
+      .hype-account-details
+      #editProfileBtn {
         width: 100%;
       }
 
-      #profileView .hype-profile-avatar-display {
-        width: 88px;
-        height: 88px;
-        font-size: 32px;
+      #profileView
+      .hype-account-details
+      .hype-profile-avatar-display {
+        width: 88px !important;
+
+        height: 88px !important;
+
+        min-width: 88px !important;
+
+        min-height: 88px !important;
+
+        font-size: 32px !important;
       }
 
       #profileView .hype-referral-title {
-        font-size: clamp(13px, 3.8vw, 25px) !important;
+        font-size:
+          clamp(13px, 3.8vw, 25px) !important;
       }
     }
 
     @media (max-width: 520px) {
       #profileView .hype-share-week-navigation {
-        grid-template-columns: 40px minmax(0, 1fr) 40px;
+        grid-template-columns:
+          40px minmax(0, 1fr) 40px;
+
         gap: 9px;
       }
 
       #profileView .hype-share-week-arrow {
         width: 40px;
+
         height: 40px;
+
         border-radius: 12px;
       }
 
@@ -1069,7 +1453,10 @@ function ensureProfileShareStyles() {
 
       #profileView .weekly-share-day {
         min-height: 148px;
-        padding: 11px 5px 9px;
+
+        padding:
+          11px 5px 9px;
+
         border-radius: 12px;
       }
 
@@ -1098,20 +1485,31 @@ function ensureProfileShareStyles() {
       }
 
       #profileView .weekly-share-stats.has-distance {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns:
+          repeat(2, minmax(0, 1fr));
       }
     }
 
     @media (max-width: 390px) {
       #profileView .hype-account-details {
-        grid-template-columns: minmax(0, 1fr) 72px;
-        column-gap: 10px;
+        grid-template-columns:
+          minmax(0, 1fr) 72px !important;
+
+        column-gap: 10px !important;
       }
 
-      #profileView .hype-profile-avatar-display {
-        width: 72px;
-        height: 72px;
-        font-size: 27px;
+      #profileView
+      .hype-account-details
+      .hype-profile-avatar-display {
+        width: 72px !important;
+
+        height: 72px !important;
+
+        min-width: 72px !important;
+
+        min-height: 72px !important;
+
+        font-size: 27px !important;
       }
 
       #profileView #weeklyShareDays {
@@ -1120,6 +1518,7 @@ function ensureProfileShareStyles() {
 
       #profileView .weekly-share-day {
         padding-left: 4px;
+
         padding-right: 4px;
       }
 
@@ -1494,18 +1893,28 @@ function updateProfileImageDialogPreview(
     return;
   }
 
+  preview.innerHTML = "";
+
   if (image) {
-    preview.innerHTML = `
-      <img
-        src="${esc(image)}"
-        alt="Profilbild Vorschau"
-      >
-    `;
+    const img =
+      document.createElement(
+        "img"
+      );
+
+    img.src =
+      image;
+
+    img.alt =
+      "Profilbild Vorschau";
+
+    preview.appendChild(
+      img
+    );
 
     return;
   }
 
-  preview.innerHTML =
+  preview.textContent =
     "👤";
 }
 
@@ -1514,21 +1923,101 @@ function updateProfileImageDialogPreview(
 ========================= */
 
 function renderProfileAccountImage(
-  image
+  image = ""
 ) {
   if (!profileView) {
     return;
   }
 
+  /*
+   * Der Account-Block muss existieren.
+   */
   let details =
     profileView.querySelector(
       ".hype-account-details"
     );
 
+  /*
+   * Falls der Block noch nicht existiert,
+   * hier zuverlässig erzeugen.
+   */
+  if (!details && profileName) {
+    const parent =
+      profileName.parentElement;
+
+    if (parent) {
+      details =
+        document.createElement(
+          "div"
+        );
+
+      details.className =
+        "hype-account-details";
+
+      parent.insertBefore(
+        details,
+        profileName
+      );
+
+      const accountLabel =
+        Array.from(
+          parent.querySelectorAll(
+            "h1, h2, h3, h4, p, span, div"
+          )
+        ).find(
+          element => {
+            const text =
+              element.textContent
+                .replace(
+                  /\s+/g,
+                  " "
+                )
+                .trim()
+                .toUpperCase();
+
+            return (
+              text === "ACCOUNT"
+            );
+          }
+        );
+
+      if (
+        accountLabel &&
+        accountLabel.parentElement !==
+          details
+      ) {
+        details.appendChild(
+          accountLabel
+        );
+      }
+
+      if (profileName) {
+        details.appendChild(
+          profileName
+        );
+      }
+
+      if (profileEmail) {
+        details.appendChild(
+          profileEmail
+        );
+      }
+
+      if (editProfileBtn) {
+        details.appendChild(
+          editProfileBtn
+        );
+      }
+    }
+  }
+
   if (!details) {
     return;
   }
 
+  /*
+   * Profilbild IMMER rechts erzeugen.
+   */
   let avatar =
     details.querySelector(
       ".hype-profile-avatar-display"
@@ -1543,30 +2032,60 @@ function renderProfileAccountImage(
     avatar.className =
       "hype-profile-avatar-display";
 
-    details.insertBefore(
-      avatar,
-      details.firstChild
+    avatar.setAttribute(
+      "aria-label",
+      "Profilbild"
+    );
+
+    details.appendChild(
+      avatar
     );
   }
 
+  /*
+   * Gespeichertes Bild anzeigen.
+   */
   if (image) {
+    avatar.innerHTML =
+      "";
+
+    const img =
+      document.createElement(
+        "img"
+      );
+
+    img.src =
+      image;
+
+    img.alt =
+      "Profilbild";
+
+    avatar.appendChild(
+      img
+    );
+
+    avatar.classList.add(
+      "has-image"
+    );
+
     avatar.classList.remove(
       "is-empty"
     );
-
-    avatar.innerHTML = `
-      <img
-        src="${esc(image)}"
-        alt="Profilbild"
-      >
-    `;
   } else {
+    /*
+     * Noch kein Bild:
+     * Platzhalter anzeigen.
+     */
+    avatar.innerHTML =
+      "👤";
+
     avatar.classList.add(
       "is-empty"
     );
 
-    avatar.innerHTML =
-      "👤";
+    avatar.classList.remove(
+      "has-image"
+    );
   }
 }
 
@@ -1593,14 +2112,18 @@ function polishProfileLayout() {
 
     if (
       parent &&
-      profileEmail.parentElement === parent &&
-      editProfileBtn.parentElement === parent &&
+      profileEmail.parentElement ===
+        parent &&
+      editProfileBtn.parentElement ===
+        parent &&
       !parent.querySelector(
         ".hype-account-details"
       )
     ) {
       const details =
-        document.createElement("div");
+        document.createElement(
+          "div"
+        );
 
       details.className =
         "hype-account-details";
@@ -1645,7 +2168,10 @@ function polishProfileLayout() {
           element => {
             const text =
               element.textContent
-                .replace(/\s+/g, " ")
+                .replace(
+                  /\s+/g,
+                  " "
+                )
                 .trim()
                 .toUpperCase();
 
@@ -1661,16 +2187,20 @@ function polishProfileLayout() {
       if (
         possibleLabel &&
         possibleLabel !==
-          accountDetails &&
-        possibleLabel.parentElement
+          accountDetails
       ) {
         accountLabel =
           possibleLabel;
 
-        accountDetails.insertBefore(
-          accountLabel,
-          profileName
-        );
+        if (
+          accountLabel.parentElement !==
+          accountDetails
+        ) {
+          accountDetails.insertBefore(
+            accountLabel,
+            profileName
+          );
+        }
       }
     }
 
@@ -1681,13 +2211,12 @@ function polishProfileLayout() {
     }
 
     /*
-     * WICHTIG:
-     * Das gespeicherte Profilbild laden
-     * und NICHT mehr mit "" überschreiben.
+     * Profilbild IMMER aus dem aktuellen
+     * Benutzerkonto laden.
      */
-
     const userId =
-      profileView.dataset.userId || "";
+      profileView.dataset.userId ||
+      "";
 
     const savedImage =
       getSavedProfileImage(
@@ -1711,7 +2240,10 @@ function polishProfileLayout() {
       element => {
         const text =
           element.textContent
-            .replace(/\s+/g, " ")
+            .replace(
+              /\s+/g,
+              " "
+            )
             .trim()
             .toUpperCase();
 
@@ -1756,7 +2288,10 @@ function polishProfileLayout() {
       button => {
         const text =
           button.textContent
-            .replace(/\s+/g, " ")
+            .replace(
+              /\s+/g,
+              " "
+            )
             .trim();
 
         if (
@@ -2498,12 +3033,12 @@ async function renderProfile() {
   }
 
   /*
-   * Benutzer-ID am Profil speichern,
-   * damit polishProfileLayout()
-   * das richtige Profilbild laden kann.
+   * Benutzer-ID speichern.
    */
-  profileView.dataset.userId =
-    user.id;
+  if (profileView) {
+    profileView.dataset.userId =
+      user.id;
+  }
 
   shareWeekStart =
     startOfWeek(
@@ -2558,21 +3093,36 @@ async function renderProfile() {
       firstName;
   }
 
-  renderWeeklySharePreview(
-    displayName
-  );
-
+  /*
+   * Account-Layout zuerst aufbauen.
+   */
   polishProfileLayout();
 
+  /*
+   * Danach gespeichertes Profilbild laden.
+   */
   const savedImage =
     getSavedProfileImage(
       user.id
     );
 
+  /*
+   * Profilbild rechts anzeigen.
+   */
   renderProfileAccountImage(
     savedImage
   );
 
+  /*
+   * Share-Bereich.
+   */
+  renderWeeklySharePreview(
+    displayName
+  );
+
+  /*
+   * Dialog vorbereiten.
+   */
   if (profileDialog) {
     ensureProfileImageEditor(
       savedImage
@@ -2737,6 +3287,9 @@ async function saveProfileName() {
     const user =
       await getProfileUser();
 
+    /*
+     * Profilbild speichern.
+     */
     if (
       user &&
       pendingProfileImage
@@ -2752,6 +3305,10 @@ async function saveProfileName() {
 
     closeProfileDialog();
 
+    /*
+     * Profil komplett neu laden.
+     * Dadurch erscheint das Bild sofort rechts.
+     */
     await renderProfile();
 
   } catch (error) {
@@ -3335,8 +3892,6 @@ function renderWeeklySharePreview(
     weeklyShareFooter.style.display =
       "none";
   }
-
-  polishProfileLayout();
 }
 
 /* =========================
