@@ -447,12 +447,17 @@ function ensureProfileShareStyles() {
     ========================= */
 
     #profileView .hype-account-details {
-      display: flex;
-      flex-direction: column;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 104px;
+      grid-template-areas:
+        "label avatar"
+        "name avatar"
+        "email avatar"
+        "button avatar";
       align-items: center;
-      gap: 0;
+      column-gap: 22px;
       margin-top: 18px;
-      padding: 24px 20px 22px;
+      padding: 24px 20px;
       border: 1px solid rgba(255,255,255,.08);
       border-radius: 20px;
       background:
@@ -462,41 +467,12 @@ function ensureProfileShareStyles() {
           rgba(255,255,255,.012)
         ),
         #12151a;
-      text-align: center;
-    }
-
-    #profileView .hype-profile-avatar-display {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 104px;
-      height: 104px;
-      margin: 0 auto 18px;
-      border: 1px solid rgba(255,255,255,.12);
-      border-radius: 50%;
-      background:
-        linear-gradient(
-          180deg,
-          rgba(255,255,255,.035),
-          rgba(255,255,255,.01)
-        ),
-        #181b20;
-      color: #737b86;
-      font-size: 38px;
-      line-height: 1;
-      overflow: hidden;
-      box-shadow: 0 10px 30px rgba(0,0,0,.20);
-    }
-
-    #profileView .hype-profile-avatar-display img {
-      display: block;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
+      text-align: left;
     }
 
     #profileView .hype-account-details .hype-account-label {
       display: block;
+      grid-area: label;
       margin: 0 0 9px;
       color: #8d949e;
       font-size: 10px;
@@ -507,6 +483,7 @@ function ensureProfileShareStyles() {
     }
 
     #profileView .hype-account-details #profileName {
+      grid-area: name;
       margin: 0 0 7px;
       color: #f5f6f7;
       font-size: clamp(25px, 6vw, 34px);
@@ -516,6 +493,7 @@ function ensureProfileShareStyles() {
     }
 
     #profileView .hype-account-details #profileEmail {
+      grid-area: email;
       margin: 0;
       color: #9aa1aa;
       font-size: 14px;
@@ -524,6 +502,7 @@ function ensureProfileShareStyles() {
     }
 
     #profileView .hype-account-details #editProfileBtn {
+      grid-area: button;
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -546,6 +525,39 @@ function ensureProfileShareStyles() {
     #profileView .hype-account-details #editProfileBtn:hover {
       background: rgba(215,255,63,.10);
       border-color: rgba(215,255,63,.65);
+    }
+
+    #profileView .hype-profile-avatar-display {
+      grid-area: avatar;
+      align-self: center;
+      justify-self: end;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 104px;
+      height: 104px;
+      margin: 0;
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 50%;
+      background:
+        linear-gradient(
+          180deg,
+          rgba(255,255,255,.035),
+          rgba(255,255,255,.01)
+        ),
+        #181b20;
+      color: #737b86;
+      font-size: 38px;
+      line-height: 1;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0,0,0,.20);
+    }
+
+    #profileView .hype-profile-avatar-display img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
     }
 
     #profileView .hype-profile-image-button,
@@ -1019,11 +1031,19 @@ function ensureProfileShareStyles() {
 
     @media (max-width: 620px) {
       #profileView .hype-account-details {
+        grid-template-columns: minmax(0, 1fr) 88px;
+        column-gap: 15px;
         padding: 21px 17px 20px;
       }
 
       #profileView .hype-account-details #editProfileBtn {
         width: 100%;
+      }
+
+      #profileView .hype-profile-avatar-display {
+        width: 88px;
+        height: 88px;
+        font-size: 32px;
       }
 
       #profileView .hype-referral-title {
@@ -1083,6 +1103,17 @@ function ensureProfileShareStyles() {
     }
 
     @media (max-width: 390px) {
+      #profileView .hype-account-details {
+        grid-template-columns: minmax(0, 1fr) 72px;
+        column-gap: 10px;
+      }
+
+      #profileView .hype-profile-avatar-display {
+        width: 72px;
+        height: 72px;
+        font-size: 27px;
+      }
+
       #profileView #weeklyShareDays {
         gap: 4px;
       }
@@ -1649,8 +1680,22 @@ function polishProfileLayout() {
       );
     }
 
+    /*
+     * WICHTIG:
+     * Das gespeicherte Profilbild laden
+     * und NICHT mehr mit "" überschreiben.
+     */
+
+    const userId =
+      profileView.dataset.userId || "";
+
+    const savedImage =
+      getSavedProfileImage(
+        userId
+      );
+
     renderProfileAccountImage(
-      ""
+      savedImage
     );
   }
 
@@ -2452,6 +2497,14 @@ async function renderProfile() {
     return;
   }
 
+  /*
+   * Benutzer-ID am Profil speichern,
+   * damit polishProfileLayout()
+   * das richtige Profilbild laden kann.
+   */
+  profileView.dataset.userId =
+    user.id;
+
   shareWeekStart =
     startOfWeek(
       new Date()
@@ -3045,10 +3098,6 @@ function renderWeeklySharePreview(
       "none";
   }
 
-  /* =========================
-     ALTE NAMEN / DATUM
-  ========================= */
-
   if (weeklyShareName) {
     weeklyShareName.textContent =
       "";
@@ -3088,10 +3137,6 @@ function renderWeeklySharePreview(
     weeklyShareRange.style.padding =
       "0";
   }
-
-  /* =========================
-     7 TAGE
-  ========================= */
 
   if (weeklyShareDays) {
     const days = [];
@@ -3202,10 +3247,6 @@ function renderWeeklySharePreview(
     weeklyShareDays.innerHTML =
       days.join("");
   }
-
-  /* =========================
-     SUMMARY
-  ========================= */
 
   if (weeklyShareSummary) {
     if (!weekSessions.length) {
