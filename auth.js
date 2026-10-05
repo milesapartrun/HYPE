@@ -17,7 +17,8 @@ const supabaseClient =
 /*
  * Für app.js verfügbar machen.
  */
-window.supabaseClient = supabaseClient;
+window.supabaseClient =
+  supabaseClient;
 
 
 /* =========================
@@ -56,11 +57,21 @@ const authSubtitle =
    STATE
 ========================= */
 
-let isRegisterMode = false;
+let isRegisterMode =
+  false;
 
-let instagramCompleted = false;
+let instagramCompleted =
+  false;
 
-let shareCompleted = false;
+let shareCompleted =
+  false;
+
+
+/*
+ * Passwort-Reset-Zustand
+ */
+let isPasswordRecovery =
+  false;
 
 
 /* =========================
@@ -76,6 +87,23 @@ const HYPE_SHARE_TEXT =
 const HYPE_SHARE_URL =
   window.location.origin +
   window.location.pathname;
+
+
+/*
+ * Diese URL wird in die Passwort-Reset-Mail
+ * eingebaut.
+ *
+ * Der Nutzer kommt nach dem Klick auf den
+ * Link wieder genau auf diese Seite zurück.
+ */
+function getPasswordResetRedirectUrl() {
+
+  return (
+    window.location.origin +
+    window.location.pathname
+  );
+
+}
 
 
 /* =========================
@@ -199,8 +227,11 @@ function loadGateProgress() {
 
   } catch (error) {
 
-    instagramCompleted = false;
-    shareCompleted = false;
+    instagramCompleted =
+      false;
+
+    shareCompleted =
+      false;
 
   }
 
@@ -233,6 +264,1286 @@ function clearGateProgress() {
     );
 
   }
+
+}
+
+
+/* =========================================================
+   PASSWORT VERGESSEN
+========================================================= */
+
+
+/*
+ * Fügt den Link
+ *
+ * "Passwort vergessen?"
+ *
+ * direkt unter dem Passwortfeld ein.
+ */
+function ensureForgotPasswordLink() {
+
+  if (!authForm || !authPassword) {
+    return;
+  }
+
+
+  let existing =
+    document.getElementById(
+      "forgotPasswordLink"
+    );
+
+
+  if (existing) {
+    return;
+  }
+
+
+  existing =
+    document.createElement(
+      "button"
+    );
+
+  existing.type =
+    "button";
+
+  existing.id =
+    "forgotPasswordLink";
+
+  existing.textContent =
+    "Passwort vergessen?";
+
+
+  /*
+   * Optisch passend zu HYPE.
+   * Dadurch brauchen wir keine zusätzliche
+   * CSS-Datei nur für diese Funktion.
+   */
+
+  existing.style.display =
+    "block";
+
+  existing.style.width =
+    "100%";
+
+  existing.style.margin =
+    "10px 0 0";
+
+  existing.style.padding =
+    "6px 4px";
+
+  existing.style.border =
+    "0";
+
+  existing.style.background =
+    "transparent";
+
+  existing.style.color =
+    "var(--muted)";
+
+  existing.style.fontSize =
+    "11px";
+
+  existing.style.fontWeight =
+    "700";
+
+  existing.style.textAlign =
+    "right";
+
+  existing.style.cursor =
+    "pointer";
+
+  existing.style.textDecoration =
+    "none";
+
+  existing.style.transition =
+    "color .15s ease";
+
+
+  existing.addEventListener(
+    "mouseenter",
+    () => {
+
+      existing.style.color =
+        "var(--accent)";
+
+    }
+  );
+
+
+  existing.addEventListener(
+    "mouseleave",
+    () => {
+
+      existing.style.color =
+        "var(--muted)";
+
+    }
+  );
+
+
+  existing.addEventListener(
+    "click",
+    () => {
+
+      openForgotPassword();
+
+    }
+  );
+
+
+  /*
+   * Wir setzen den Link direkt nach
+   * dem Passwortfeld bzw. dessen Label.
+   */
+
+  const passwordLabel =
+    authPassword.closest("label");
+
+
+  if (passwordLabel) {
+
+    passwordLabel.insertAdjacentElement(
+      "afterend",
+      existing
+    );
+
+    return;
+
+  }
+
+
+  authPassword.insertAdjacentElement(
+    "afterend",
+    existing
+  );
+
+}
+
+
+/*
+ * Entfernt bzw. versteckt den Link,
+ * wenn wir uns im Registrierungsmodus
+ * oder Passwort-Reset-Modus befinden.
+ */
+function updateForgotPasswordLink() {
+
+  const link =
+    document.getElementById(
+      "forgotPasswordLink"
+    );
+
+
+  if (!link) {
+    return;
+  }
+
+
+  if (
+    isRegisterMode ||
+    isPasswordRecovery
+  ) {
+
+    link.style.display =
+      "none";
+
+    return;
+
+  }
+
+
+  link.style.display =
+    "block";
+
+}
+
+
+/* =========================================================
+   PASSWORT RESET – E-MAIL
+========================================================= */
+
+async function sendPasswordResetEmail() {
+
+  const email =
+    authEmail?.value.trim();
+
+
+  if (!email) {
+
+    showAuthMessage(
+      "Bitte gib zuerst deine E-Mail-Adresse ein.",
+      "error"
+    );
+
+    authEmail?.focus();
+
+    return;
+
+  }
+
+
+  clearAuthMessage();
+
+
+  /*
+   * Button temporär deaktivieren,
+   * damit nicht mehrfach geklickt wird.
+   */
+
+  const forgotButton =
+    document.getElementById(
+      "forgotPasswordLink"
+    );
+
+
+  if (forgotButton) {
+
+    forgotButton.disabled =
+      true;
+
+    forgotButton.textContent =
+      "E-Mail wird gesendet …";
+
+  }
+
+
+  try {
+
+    const {
+      error
+    } =
+      await supabaseClient.auth
+        .resetPasswordForEmail(
+          email,
+          {
+            redirectTo:
+              getPasswordResetRedirectUrl()
+          }
+        );
+
+
+    if (error) {
+
+      console.error(
+        "HYPE password reset error:",
+        error
+      );
+
+
+      showAuthMessage(
+        getAuthErrorMessage(error),
+        "error"
+      );
+
+
+      return;
+
+    }
+
+
+    /*
+     * Absichtlich keine Aussage darüber,
+     * ob die E-Mail tatsächlich zu einem
+     * bestehenden Account gehört.
+     *
+     * Das verhindert User Enumeration.
+     */
+
+    showAuthMessage(
+      "Wenn für diese E-Mail ein HYPE-Account existiert, wurde eine E-Mail zum Zurücksetzen des Passworts gesendet. Bitte prüfe auch deinen Spam-Ordner.",
+      "success"
+    );
+
+
+  } catch (error) {
+
+    console.error(
+      "HYPE password reset exception:",
+      error
+    );
+
+
+    showAuthMessage(
+      "Die Passwort-Reset-Mail konnte nicht angefordert werden. Bitte versuche es erneut.",
+      "error"
+    );
+
+
+  } finally {
+
+    if (forgotButton) {
+
+      forgotButton.disabled =
+        false;
+
+      forgotButton.textContent =
+        "Passwort vergessen?";
+
+    }
+
+  }
+
+}
+
+
+/* =========================================================
+   PASSWORT RESET – VIEW
+========================================================= */
+
+function getPasswordResetView() {
+
+  return document.getElementById(
+    "passwordResetView"
+  );
+
+}
+
+
+function ensurePasswordResetView() {
+
+  let view =
+    getPasswordResetView();
+
+
+  if (view) {
+    return view;
+  }
+
+
+  if (!authForm) {
+    return null;
+  }
+
+
+  view =
+    document.createElement(
+      "div"
+    );
+
+  view.id =
+    "passwordResetView";
+
+  view.className =
+    "auth-form hidden";
+
+
+  view.innerHTML = `
+
+    <div
+      style="
+        margin-bottom:22px;
+      "
+    >
+
+      <div
+        style="
+          color:var(--muted);
+          font-size:11px;
+          font-weight:800;
+          letter-spacing:.12em;
+          text-transform:uppercase;
+          margin-bottom:6px;
+        "
+      >
+        ACCOUNT
+      </div>
+
+      <h2
+        style="
+          margin:0;
+          color:var(--text);
+          font-size:26px;
+          line-height:1.1;
+          letter-spacing:-.04em;
+        "
+      >
+        Neues Passwort
+      </h2>
+
+      <p
+        style="
+          margin:9px 0 0;
+          color:var(--muted);
+          font-size:12px;
+          line-height:1.5;
+        "
+      >
+        Gib dein neues Passwort ein.
+      </p>
+
+    </div>
+
+
+    <label>
+
+      Neues Passwort
+
+      <input
+        type="password"
+        id="resetNewPassword"
+        autocomplete="new-password"
+        placeholder="Neues Passwort"
+        minlength="6"
+      >
+
+    </label>
+
+
+    <label>
+
+      Passwort bestätigen
+
+      <input
+        type="password"
+        id="resetConfirmPassword"
+        autocomplete="new-password"
+        placeholder="Passwort wiederholen"
+        minlength="6"
+      >
+
+    </label>
+
+
+    <button
+      type="button"
+      id="resetPasswordSubmit"
+      class="primary full"
+    >
+      Passwort speichern
+    </button>
+
+
+    <button
+      type="button"
+      id="resetPasswordBack"
+      style="
+        width:100%;
+        margin-top:10px;
+        padding:10px;
+        border:0;
+        background:transparent;
+        color:var(--muted);
+        font-size:11px;
+        font-weight:700;
+        cursor:pointer;
+      "
+    >
+      ← Zurück zum Login
+    </button>
+
+  `;
+
+
+  /*
+   * Direkt nach dem normalen Login-Formular
+   * in denselben Auth-Container einsetzen.
+   */
+
+  authForm.insertAdjacentElement(
+    "afterend",
+    view
+  );
+
+
+  const submitButton =
+    document.getElementById(
+      "resetPasswordSubmit"
+    );
+
+
+  const backButton =
+    document.getElementById(
+      "resetPasswordBack"
+    );
+
+
+  if (submitButton) {
+
+    submitButton.addEventListener(
+      "click",
+      updatePassword
+    );
+
+  }
+
+
+  if (backButton) {
+
+    backButton.addEventListener(
+      "click",
+      () => {
+
+        isPasswordRecovery =
+          false;
+
+        hidePasswordResetView();
+
+        showLogin();
+
+      }
+    );
+
+  }
+
+
+  return view;
+
+}
+
+
+/*
+ * Zeigt das Formular zum Setzen
+ * des neuen Passworts.
+ */
+function showPasswordResetView() {
+
+  const view =
+    ensurePasswordResetView();
+
+
+  if (!view) {
+    return;
+  }
+
+
+  isPasswordRecovery =
+    true;
+
+
+  /*
+   * Auth-Seite sichtbar halten.
+   */
+
+  if (authScreen) {
+
+    authScreen.classList.remove(
+      "hidden"
+    );
+
+  }
+
+
+  if (appContent) {
+
+    appContent.classList.add(
+      "hidden"
+    );
+
+  }
+
+
+  /*
+   * Normales Login-Formular ausblenden.
+   */
+
+  if (authForm) {
+
+    authForm.classList.add(
+      "hidden"
+    );
+
+  }
+
+
+  if (authSwitch) {
+
+    authSwitch.classList.add(
+      "hidden"
+    );
+
+  }
+
+
+  if (authSubtitle) {
+
+    authSubtitle.innerHTML = `
+      Setze dein HYPE-Passwort zurück.
+    `;
+
+  }
+
+
+  view.classList.remove(
+    "hidden"
+  );
+
+
+  updateForgotPasswordLink();
+
+
+  clearAuthMessage();
+
+
+  /*
+   * Cursor direkt ins neue Passwortfeld.
+   */
+
+  setTimeout(
+    () => {
+
+      document
+        .getElementById(
+          "resetNewPassword"
+        )
+        ?.focus();
+
+    },
+    100
+  );
+
+}
+
+
+/*
+ * Passwort-Reset-Formular wieder
+ * ausblenden.
+ */
+function hidePasswordResetView() {
+
+  const view =
+    getPasswordResetView();
+
+
+  if (view) {
+
+    view.classList.add(
+      "hidden"
+    );
+
+  }
+
+
+  if (authForm) {
+
+    authForm.classList.remove(
+      "hidden"
+    );
+
+  }
+
+
+  if (authSwitch) {
+
+    authSwitch.classList.remove(
+      "hidden"
+    );
+
+  }
+
+
+  isPasswordRecovery =
+    false;
+
+
+  updateForgotPasswordLink();
+
+}
+
+
+/* =========================================================
+   PASSWORT AKTUALISIEREN
+========================================================= */
+
+async function updatePassword() {
+
+  const newPassword =
+    document
+      .getElementById(
+        "resetNewPassword"
+      )
+      ?.value || "";
+
+
+  const confirmPassword =
+    document
+      .getElementById(
+        "resetConfirmPassword"
+      )
+      ?.value || "";
+
+
+  if (!newPassword) {
+
+    showAuthMessage(
+      "Bitte gib ein neues Passwort ein.",
+      "error"
+    );
+
+    return;
+
+  }
+
+
+  if (newPassword.length < 6) {
+
+    showAuthMessage(
+      "Das neue Passwort muss mindestens 6 Zeichen haben.",
+      "error"
+    );
+
+    return;
+
+  }
+
+
+  if (
+    newPassword !==
+    confirmPassword
+  ) {
+
+    showAuthMessage(
+      "Die beiden Passwörter stimmen nicht überein.",
+      "error"
+    );
+
+    return;
+
+  }
+
+
+  const submitButton =
+    document.getElementById(
+      "resetPasswordSubmit"
+    );
+
+
+  if (submitButton) {
+
+    submitButton.disabled =
+      true;
+
+    submitButton.textContent =
+      "Passwort wird gespeichert …";
+
+  }
+
+
+  clearAuthMessage();
+
+
+  try {
+
+    const {
+      data,
+      error
+    } =
+      await supabaseClient.auth
+        .updateUser({
+          password:
+            newPassword
+        });
+
+
+    if (error) {
+
+      console.error(
+        "HYPE password update error:",
+        error
+      );
+
+
+      showAuthMessage(
+        getAuthErrorMessage(error),
+        "error"
+      );
+
+
+      return;
+
+    }
+
+
+    console.log(
+      "HYPE password successfully updated:",
+      data
+    );
+
+
+    /*
+     * Nach erfolgreicher Änderung
+     * aus der Recovery-Session ausloggen.
+     *
+     * Danach muss sich der Nutzer mit
+     * dem neuen Passwort einloggen.
+     */
+
+    await supabaseClient.auth.signOut();
+
+
+    hidePasswordResetView();
+
+
+    showLogin();
+
+
+    showAuthMessage(
+      "Dein Passwort wurde erfolgreich geändert. Du kannst dich jetzt mit deinem neuen Passwort einloggen.",
+      "success"
+    );
+
+
+  } catch (error) {
+
+    console.error(
+      "HYPE password update exception:",
+      error
+    );
+
+
+    showAuthMessage(
+      "Das Passwort konnte nicht geändert werden. Bitte versuche den Link aus der E-Mail erneut.",
+      "error"
+    );
+
+
+  } finally {
+
+    if (submitButton) {
+
+      submitButton.disabled =
+        false;
+
+      submitButton.textContent =
+        "Passwort speichern";
+
+    }
+
+  }
+
+}
+
+
+/* =========================================================
+   FORGOT PASSWORD ÖFFNEN
+========================================================= */
+
+function openForgotPassword() {
+
+  /*
+   * Wir bleiben auf derselben Login-Seite.
+   * Der Nutzer kann seine E-Mail dort
+   * direkt eingeben.
+   */
+
+  isRegisterMode =
+    false;
+
+  clearAuthMessage();
+
+
+  /*
+   * E-Mail-Adresse behalten.
+   */
+
+  const currentEmail =
+    authEmail?.value.trim() || "";
+
+
+  /*
+   * Einfacher Dialog für die E-Mail.
+   */
+
+  const existing =
+    document.getElementById(
+      "forgotPasswordDialog"
+    );
+
+
+  if (existing) {
+
+    existing.remove();
+
+  }
+
+
+  const overlay =
+    document.createElement(
+      "div"
+    );
+
+  overlay.id =
+    "forgotPasswordDialog";
+
+
+  overlay.style.position =
+    "fixed";
+
+  overlay.style.inset =
+    "0";
+
+  overlay.style.zIndex =
+    "1000";
+
+  overlay.style.display =
+    "flex";
+
+  overlay.style.alignItems =
+    "center";
+
+  overlay.style.justifyContent =
+    "center";
+
+  overlay.style.padding =
+    "20px";
+
+  overlay.style.background =
+    "rgba(0,0,0,.72)";
+
+  overlay.style.backdropFilter =
+    "blur(10px)";
+
+  overlay.style.webkitBackdropFilter =
+    "blur(10px)";
+
+
+  const card =
+    document.createElement(
+      "div"
+    );
+
+
+  card.style.width =
+    "min(430px,100%)";
+
+  card.style.padding =
+    "24px";
+
+  card.style.background =
+    "#14171c";
+
+  card.style.border =
+    "1px solid var(--line)";
+
+  card.style.borderRadius =
+    "22px";
+
+  card.style.boxShadow =
+    "0 30px 100px rgba(0,0,0,.6)";
+
+
+  card.innerHTML = `
+
+    <div
+      style="
+        color:var(--muted);
+        font-size:11px;
+        font-weight:800;
+        letter-spacing:.12em;
+        margin-bottom:6px;
+      "
+    >
+      ACCOUNT
+    </div>
+
+    <h3
+      style="
+        margin:0;
+        color:var(--text);
+        font-size:24px;
+        line-height:1.1;
+      "
+    >
+      Passwort vergessen?
+    </h3>
+
+    <p
+      style="
+        margin:10px 0 18px;
+        color:var(--muted);
+        font-size:12px;
+        line-height:1.5;
+      "
+    >
+      Gib die E-Mail-Adresse deines HYPE-Accounts ein.
+      Wir schicken dir einen Link, über den du ein neues
+      Passwort festlegen kannst.
+    </p>
+
+    <label
+      style="
+        display:block;
+        margin:0 0 14px;
+      "
+    >
+
+      E-Mail
+
+      <input
+        type="email"
+        id="forgotPasswordEmail"
+        autocomplete="email"
+        placeholder="deine@email.de"
+        value=""
+      >
+
+    </label>
+
+    <button
+      type="button"
+      id="forgotPasswordSend"
+      class="primary full"
+    >
+      Reset-E-Mail senden
+    </button>
+
+    <button
+      type="button"
+      id="forgotPasswordCancel"
+      style="
+        width:100%;
+        margin-top:9px;
+        padding:10px;
+        border:0;
+        background:transparent;
+        color:var(--muted);
+        font-size:11px;
+        font-weight:700;
+        cursor:pointer;
+      "
+    >
+      Abbrechen
+    </button>
+
+    <div
+      id="forgotPasswordDialogMessage"
+      style="
+        min-height:18px;
+        margin-top:10px;
+        color:var(--muted);
+        font-size:11px;
+        line-height:1.45;
+        text-align:center;
+      "
+    ></div>
+
+  `;
+
+
+  overlay.appendChild(
+    card
+  );
+
+
+  document.body.appendChild(
+    overlay
+  );
+
+
+  const emailInput =
+    document.getElementById(
+      "forgotPasswordEmail"
+    );
+
+
+  /*
+   * Aktuelle Login-E-Mail übernehmen,
+   * wenn schon eine eingegeben wurde.
+   */
+
+  if (currentEmail) {
+
+    emailInput.value =
+      currentEmail;
+
+  }
+
+
+  const sendButton =
+    document.getElementById(
+      "forgotPasswordSend"
+    );
+
+
+  const cancelButton =
+    document.getElementById(
+      "forgotPasswordCancel"
+    );
+
+
+  const dialogMessage =
+    document.getElementById(
+      "forgotPasswordDialogMessage"
+    );
+
+
+  if (cancelButton) {
+
+    cancelButton.addEventListener(
+      "click",
+      () => {
+
+        overlay.remove();
+
+      }
+    );
+
+  }
+
+
+  if (sendButton) {
+
+    sendButton.addEventListener(
+      "click",
+      async () => {
+
+        const email =
+          emailInput.value.trim();
+
+
+        if (!email) {
+
+          dialogMessage.textContent =
+            "Bitte gib deine E-Mail-Adresse ein.";
+
+          dialogMessage.style.color =
+            "var(--danger)";
+
+          emailInput.focus();
+
+          return;
+
+        }
+
+
+        sendButton.disabled =
+          true;
+
+        sendButton.textContent =
+          "E-Mail wird gesendet …";
+
+
+        dialogMessage.textContent =
+          "";
+
+
+        try {
+
+          const {
+            error
+          } =
+            await supabaseClient.auth
+              .resetPasswordForEmail(
+                email,
+                {
+                  redirectTo:
+                    getPasswordResetRedirectUrl()
+                }
+              );
+
+
+          if (error) {
+
+            console.error(
+              "HYPE password reset dialog error:",
+              error
+            );
+
+
+            dialogMessage.textContent =
+              getAuthErrorMessage(
+                error
+              );
+
+            dialogMessage.style.color =
+              "var(--danger)";
+
+
+            sendButton.disabled =
+              false;
+
+            sendButton.textContent =
+              "Reset-E-Mail senden";
+
+            return;
+
+          }
+
+
+          dialogMessage.textContent =
+            "Wenn für diese E-Mail ein HYPE-Account existiert, wurde eine Reset-E-Mail gesendet. Bitte prüfe auch deinen Spam-Ordner.";
+
+          dialogMessage.style.color =
+            "var(--accent)";
+
+
+          sendButton.textContent =
+            "E-Mail gesendet";
+
+
+          /*
+           * Nach erfolgreichem Versand
+           * kurz offen lassen, damit der Nutzer
+           * die Meldung lesen kann.
+           */
+
+          setTimeout(
+            () => {
+
+              overlay.remove();
+
+            },
+            3500
+          );
+
+
+        } catch (error) {
+
+          console.error(
+            "HYPE password reset dialog exception:",
+            error
+          );
+
+
+          dialogMessage.textContent =
+            "Die E-Mail konnte nicht gesendet werden. Bitte versuche es erneut.";
+
+          dialogMessage.style.color =
+            "var(--danger)";
+
+
+          sendButton.disabled =
+            false;
+
+          sendButton.textContent =
+            "Reset-E-Mail senden";
+
+        }
+
+      }
+    );
+
+  }
+
+
+  /*
+   * Klick auf den dunklen Hintergrund
+   * schließt den Dialog.
+   */
+
+  overlay.addEventListener(
+    "click",
+    event => {
+
+      if (
+        event.target ===
+        overlay
+      ) {
+
+        overlay.remove();
+
+      }
+
+    }
+  );
+
+
+  setTimeout(
+    () => {
+
+      emailInput?.focus();
+
+    },
+    50
+  );
 
 }
 
@@ -720,10 +2031,6 @@ function attachRegistrationGateEvents() {
 
         try {
 
-          /*
-           * Native Share Sheet
-           */
-
           if (
             navigator.share
           ) {
@@ -752,10 +2059,6 @@ function attachRegistrationGateEvents() {
           }
 
 
-          /*
-           * Clipboard Fallback
-           */
-
           if (
             navigator.clipboard &&
             navigator.clipboard.writeText
@@ -776,21 +2079,12 @@ function attachRegistrationGateEvents() {
           }
 
 
-          /*
-           * Letzter Fallback
-           */
-
           showAuthMessage(
             `Bitte teile diesen Link mit jemandem: ${HYPE_SHARE_URL}`,
             "success"
           );
 
         } catch (error) {
-
-          /*
-           * User hat das native Share Sheet
-           * geschlossen.
-           */
 
           if (
             error?.name ===
@@ -917,6 +2211,8 @@ function updateAuthMode() {
 
   ensureFirstNameField();
 
+  ensureForgotPasswordLink();
+
 
   if (isRegisterMode) {
 
@@ -955,6 +2251,8 @@ function updateAuthMode() {
     updateFirstNameField();
 
     updateRegistrationSubmitState();
+
+    updateForgotPasswordLink();
 
     return;
 
@@ -998,6 +2296,8 @@ function updateAuthMode() {
   renderRegistrationGate();
 
   updateFirstNameField();
+
+  updateForgotPasswordLink();
 
 }
 
@@ -1082,10 +2382,14 @@ async function signIn() {
   const {
     error
   } =
-    await supabaseClient.auth.signInWithPassword({
-      email,
-      password
-    });
+    await supabaseClient.auth
+      .signInWithPassword({
+
+        email,
+
+        password
+
+      });
 
 
   setAuthLoading(false);
@@ -1120,14 +2424,6 @@ async function signIn() {
 ========================= */
 
 async function signUp() {
-
-  /*
-   * Sicherheits-/UX-Gate.
-   * Wichtig:
-   * Diese beiden Schritte können im Browser
-   * nicht technisch verifiziert werden.
-   * Sie werden vom Nutzer bestätigt.
-   */
 
   if (
     !instagramCompleted ||
@@ -1218,24 +2514,25 @@ async function signUp() {
     data,
     error
   } =
-    await supabaseClient.auth.signUp({
+    await supabaseClient.auth
+      .signUp({
 
-      email,
+        email,
 
-      password,
+        password,
 
-      options: {
+        options: {
 
-        data: {
+          data: {
 
-          first_name:
-            firstName
+            first_name:
+              firstName
+
+          }
 
         }
 
-      }
-
-    });
+      });
 
 
   setAuthLoading(false);
@@ -1260,11 +2557,6 @@ async function signUp() {
   }
 
 
-  /*
-   * Falls Supabase direkt eine Session erzeugt,
-   * ist der Account sofort eingeloggt.
-   */
-
   if (
     data &&
     data.session
@@ -1278,10 +2570,6 @@ async function signUp() {
 
   }
 
-
-  /*
-   * Falls E-Mail-Bestätigung aktiviert ist.
-   */
 
   clearGateProgress();
 
@@ -1338,16 +2626,17 @@ async function updateProfileFirstName(
     data,
     error
   } =
-    await supabaseClient.auth.updateUser({
+    await supabaseClient.auth
+      .updateUser({
 
-      data: {
+        data: {
 
-        first_name:
-          cleanName
+          first_name:
+            cleanName
 
-      }
+        }
 
-    });
+      });
 
 
   if (error) {
@@ -1390,7 +2679,8 @@ async function getCurrentUser() {
     data,
     error
   } =
-    await supabaseClient.auth.getUser();
+    await supabaseClient.auth
+      .getUser();
 
 
   if (error) {
@@ -1483,6 +2773,17 @@ function getAuthErrorMessage(
   }
 
 
+  if (
+    message.includes(
+      "same password"
+    )
+  ) {
+
+    return "Das neue Passwort muss sich vom bisherigen Passwort unterscheiden.";
+
+  }
+
+
   return (
     error?.message ||
     "Es ist ein Fehler aufgetreten."
@@ -1520,6 +2821,7 @@ function showApp() {
       "bottomNav"
     );
 
+
   if (bottomNav) {
 
     bottomNav.classList.remove(
@@ -1528,11 +2830,6 @@ function showApp() {
 
   }
 
-
-  /*
-   * app.js bekommt ein klares Signal,
-   * dass der Auth-Status fertig ist.
-   */
 
   window.dispatchEvent(
     new CustomEvent(
@@ -1572,6 +2869,7 @@ function showLogin() {
       "bottomNav"
     );
 
+
   if (bottomNav) {
 
     bottomNav.classList.add(
@@ -1579,6 +2877,13 @@ function showLogin() {
     );
 
   }
+
+
+  /*
+   * Passwort-Reset-Ansicht schließen.
+   */
+
+  hidePasswordResetView();
 
 
   if (authForm) {
@@ -1606,7 +2911,8 @@ async function logout() {
   const {
     error
   } =
-    await supabaseClient.auth.signOut();
+    await supabaseClient.auth
+      .signOut();
 
 
   if (error) {
@@ -1699,12 +3005,6 @@ if (authSwitch) {
 
       if (isRegisterMode) {
 
-        /*
-         * Bei jedem bewussten Wechsel
-         * in die Registrierung beginnen
-         * wir das Gate sauber neu.
-         */
-
         loadGateProgress();
 
       } else {
@@ -1755,9 +3055,40 @@ if (authSwitch) {
 supabaseClient.auth.onAuthStateChange(
   (event, session) => {
 
+    /*
+     * GANZ WICHTIG:
+     *
+     * Wenn der Nutzer den Link aus der
+     * Passwort-Reset-Mail anklickt, meldet
+     * Supabase PASSWORD_RECOVERY.
+     *
+     * Dann NICHT die normale App öffnen,
+     * sondern das neue Passwortformular.
+     */
+
+    if (
+      event ===
+      "PASSWORD_RECOVERY"
+    ) {
+
+      showPasswordResetView();
+
+      return;
+
+    }
+
+
+    /*
+     * Normale eingeloggte Session.
+     */
+
     if (session) {
 
-      showApp();
+      if (!isPasswordRecovery) {
+
+        showApp();
+
+      }
 
       return;
 
@@ -1768,6 +3099,20 @@ supabaseClient.auth.onAuthStateChange(
       event === "SIGNED_OUT" ||
       event === "INITIAL_SESSION"
     ) {
+
+      /*
+       * Während eines Passwort-Recovery-Flows
+       * darf die Login-Ansicht nicht dazwischenfunken.
+       */
+
+      if (
+        isPasswordRecovery
+      ) {
+
+        return;
+
+      }
+
 
       showLogin();
 
@@ -1787,7 +3132,8 @@ async function initAuth() {
     data,
     error
   } =
-    await supabaseClient.auth.getSession();
+    await supabaseClient.auth
+      .getSession();
 
 
   if (error) {
@@ -1809,11 +3155,25 @@ async function initAuth() {
   }
 
 
-  if (data.session) {
+  /*
+   * Wenn die Seite über einen Recovery-Link
+   * geöffnet wurde, übernimmt das
+   * PASSWORD_RECOVERY-Event.
+   *
+   * Wir öffnen hier deshalb nur die normale
+   * App, wenn kein Recovery-Flow aktiv ist.
+   */
+
+  if (
+    data.session &&
+    !isPasswordRecovery
+  ) {
 
     showApp();
 
-  } else {
+  } else if (
+    !isPasswordRecovery
+  ) {
 
     showLogin();
 
@@ -1827,6 +3187,10 @@ async function initAuth() {
 ========================= */
 
 ensureFirstNameField();
+
+ensureForgotPasswordLink();
+
+ensurePasswordResetView();
 
 loadGateProgress();
 
