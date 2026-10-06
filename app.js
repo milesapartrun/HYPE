@@ -380,6 +380,291 @@ const logoutBtn =
   );
 
 /* =========================
+   HYPE ATHLETEN-COUNT
+========================= */
+
+/*
+ * Die drei Funktionen stehen bewusst
+ * AUSSERHALB von renderWeeklyInsight().
+ *
+ * Dadurch bleiben sie global verfügbar
+ * und werden nicht bei jedem Render
+ * neu definiert.
+ */
+
+function ensureHypeAthleteCountStyles() {
+  if (
+    document.getElementById(
+      "hypeAthleteCountStyles"
+    )
+  ) {
+    return;
+  }
+
+  const style =
+    document.createElement("style");
+
+  style.id =
+    "hypeAthleteCountStyles";
+
+  style.textContent = `
+    #hypeAthleteCount {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      width: 100%;
+      margin-top: 18px;
+      margin-bottom: 18px;
+      padding: 16px 17px;
+      border: 1px solid rgba(215,255,63,.16);
+      border-radius: 16px;
+      background:
+        linear-gradient(
+          135deg,
+          rgba(215,255,63,.055),
+          rgba(255,255,255,.012)
+        ),
+        #12151a;
+      box-sizing: border-box;
+    }
+
+    #hypeAthleteCount.hidden {
+      display: none !important;
+    }
+
+    #hypeAthleteCount .hype-athlete-count-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex: 0 0 auto;
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: rgba(215,255,63,.08);
+      color: #d7ff3f;
+      font-size: 19px;
+      line-height: 1;
+    }
+
+    #hypeAthleteCount .hype-athlete-count-content {
+      min-width: 0;
+    }
+
+    #hypeAthleteCount .hype-athlete-count-number {
+      display: inline-block;
+      margin-right: 5px;
+      color: #d7ff3f;
+      font-size: 19px;
+      line-height: 1;
+      font-weight: 900;
+      letter-spacing: -.02em;
+    }
+
+    #hypeAthleteCount .hype-athlete-count-text {
+      color: #9aa1aa;
+      font-size: 12px;
+      line-height: 1.4;
+      font-weight: 650;
+    }
+
+    @media (max-width: 520px) {
+      #hypeAthleteCount {
+        padding: 15px;
+      }
+
+      #hypeAthleteCount .hype-athlete-count-number {
+        font-size: 18px;
+      }
+
+      #hypeAthleteCount .hype-athlete-count-text {
+        font-size: 11px;
+      }
+    }
+  `;
+
+  document.head.appendChild(style);
+}
+
+/*
+ * Erstellt die Athleten-Anzeige genau
+ * EINMAL.
+ *
+ * Wichtig:
+ * Sie wird nicht mehr hinter weeklyInsight
+ * eingefügt, sondern ans Ende von planView.
+ *
+ * Dadurch befindet sie sich wirklich
+ * unten im Plan-Bereich.
+ */
+
+function ensureHypeAthleteCountElement() {
+  if (!planView) {
+    return null;
+  }
+
+  let container =
+    document.getElementById(
+      "hypeAthleteCount"
+    );
+
+  if (container) {
+    return container;
+  }
+
+  ensureHypeAthleteCountStyles();
+
+  container =
+    document.createElement("div");
+
+  container.id =
+    "hypeAthleteCount";
+
+  container.className =
+    "hidden";
+
+  container.innerHTML = `
+    <div class="hype-athlete-count-icon">
+      ✦
+    </div>
+
+    <div class="hype-athlete-count-content">
+
+      <strong
+        id="hypeAthleteCountNumber"
+        class="hype-athlete-count-number"
+      >
+        …
+      </strong>
+
+      <span
+        class="hype-athlete-count-text"
+      >
+        Athleten sind bereits bei HYPE.
+      </span>
+
+    </div>
+  `;
+
+  /*
+   * GANZ WICHTIG:
+   *
+   * Nicht mehr:
+   *
+   * weeklyInsight.insertAdjacentElement(...)
+   *
+   * sondern:
+   *
+   * planView.appendChild(...)
+   *
+   * Damit landet die Anzeige am Ende
+   * des gesamten Plan-Bereichs.
+   */
+
+  planView.appendChild(
+    container
+  );
+
+  return container;
+}
+
+/*
+ * Lädt ausschließlich die öffentliche
+ * Anzahl der registrierten HYPE-Athleten.
+ *
+ * Erwartet:
+ *
+ * get_hype_athlete_count()
+ *
+ * als Supabase RPC mit einer
+ * numerischen Rückgabe.
+ */
+
+async function loadHypeAthleteCount() {
+  const container =
+    ensureHypeAthleteCountElement();
+
+  if (!container) {
+    return;
+  }
+
+  const numberElement =
+    document.getElementById(
+      "hypeAthleteCountNumber"
+    );
+
+  if (!numberElement) {
+    return;
+  }
+
+  /*
+   * Supabase kann beim ersten Render
+   * noch nicht verfügbar sein.
+   *
+   * In diesem Fall bleibt die Anzeige
+   * zunächst unsichtbar und wird beim
+   * Auth-Event erneut geladen.
+   */
+
+  if (
+    typeof supabaseClient ===
+    "undefined" ||
+    !supabaseClient
+  ) {
+    container.classList.add(
+      "hidden"
+    );
+
+    return;
+  }
+
+  try {
+    const {
+      data,
+      error
+    } =
+      await supabaseClient.rpc(
+        "get_hype_athlete_count"
+      );
+
+    if (error) {
+      throw error;
+    }
+
+    const athleteCount =
+      Number(data);
+
+    if (
+      !Number.isFinite(
+        athleteCount
+      )
+    ) {
+      throw new Error(
+        "Ungültige Athletenzahl."
+      );
+    }
+
+    numberElement.textContent =
+      athleteCount.toLocaleString(
+        "de-DE"
+      );
+
+    container.classList.remove(
+      "hidden"
+    );
+
+  } catch (error) {
+    console.error(
+      "HYPE athlete count error:",
+      error
+    );
+
+    container.classList.add(
+      "hidden"
+    );
+  }
+}
+
+/* =========================
    PROFILE CLEANUP
 ========================= */
 
@@ -499,10 +784,6 @@ function ensureProfileShareStyles() {
     #profileView #weeklyShareCard {
       overflow: hidden;
     }
-
-    /* =========================
-       ACCOUNT
-    ========================= */
 
     #profileView .hype-account-details {
       position: relative !important;
@@ -640,10 +921,6 @@ function ensureProfileShareStyles() {
         rgba(215,255,63,.65);
     }
 
-    /* =========================
-       PROFILBILD
-    ========================= */
-
     #profileView .hype-account-details
     .hype-profile-avatar-display {
       grid-area: avatar !important;
@@ -732,10 +1009,6 @@ function ensureProfileShareStyles() {
     #profileView .hype-profile-avatar-button {
       display: none !important;
     }
-
-    /* =========================
-       PROFIL-DIALOG
-    ========================= */
 
     #profileDialog .hype-profile-image-editor {
       display: flex;
@@ -859,10 +1132,6 @@ function ensureProfileShareStyles() {
 
       cursor: pointer;
     }
-
-    /* =========================
-       WOCHEN-SHARE NAVIGATION
-    ========================= */
 
     #profileView .hype-share-week-navigation {
       display: grid;
@@ -1046,10 +1315,6 @@ function ensureProfileShareStyles() {
       overflow: hidden !important;
     }
 
-    /* =========================
-       7 TAGE
-    ========================= */
-
     #profileView #weeklyShareDays {
       display: grid;
 
@@ -1215,10 +1480,6 @@ function ensureProfileShareStyles() {
         );
     }
 
-    /* =========================
-       SUMMARY
-    ========================= */
-
     #profileView #weeklyShareSummary {
       margin-top: 16px;
     }
@@ -1337,10 +1598,6 @@ function ensureProfileShareStyles() {
       border-radius: 13px;
     }
 
-    /* =========================
-       INSTAGRAM-VORSCHAU
-    ========================= */
-
     #profileView .weekly-share-image-preview {
       margin-top: 18px;
 
@@ -1419,10 +1676,6 @@ function ensureProfileShareStyles() {
       background: #0b0d10;
     }
 
-    /* =========================
-       EMPFEHLEN
-    ========================= */
-
     #profileView .hype-referral-title {
       display: block !important;
 
@@ -1451,10 +1704,6 @@ function ensureProfileShareStyles() {
 
       word-break: keep-all !important;
     }
-
-    /* =========================
-       TRAINING AKTIONEN
-    ========================= */
 
     .session-actions {
       display: flex;
@@ -1526,10 +1775,6 @@ function ensureProfileShareStyles() {
 
       color: #d9dde2;
     }
-
-    /* =========================
-       COPY / MOVE DIALOG
-    ========================= */
 
     .hype-action-dialog {
       width: min(
@@ -3906,9 +4151,6 @@ function sessionsForYear(
    / VERSCHIEBEN
 ========================= */
 
-/*
- * Erstellt eine neue eindeutige ID.
- */
 function createSessionId() {
   return (
     `${Date.now()}-${Math.random()
@@ -3917,10 +4159,6 @@ function createSessionId() {
   );
 }
 
-/*
- * Liefert die sieben Tage der Woche,
- * in der sich das Training befindet.
- */
 function getWeekDatesForSession(
   session
 ) {
@@ -3949,10 +4187,6 @@ function getWeekDatesForSession(
   );
 }
 
-/*
- * Deutsche Darstellung eines
- * Datums für die Aktionsdialoge.
- */
 function formatActionDate(
   date
 ) {
@@ -3997,10 +4231,6 @@ function formatActionDate(
   return `${weekday}, ${day}. ${month}${todayText}`;
 }
 
-/*
- * Schließt einen der dynamisch
- * erzeugten Aktionsdialoge.
- */
 function closeHypeActionDialog(
   dialog
 ) {
@@ -4027,10 +4257,6 @@ function closeHypeActionDialog(
   );
 }
 
-/*
- * Baut den gemeinsamen Kopf
- * für Copy/Move-Dialoge.
- */
 function buildActionDialogTraining(
   session
 ) {
@@ -4074,13 +4300,6 @@ function buildActionDialogTraining(
   `;
 }
 
-/*
- * Dialog zum Wiederverwenden.
- *
- * Standardmäßig ist HEUTE ausgewählt.
- * Es kann aber jedes beliebige Datum
- * gewählt werden.
- */
 function openCopyDialog(
   session
 ) {
@@ -4226,10 +4445,6 @@ function openCopyDialog(
         dialog
       );
 
-      /*
-       * Nach dem Kopieren direkt
-       * auf den Zieltag springen.
-       */
       selected =
         parseDate(
           targetDate
@@ -4237,12 +4452,6 @@ function openCopyDialog(
 
       renderAll();
 
-      /*
-       * Kleine Rückmeldung, ohne
-       * den Nutzer mit einem
-       * weiteren Bestätigungsdialog
-       * aufzuhalten.
-       */
       setTimeout(
         () => {
           alert(
@@ -4290,14 +4499,6 @@ function openCopyDialog(
   );
 }
 
-/*
- * Dialog zum Verschieben.
- *
- * Wichtig:
- * Es werden ausschließlich die
- * sieben Tage derselben Woche
- * angeboten.
- */
 function openMoveDialog(
   session
 ) {
@@ -4469,10 +4670,6 @@ function openMoveDialog(
         dialog
       );
 
-      /*
-       * Nach dem Verschieben
-       * direkt zum neuen Tag springen.
-       */
       selected =
         parseDate(
           targetDate
@@ -6150,6 +6347,27 @@ function renderPlan() {
   renderSelectedDay();
 
   renderWeeklyInsight();
+
+  /*
+   * Athleten-Anzeige IMMER sicherstellen.
+   *
+   * Sie wird erst nach dem kompletten
+   * Plan-Inhalt an planView angehängt
+   * und sitzt dadurch ganz unten.
+   */
+
+  ensureHypeAthleteCountElement();
+
+  /*
+   * RPC laden.
+   *
+   * Wenn Supabase zu diesem Zeitpunkt
+   * noch nicht bereit ist, übernimmt
+   * später der Auth-Listener den zweiten
+   * Ladeversuch.
+   */
+
+  loadHypeAthleteCount();
 }
 
 function renderWeekStrip() {
@@ -6634,10 +6852,6 @@ function attachSessionEvents(
           }
         );
 
-        /*
-         * NEU:
-         * Training wiederverwenden.
-         */
         if (copyButton) {
           copyButton.addEventListener(
             "click",
@@ -6649,11 +6863,6 @@ function attachSessionEvents(
           );
         }
 
-        /*
-         * NEU:
-         * Training innerhalb der
-         * aktuellen Woche verschieben.
-         */
         if (moveButton) {
           moveButton.addEventListener(
             "click",
@@ -6698,269 +6907,17 @@ function attachSessionEvents(
    WEEKLY INSIGHT
 ========================= */
 
+/*
+ * WICHTIG:
+ *
+ * Die Athleten-Funktionen stehen NICHT
+ * mehr hier drin.
+ *
+ * renderWeeklyInsight() kümmert sich
+ * ausschließlich um den Wochenstatus.
+ */
+
 function renderWeeklyInsight() {
-  /* =========================
-   HYPE ATHLETEN-COUNT
-========================= */
-
-function ensureHypeAthleteCountStyles() {
-  if (
-    document.getElementById(
-      "hypeAthleteCountStyles"
-    )
-  ) {
-    return;
-  }
-
-  const style =
-    document.createElement("style");
-
-  style.id =
-    "hypeAthleteCountStyles";
-
-  style.textContent = `
-    #hypeAthleteCount {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      width: 100%;
-      margin-top: 12px;
-      padding: 16px 17px;
-      border: 1px solid rgba(215,255,63,.16);
-      border-radius: 16px;
-      background:
-        linear-gradient(
-          135deg,
-          rgba(215,255,63,.055),
-          rgba(255,255,255,.012)
-        ),
-        #12151a;
-      box-sizing: border-box;
-    }
-
-    #hypeAthleteCount.hidden {
-      display: none !important;
-    }
-
-    #hypeAthleteCount .hype-athlete-count-icon {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex: 0 0 auto;
-      width: 40px;
-      height: 40px;
-      border-radius: 12px;
-      background: rgba(215,255,63,.08);
-      color: #d7ff3f;
-      font-size: 19px;
-      line-height: 1;
-    }
-
-    #hypeAthleteCount .hype-athlete-count-content {
-      min-width: 0;
-    }
-
-    #hypeAthleteCount
-    .hype-athlete-count-number {
-      display: inline-block;
-      margin-right: 5px;
-      color: #d7ff3f;
-      font-size: 19px;
-      line-height: 1;
-      font-weight: 900;
-      letter-spacing: -.02em;
-    }
-
-    #hypeAthleteCount
-    .hype-athlete-count-text {
-      color: #9aa1aa;
-      font-size: 12px;
-      line-height: 1.4;
-      font-weight: 650;
-    }
-
-    @media (max-width: 520px) {
-      #hypeAthleteCount {
-        padding: 15px;
-      }
-
-      #hypeAthleteCount
-      .hype-athlete-count-number {
-        font-size: 18px;
-      }
-
-      #hypeAthleteCount
-      .hype-athlete-count-text {
-        font-size: 11px;
-      }
-    }
-  `;
-
-  document.head.appendChild(style);
-}
-
-
-/*
- * Baut die Community-Anzeige automatisch
- * unter dem Wochenstatus ein.
- *
- * Dadurch ist es egal, ob die Anzeige
- * bereits im index.html vorhanden ist.
- */
-function ensureHypeAthleteCountElement() {
-  if (!weeklyInsight) {
-    return null;
-  }
-
-  let container =
-    document.getElementById(
-      "hypeAthleteCount"
-    );
-
-  if (container) {
-    return container;
-  }
-
-  ensureHypeAthleteCountStyles();
-
-  container =
-    document.createElement("div");
-
-  container.id =
-    "hypeAthleteCount";
-
-  container.className =
-    "hidden";
-
-  container.innerHTML = `
-    <div class="hype-athlete-count-icon">
-      ✦
-    </div>
-
-    <div class="hype-athlete-count-content">
-
-      <strong
-        id="hypeAthleteCountNumber"
-        class="hype-athlete-count-number"
-      >
-        …
-      </strong>
-
-      <span
-        class="hype-athlete-count-text"
-      >
-        Athleten sind bereits bei HYPE.
-      </span>
-
-    </div>
-  `;
-
-  /*
-   * Die Anzeige kommt direkt unter
-   * den Wochenstatus.
-   */
-  weeklyInsight.insertAdjacentElement(
-    "afterend",
-    container
-  );
-
-  return container;
-}
-
-
-/*
- * Lädt ausschließlich die öffentliche
- * Anzahl der registrierten HYPE-Athleten.
- *
- * Die Supabase-Funktion
- * get_hype_athlete_count()
- * gibt nur eine Zahl zurück.
- */
-async function loadHypeAthleteCount() {
-  const container =
-    ensureHypeAthleteCountElement();
-
-  if (!container) {
-    return;
-  }
-
-  const numberElement =
-    document.getElementById(
-      "hypeAthleteCountNumber"
-    );
-
-  if (!numberElement) {
-    return;
-  }
-
-  /*
-   * Falls Supabase noch nicht verfügbar
-   * ist, Anzeige ausblenden.
-   */
-  if (
-    typeof supabaseClient ===
-    "undefined"
-  ) {
-    container.classList.add(
-      "hidden"
-    );
-
-    return;
-  }
-
-  try {
-    const {
-      data,
-      error
-    } =
-      await supabaseClient.rpc(
-        "get_hype_athlete_count"
-      );
-
-    if (error) {
-      throw error;
-    }
-
-    const athleteCount =
-      Number(data);
-
-    /*
-     * Nur eine gültige Zahl anzeigen.
-     */
-    if (
-      !Number.isFinite(
-        athleteCount
-      )
-    ) {
-      throw new Error(
-        "Ungültige Athletenzahl."
-      );
-    }
-
-    numberElement.textContent =
-      athleteCount.toLocaleString(
-        "de-DE"
-      );
-
-    container.classList.remove(
-      "hidden"
-    );
-
-  } catch (error) {
-    console.error(
-      "HYPE athlete count error:",
-      error
-    );
-
-    /*
-     * Wenn die Zahl nicht geladen werden kann,
-     * soll kein kaputtes Element sichtbar sein.
-     */
-    container.classList.add(
-      "hidden"
-    );
-  }
-}
   const weekSessions =
     sessionsForWeek(
       selected
@@ -9046,6 +9003,21 @@ if (
               "hidden"
             );
           }
+
+          /*
+           * WICHTIG:
+           *
+           * Nach bestätigter Supabase-Session
+           * wird der Athleten-Count erneut
+           * geladen.
+           *
+           * Dadurch funktioniert es auch,
+           * wenn Supabase beim initialen
+           * renderPlan() noch nicht bereit war.
+           */
+
+          loadHypeAthleteCount();
+
         } else {
           if (bottomNav) {
             bottomNav.classList.add(
