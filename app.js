@@ -422,7 +422,7 @@ function ensureHypeAthleteCountElement() {
       <span
         class="hype-athlete-count-text"
       >
-        Athleten sind bereits bei HYPE.
+        Athleten trainieren bereits mit HYPE.
       </span>
     </div>
   `;
@@ -2904,6 +2904,7 @@ async function saveProfileName() {
     alert(
       "Der Vorname darf maximal 40 Zeichen haben."
     );
+    profileFirstNameInput.focus();
     return;
   }
   if (
