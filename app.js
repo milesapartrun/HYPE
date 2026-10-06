@@ -1452,6 +1452,365 @@ function ensureProfileShareStyles() {
       word-break: keep-all !important;
     }
 
+    /* =========================
+       TRAINING AKTIONEN
+    ========================= */
+
+    .session-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .session-actions .hype-action-btn {
+      appearance: none;
+      -webkit-appearance: none;
+
+      min-height: 34px;
+
+      padding: 0 11px;
+
+      border: 1px solid
+        rgba(255,255,255,.10);
+
+      border-radius: 10px;
+
+      background: #15181d;
+
+      color: #aeb4bc;
+
+      font-family: inherit;
+
+      font-size: 10px;
+
+      line-height: 1;
+
+      font-weight: 800;
+
+      cursor: pointer;
+
+      transition:
+        background .15s ease,
+        border-color .15s ease,
+        color .15s ease,
+        transform .15s ease;
+    }
+
+    .session-actions .hype-action-btn:hover {
+      background: #1d2127;
+
+      border-color:
+        rgba(215,255,63,.35);
+
+      color: #d7ff3f;
+    }
+
+    .session-actions .hype-action-btn:active {
+      transform: scale(.97);
+    }
+
+    .session-actions .hype-action-btn.copy {
+      border-color:
+        rgba(215,255,63,.18);
+
+      color: #d7ff3f;
+
+      background:
+        rgba(215,255,63,.045);
+    }
+
+    .session-actions .hype-action-btn.move {
+      border-color:
+        rgba(255,255,255,.12);
+
+      color: #d9dde2;
+    }
+
+    /* =========================
+       COPY / MOVE DIALOG
+    ========================= */
+
+    .hype-action-dialog {
+      width: min(
+        92vw,
+        440px
+      );
+
+      max-width: 440px;
+
+      padding: 0;
+
+      border: 1px solid
+        rgba(255,255,255,.10);
+
+      border-radius: 22px;
+
+      background: #101318;
+
+      color: #f5f6f7;
+
+      box-shadow:
+        0 30px 90px
+        rgba(0,0,0,.55);
+    }
+
+    .hype-action-dialog::backdrop {
+      background:
+        rgba(0,0,0,.72);
+
+      backdrop-filter:
+        blur(4px);
+    }
+
+    .hype-action-dialog-inner {
+      padding: 24px;
+    }
+
+    .hype-action-dialog-eyebrow {
+      margin-bottom: 8px;
+
+      color: #8d949e;
+
+      font-size: 9px;
+
+      line-height: 1;
+
+      font-weight: 850;
+
+      letter-spacing: .16em;
+
+      text-transform: uppercase;
+    }
+
+    .hype-action-dialog-title {
+      margin: 0;
+
+      color: #f5f6f7;
+
+      font-size: 22px;
+
+      line-height: 1.1;
+
+      font-weight: 900;
+
+      letter-spacing: -.025em;
+    }
+
+    .hype-action-dialog-training {
+      display: flex;
+
+      align-items: center;
+
+      gap: 12px;
+
+      margin-top: 18px;
+
+      padding: 13px 14px;
+
+      border: 1px solid
+        rgba(255,255,255,.08);
+
+      border-radius: 14px;
+
+      background: #15181d;
+    }
+
+    .hype-action-dialog-training-icon {
+      flex: 0 0 auto;
+
+      font-size: 28px;
+
+      line-height: 1;
+    }
+
+    .hype-action-dialog-training-content {
+      min-width: 0;
+    }
+
+    .hype-action-dialog-training-content strong {
+      display: block;
+
+      overflow: hidden;
+
+      color: #f5f6f7;
+
+      font-size: 13px;
+
+      line-height: 1.3;
+
+      font-weight: 850;
+
+      text-overflow: ellipsis;
+
+      white-space: nowrap;
+    }
+
+    .hype-action-dialog-training-content span {
+      display: block;
+
+      margin-top: 3px;
+
+      color: #7f8791;
+
+      font-size: 10px;
+
+      line-height: 1.35;
+    }
+
+    .hype-action-dialog-label {
+      display: block;
+
+      margin-top: 20px;
+
+      color: #9aa1aa;
+
+      font-size: 10px;
+
+      line-height: 1.3;
+
+      font-weight: 800;
+
+      letter-spacing: .04em;
+    }
+
+    .hype-action-dialog-date {
+      display: block;
+
+      width: 100%;
+
+      min-height: 48px;
+
+      margin-top: 8px;
+
+      padding: 0 13px;
+
+      border: 1px solid
+        rgba(255,255,255,.10);
+
+      border-radius: 12px;
+
+      background: #15181d;
+
+      color: #f5f6f7;
+
+      font-family: inherit;
+
+      font-size: 13px;
+
+      box-sizing: border-box;
+
+      outline: none;
+    }
+
+    .hype-action-dialog-date:focus {
+      border-color:
+        rgba(215,255,63,.45);
+
+      box-shadow:
+        0 0 0 3px
+        rgba(215,255,63,.06);
+    }
+
+    .hype-action-dialog-select {
+      display: block;
+
+      width: 100%;
+
+      min-height: 48px;
+
+      margin-top: 8px;
+
+      padding: 0 13px;
+
+      border: 1px solid
+        rgba(255,255,255,.10);
+
+      border-radius: 12px;
+
+      background: #15181d;
+
+      color: #f5f6f7;
+
+      font-family: inherit;
+
+      font-size: 13px;
+
+      box-sizing: border-box;
+
+      outline: none;
+    }
+
+    .hype-action-dialog-select:focus {
+      border-color:
+        rgba(215,255,63,.45);
+
+      box-shadow:
+        0 0 0 3px
+        rgba(215,255,63,.06);
+    }
+
+    .hype-action-dialog-hint {
+      margin-top: 9px;
+
+      color: #737b86;
+
+      font-size: 10px;
+
+      line-height: 1.45;
+    }
+
+    .hype-action-dialog-actions {
+      display: grid;
+
+      grid-template-columns:
+        1fr 1fr;
+
+      gap: 9px;
+
+      margin-top: 22px;
+    }
+
+    .hype-action-dialog-actions button {
+      min-height: 46px;
+
+      padding: 0 14px;
+
+      border-radius: 12px;
+
+      font-family: inherit;
+
+      font-size: 11px;
+
+      font-weight: 850;
+
+      cursor: pointer;
+    }
+
+    .hype-action-dialog-cancel {
+      border: 1px solid
+        rgba(255,255,255,.10);
+
+      background: #15181d;
+
+      color: #9aa1aa;
+    }
+
+    .hype-action-dialog-confirm {
+      border: 1px solid
+        rgba(215,255,63,.42);
+
+      background:
+        rgba(215,255,63,.10);
+
+      color: #d7ff3f;
+    }
+
+    .hype-action-dialog-confirm:hover {
+      background:
+        rgba(215,255,63,.16);
+    }
+
     @media (max-width: 620px) {
       #profileView .hype-account-details {
         grid-template-columns:
@@ -1545,6 +1904,10 @@ function ensureProfileShareStyles() {
       #profileView .weekly-share-stats.has-distance {
         grid-template-columns:
           repeat(2, minmax(0, 1fr));
+      }
+
+      .session-actions .hype-action-btn {
+        flex: 1 1 auto;
       }
     }
 
@@ -1987,18 +2350,11 @@ function renderProfileAccountImage(
     return;
   }
 
-  /*
-   * Der Account-Block muss existieren.
-   */
   let details =
     profileView.querySelector(
       ".hype-account-details"
     );
 
-  /*
-   * Falls der Block noch nicht existiert,
-   * hier zuverlässig erzeugen.
-   */
   if (!details && profileName) {
     const parent =
       profileName.parentElement;
@@ -2073,9 +2429,6 @@ function renderProfileAccountImage(
     return;
   }
 
-  /*
-   * Profilbild IMMER rechts erzeugen.
-   */
   let avatar =
     details.querySelector(
       ".hype-profile-avatar-display"
@@ -2100,9 +2453,6 @@ function renderProfileAccountImage(
     );
   }
 
-  /*
-   * Gespeichertes Bild anzeigen.
-   */
   if (image) {
     avatar.innerHTML =
       "";
@@ -2130,10 +2480,6 @@ function renderProfileAccountImage(
       "is-empty"
     );
   } else {
-    /*
-     * Noch kein Bild:
-     * Platzhalter anzeigen.
-     */
     avatar.innerHTML =
       "👤";
 
@@ -2155,10 +2501,6 @@ function polishProfileLayout() {
   if (!profileView) {
     return;
   }
-
-  /* =========================
-     ACCOUNT BLOCK
-  ========================= */
 
   if (
     profileName &&
@@ -2268,10 +2610,6 @@ function polishProfileLayout() {
       );
     }
 
-    /*
-     * Profilbild IMMER aus dem aktuellen
-     * Benutzerkonto laden.
-     */
     const userId =
       profileView.dataset.userId ||
       "";
@@ -2285,10 +2623,6 @@ function polishProfileLayout() {
       savedImage
     );
   }
-
-  /* =========================
-     ACCOUNT LABEL
-  ========================= */
 
   profileView
     .querySelectorAll(
@@ -2324,10 +2658,6 @@ function polishProfileLayout() {
         }
       }
     );
-
-  /* =========================
-     PROFILBILD / DATEI
-  ========================= */
 
   profileView
     .querySelectorAll(
@@ -3109,9 +3439,6 @@ async function renderProfile() {
     return;
   }
 
-  /*
-   * Benutzer-ID speichern.
-   */
   if (profileView) {
     profileView.dataset.userId =
       user.id;
@@ -3170,36 +3497,21 @@ async function renderProfile() {
       firstName;
   }
 
-  /*
-   * Account-Layout zuerst aufbauen.
-   */
   polishProfileLayout();
 
-  /*
-   * Danach gespeichertes Profilbild laden.
-   */
   const savedImage =
     getSavedProfileImage(
       user.id
     );
 
-  /*
-   * Profilbild rechts anzeigen.
-   */
   renderProfileAccountImage(
     savedImage
   );
 
-  /*
-   * Share-Bereich.
-   */
   renderWeeklySharePreview(
     displayName
   );
 
-  /*
-   * Dialog vorbereiten.
-   */
   if (profileDialog) {
     ensureProfileImageEditor(
       savedImage
@@ -3364,9 +3676,6 @@ async function saveProfileName() {
     const user =
       await getProfileUser();
 
-    /*
-     * Profilbild speichern.
-     */
     if (
       user &&
       pendingProfileImage
@@ -3382,10 +3691,6 @@ async function saveProfileName() {
 
     closeProfileDialog();
 
-    /*
-     * Profil komplett neu laden.
-     * Dadurch erscheint das Bild sofort rechts.
-     */
     await renderProfile();
 
   } catch (error) {
@@ -3593,6 +3898,638 @@ function sessionsForYear(
         session.date
       ).getFullYear() ===
       year
+  );
+}
+
+/* =========================
+   TRAINING WIEDERVERWENDEN
+   / VERSCHIEBEN
+========================= */
+
+/*
+ * Erstellt eine neue eindeutige ID.
+ */
+function createSessionId() {
+  return (
+    `${Date.now()}-${Math.random()
+      .toString(16)
+      .slice(2)}`
+  );
+}
+
+/*
+ * Liefert die sieben Tage der Woche,
+ * in der sich das Training befindet.
+ */
+function getWeekDatesForSession(
+  session
+) {
+  const sourceDate =
+    parseDate(
+      session.date
+    );
+
+  const start =
+    startOfWeek(
+      sourceDate
+    );
+
+  return Array.from(
+    {
+      length: 7
+    },
+    (
+      _,
+      index
+    ) =>
+      addDays(
+        start,
+        index
+      )
+  );
+}
+
+/*
+ * Deutsche Darstellung eines
+ * Datums für die Aktionsdialoge.
+ */
+function formatActionDate(
+  date
+) {
+  const weekday =
+    new Intl.DateTimeFormat(
+      "de-DE",
+      {
+        weekday: "short"
+      }
+    )
+      .format(date)
+      .replace(
+        ".",
+        ""
+      );
+
+  const day =
+    date.getDate();
+
+  const month =
+    new Intl.DateTimeFormat(
+      "de-DE",
+      {
+        month: "short"
+      }
+    )
+      .format(date)
+      .replace(
+        ".",
+        ""
+      );
+
+  const today =
+    iso(date) ===
+    iso(new Date());
+
+  const todayText =
+    today
+      ? " · Heute"
+      : "";
+
+  return `${weekday}, ${day}. ${month}${todayText}`;
+}
+
+/*
+ * Schließt einen der dynamisch
+ * erzeugten Aktionsdialoge.
+ */
+function closeHypeActionDialog(
+  dialog
+) {
+  if (!dialog) {
+    return;
+  }
+
+  if (
+    typeof dialog.close ===
+    "function"
+  ) {
+    dialog.close();
+  } else {
+    dialog.removeAttribute(
+      "open"
+    );
+  }
+
+  setTimeout(
+    () => {
+      dialog.remove();
+    },
+    50
+  );
+}
+
+/*
+ * Baut den gemeinsamen Kopf
+ * für Copy/Move-Dialoge.
+ */
+function buildActionDialogTraining(
+  session
+) {
+  return `
+    <div class="hype-action-dialog-training">
+
+      <div class="hype-action-dialog-training-icon">
+        ${esc(
+          getSportIcon(
+            session
+          )
+        )}
+      </div>
+
+      <div class="hype-action-dialog-training-content">
+
+        <strong>
+          ${esc(
+            session.title ||
+            "Training"
+          )}
+        </strong>
+
+        <span>
+          ${esc(
+            getSportLabel(
+              session
+            )
+          )}
+          ·
+          ${esc(
+            getSessionMetricText(
+              session
+            )
+          )}
+        </span>
+
+      </div>
+
+    </div>
+  `;
+}
+
+/*
+ * Dialog zum Wiederverwenden.
+ *
+ * Standardmäßig ist HEUTE ausgewählt.
+ * Es kann aber jedes beliebige Datum
+ * gewählt werden.
+ */
+function openCopyDialog(
+  session
+) {
+  const dialog =
+    document.createElement(
+      "dialog"
+    );
+
+  dialog.className =
+    "hype-action-dialog";
+
+  const today =
+    new Date();
+
+  const todayIso =
+    iso(today);
+
+  dialog.innerHTML = `
+    <div class="hype-action-dialog-inner">
+
+      <div class="hype-action-dialog-eyebrow">
+        TRAINING WIEDERVERWENDEN
+      </div>
+
+      <h2 class="hype-action-dialog-title">
+        Auf welchen Tag kopieren?
+      </h2>
+
+      ${buildActionDialogTraining(
+        session
+      )}
+
+      <label class="hype-action-dialog-label">
+        Zieldatum
+      </label>
+
+      <input
+        type="date"
+        class="hype-action-dialog-date"
+        value="${todayIso}"
+      >
+
+      <div class="hype-action-dialog-hint">
+        Es wird eine neue offene Einheit erstellt.
+        Erledigt-Status, tatsächliche Intensität
+        und Nach-Training-Notizen werden nicht übernommen.
+      </div>
+
+      <div class="hype-action-dialog-actions">
+
+        <button
+          type="button"
+          class="hype-action-dialog-cancel"
+        >
+          Abbrechen
+        </button>
+
+        <button
+          type="button"
+          class="hype-action-dialog-confirm"
+        >
+          Training kopieren
+        </button>
+
+      </div>
+
+    </div>
+  `;
+
+  document.body.appendChild(
+    dialog
+  );
+
+  const dateInput =
+    dialog.querySelector(
+      ".hype-action-dialog-date"
+    );
+
+  const cancelButton =
+    dialog.querySelector(
+      ".hype-action-dialog-cancel"
+    );
+
+  const confirmButton =
+    dialog.querySelector(
+      ".hype-action-dialog-confirm"
+    );
+
+  cancelButton.addEventListener(
+    "click",
+    () => {
+      closeHypeActionDialog(
+        dialog
+      );
+    }
+  );
+
+  confirmButton.addEventListener(
+    "click",
+    () => {
+      const targetDate =
+        dateInput.value;
+
+      if (!targetDate) {
+        alert(
+          "Bitte wähle ein Zieldatum aus."
+        );
+
+        dateInput.focus();
+
+        return;
+      }
+
+      const copiedSession = {
+        ...session,
+
+        id:
+          createSessionId(),
+
+        date:
+          targetDate,
+
+        completed:
+          false,
+
+        actualIntensity:
+          null,
+
+        postNotes:
+          "",
+
+        createdAt:
+          Date.now()
+      };
+
+      sessions.push(
+        copiedSession
+      );
+
+      save();
+
+      closeHypeActionDialog(
+        dialog
+      );
+
+      /*
+       * Nach dem Kopieren direkt
+       * auf den Zieltag springen.
+       */
+      selected =
+        parseDate(
+          targetDate
+        );
+
+      renderAll();
+
+      /*
+       * Kleine Rückmeldung, ohne
+       * den Nutzer mit einem
+       * weiteren Bestätigungsdialog
+       * aufzuhalten.
+       */
+      setTimeout(
+        () => {
+          alert(
+            `"${session.title}" wurde auf ${formatLongDate(
+              selected
+            )} kopiert.`
+          );
+        },
+        80
+      );
+    }
+  );
+
+  dialog.addEventListener(
+    "click",
+    event => {
+      if (
+        event.target ===
+        dialog
+      ) {
+        closeHypeActionDialog(
+          dialog
+        );
+      }
+    }
+  );
+
+  if (
+    typeof dialog.showModal ===
+    "function"
+  ) {
+    dialog.showModal();
+  } else {
+    dialog.setAttribute(
+      "open",
+      ""
+    );
+  }
+
+  setTimeout(
+    () => {
+      dateInput.focus();
+    },
+    50
+  );
+}
+
+/*
+ * Dialog zum Verschieben.
+ *
+ * Wichtig:
+ * Es werden ausschließlich die
+ * sieben Tage derselben Woche
+ * angeboten.
+ */
+function openMoveDialog(
+  session
+) {
+  const dialog =
+    document.createElement(
+      "dialog"
+    );
+
+  dialog.className =
+    "hype-action-dialog";
+
+  const weekDates =
+    getWeekDatesForSession(
+      session
+    );
+
+  const currentDate =
+    session.date;
+
+  const options =
+    weekDates
+      .map(
+        date => {
+          const dateValue =
+            iso(date);
+
+          const isCurrent =
+            dateValue ===
+            currentDate;
+
+          return `
+            <option
+              value="${dateValue}"
+              ${
+                isCurrent
+                  ? "selected"
+                  : ""
+              }
+            >
+              ${esc(
+                formatActionDate(
+                  date
+                )
+              )}
+              ${
+                isCurrent
+                  ? " · aktueller Tag"
+                  : ""
+              }
+            </option>
+          `;
+        }
+      )
+      .join("");
+
+  dialog.innerHTML = `
+    <div class="hype-action-dialog-inner">
+
+      <div class="hype-action-dialog-eyebrow">
+        TRAINING VERSCHIEBEN
+      </div>
+
+      <h2 class="hype-action-dialog-title">
+        Anderen Tag auswählen
+      </h2>
+
+      ${buildActionDialogTraining(
+        session
+      )}
+
+      <label class="hype-action-dialog-label">
+        Neuer Tag
+      </label>
+
+      <select
+        class="hype-action-dialog-select"
+      >
+        ${options}
+      </select>
+
+      <div class="hype-action-dialog-hint">
+        Du kannst dieses Training nur innerhalb
+        seiner aktuellen Woche verschieben.
+      </div>
+
+      <div class="hype-action-dialog-actions">
+
+        <button
+          type="button"
+          class="hype-action-dialog-cancel"
+        >
+          Abbrechen
+        </button>
+
+        <button
+          type="button"
+          class="hype-action-dialog-confirm"
+        >
+          Training verschieben
+        </button>
+
+      </div>
+
+    </div>
+  `;
+
+  document.body.appendChild(
+    dialog
+  );
+
+  const select =
+    dialog.querySelector(
+      ".hype-action-dialog-select"
+    );
+
+  const cancelButton =
+    dialog.querySelector(
+      ".hype-action-dialog-cancel"
+    );
+
+  const confirmButton =
+    dialog.querySelector(
+      ".hype-action-dialog-confirm"
+    );
+
+  cancelButton.addEventListener(
+    "click",
+    () => {
+      closeHypeActionDialog(
+        dialog
+      );
+    }
+  );
+
+  confirmButton.addEventListener(
+    "click",
+    () => {
+      const targetDate =
+        select.value;
+
+      if (!targetDate) {
+        alert(
+          "Bitte wähle einen Tag aus."
+        );
+
+        return;
+      }
+
+      if (
+        targetDate ===
+        session.date
+      ) {
+        closeHypeActionDialog(
+          dialog
+        );
+
+        return;
+      }
+
+      const oldDate =
+        session.date;
+
+      session.date =
+        targetDate;
+
+      save();
+
+      closeHypeActionDialog(
+        dialog
+      );
+
+      /*
+       * Nach dem Verschieben
+       * direkt zum neuen Tag springen.
+       */
+      selected =
+        parseDate(
+          targetDate
+        );
+
+      renderAll();
+
+      setTimeout(
+        () => {
+          alert(
+            `"${session.title}" wurde von ${formatLongDate(
+              parseDate(
+                oldDate
+              )
+            )} auf ${formatLongDate(
+              parseDate(
+                targetDate
+              )
+            )} verschoben.`
+          );
+        },
+        80
+      );
+    }
+  );
+
+  dialog.addEventListener(
+    "click",
+    event => {
+      if (
+        event.target ===
+        dialog
+      ) {
+        closeHypeActionDialog(
+          dialog
+        );
+      }
+    }
+  );
+
+  if (
+    typeof dialog.showModal ===
+    "function"
+  ) {
+    dialog.showModal();
+  } else {
+    dialog.setAttribute(
+      "open",
+      ""
+    );
+  }
+
+  setTimeout(
+    () => {
+      select.focus();
+    },
+    50
   );
 }
 
@@ -5543,6 +6480,24 @@ function renderSessionCard(
           × Löschen
         </button>
 
+        <button
+          type="button"
+          class="hype-action-btn copy"
+          data-action="copy"
+          title="Dieses Training als neue Einheit wiederverwenden"
+        >
+          ⧉ Wiederverwenden
+        </button>
+
+        <button
+          type="button"
+          class="hype-action-btn move"
+          data-action="move"
+          title="Dieses Training innerhalb der Woche verschieben"
+        >
+          ⇄ Verschieben
+        </button>
+
       </div>
 
     </article>
@@ -5585,6 +6540,16 @@ function attachSessionEvents(
         const deleteButton =
           card.querySelector(
             '[data-action="delete"]'
+          );
+
+        const copyButton =
+          card.querySelector(
+            '[data-action="copy"]'
+          );
+
+        const moveButton =
+          card.querySelector(
+            '[data-action="move"]'
           );
 
         const actualIntensity =
@@ -5668,6 +6633,37 @@ function attachSessionEvents(
             renderAll();
           }
         );
+
+        /*
+         * NEU:
+         * Training wiederverwenden.
+         */
+        if (copyButton) {
+          copyButton.addEventListener(
+            "click",
+            () => {
+              openCopyDialog(
+                session
+              );
+            }
+          );
+        }
+
+        /*
+         * NEU:
+         * Training innerhalb der
+         * aktuellen Woche verschieben.
+         */
+        if (moveButton) {
+          moveButton.addEventListener(
+            "click",
+            () => {
+              openMoveDialog(
+                session
+              );
+            }
+          );
+        }
 
         if (actualIntensity) {
           actualIntensity.addEventListener(
@@ -6361,7 +7357,8 @@ function attachMonthWeekNavigation() {
         weekCells[
           weekCells.length -
             1
-        ].dataset
+        ]
+          .dataset
           .date
       );
 
@@ -7237,9 +8234,7 @@ trainingForm.addEventListener(
     } else {
       sessions.push({
         id:
-          `${Date.now()}-${Math.random()
-            .toString(16)
-            .slice(2)}`,
+          createSessionId(),
 
         date:
           iso(selected),
