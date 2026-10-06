@@ -291,14 +291,21 @@ const logoutBtn =
 /* =========================
    HYPE ATHLETEN-COUNT
 ========================= */
+
 /*
- * Die drei Funktionen stehen bewusst
- * AUSSERHALB von renderWeeklyInsight().
+ * HYPE Athleten-Count
  *
- * Dadurch bleiben sie global verfügbar
- * und werden nicht bei jedem Render
- * neu definiert.
+ * Gestaltung bewusst angelehnt an
+ * den Wochenstatus:
+ *
+ * - kleine Überschrift darüber
+ * - abgerundete Card
+ * - gelber HYPE-Stern links
+ * - weiße, kräftige Headline
+ * - HYPE-Grün für die Anzahl
+ * - dezenter dunkler Hintergrund
  */
+
 function ensureHypeAthleteCountStyles() {
   if (
     document.getElementById(
@@ -307,20 +314,55 @@ function ensureHypeAthleteCountStyles() {
   ) {
     return;
   }
+
   const style =
     document.createElement("style");
+
   style.id =
     "hypeAthleteCountStyles";
+
   style.textContent = `
+    /*
+     * Äußere Section
+     *
+     * Die Überschrift sitzt bewusst
+     * außerhalb der Card.
+     */
+    #hypeAthleteCountSection {
+      width: 100%;
+      margin-top: 28px;
+      margin-bottom: 24px;
+      box-sizing: border-box;
+    }
+
+    /*
+     * Kleine HYPE-Überschrift
+     */
+    #hypeAthleteCountSection
+    .hype-athlete-count-heading {
+      margin: 0 0 10px 2px;
+      color: #8d949e;
+      font-size: 10px;
+      line-height: 1;
+      font-weight: 850;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+    }
+
+    /*
+     * Eigentliche Card
+     *
+     * Optisch nah am Wochenstatus.
+     */
     #hypeAthleteCount {
       display: flex;
       align-items: center;
       gap: 14px;
       width: 100%;
-      margin-top: 18px;
-      margin-bottom: 18px;
-      padding: 16px 17px;
-      border: 1px solid rgba(215,255,63,.16);
+      margin: 0;
+      padding: 18px 17px;
+      border: 1px solid
+        rgba(255,255,255,.08);
       border-radius: 16px;
       background:
         linear-gradient(
@@ -331,120 +373,210 @@ function ensureHypeAthleteCountStyles() {
         #12151a;
       box-sizing: border-box;
     }
+
     #hypeAthleteCount.hidden {
       display: none !important;
     }
-    #hypeAthleteCount .hype-athlete-count-icon {
+
+    /*
+     * Gelber HYPE-Stern
+     */
+    #hypeAthleteCount
+    .hype-athlete-count-icon {
       display: flex;
       align-items: center;
       justify-content: center;
       flex: 0 0 auto;
-      width: 40px;
-      height: 40px;
-      border-radius: 12px;
-      background: rgba(215,255,63,.08);
+      width: 42px;
+      height: 42px;
+      border-radius: 13px;
+      background:
+        rgba(215,255,63,.08);
       color: #d7ff3f;
-      font-size: 19px;
+      font-size: 20px;
       line-height: 1;
     }
-    #hypeAthleteCount .hype-athlete-count-content {
+
+    /*
+     * Textbereich
+     */
+    #hypeAthleteCount
+    .hype-athlete-count-content {
       min-width: 0;
     }
-    #hypeAthleteCount .hype-athlete-count-number {
-      display: inline-block;
-      margin-right: 5px;
+
+    /*
+     * Hauptheadline
+     *
+     * Genau wie "Wochenstatus":
+     * weiß, fett und prominent.
+     */
+    #hypeAthleteCount
+    .hype-athlete-count-title {
+      display: block;
+      margin: 0 0 5px;
+      color: #f5f6f7;
+      font-size: 14px;
+      line-height: 1.3;
+      font-weight: 900;
+      letter-spacing: -.015em;
+    }
+
+    /*
+     * Eigentliche Aussage
+     */
+    #hypeAthleteCount
+    .hype-athlete-count-text {
+      display: block;
+      color: #9aa1aa;
+      font-size: 12px;
+      line-height: 1.45;
+      font-weight: 650;
+    }
+
+    /*
+     * Zahl
+     */
+    #hypeAthleteCount
+    .hype-athlete-count-number {
+      display: inline;
+      margin-right: 4px;
       color: #d7ff3f;
-      font-size: 19px;
+      font-size: 16px;
       line-height: 1;
       font-weight: 900;
       letter-spacing: -.02em;
     }
-    #hypeAthleteCount .hype-athlete-count-text {
-      color: #9aa1aa;
-      font-size: 12px;
-      line-height: 1.4;
-      font-weight: 650;
-    }
+
     @media (max-width: 520px) {
+      #hypeAthleteCountSection {
+        margin-top: 24px;
+        margin-bottom: 20px;
+      }
+
       #hypeAthleteCount {
-        padding: 15px;
+        padding: 16px 15px;
+        gap: 13px;
       }
-      #hypeAthleteCount .hype-athlete-count-number {
-        font-size: 18px;
+
+      #hypeAthleteCount
+      .hype-athlete-count-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        font-size: 19px;
       }
-      #hypeAthleteCount .hype-athlete-count-text {
+
+      #hypeAthleteCount
+      .hype-athlete-count-title {
+        font-size: 13px;
+      }
+
+      #hypeAthleteCount
+      .hype-athlete-count-text {
         font-size: 11px;
+      }
+
+      #hypeAthleteCount
+      .hype-athlete-count-number {
+        font-size: 15px;
       }
     }
   `;
-  document.head.appendChild(style);
+
+  document.head.appendChild(
+    style
+  );
 }
+
 /*
- * Erstellt die Athleten-Anzeige genau
- * EINMAL.
+ * Erstellt die Athleten-Anzeige
+ * genau EINMAL.
  *
- * Wichtig:
- * Sie wird nicht mehr hinter weeklyInsight
- * eingefügt, sondern ans Ende von planView.
- *
- * Dadurch befindet sie sich wirklich
- * unten im Plan-Bereich.
+ * Die komplette Section wird am
+ * Ende des Plan-Bereichs eingefügt.
  */
 function ensureHypeAthleteCountElement() {
   if (!planView) {
     return null;
   }
-  let container =
+
+  let section =
     document.getElementById(
-      "hypeAthleteCount"
+      "hypeAthleteCountSection"
     );
-  if (container) {
-    return container;
+
+  if (section) {
+    return section.querySelector(
+      "#hypeAthleteCount"
+    );
   }
+
   ensureHypeAthleteCountStyles();
-  container =
-    document.createElement("div");
-  container.id =
-    "hypeAthleteCount";
-  container.className =
-    "hidden";
-  container.innerHTML = `
-    <div class="hype-athlete-count-icon">
-      ✦
+
+  section =
+    document.createElement(
+      "section"
+    );
+
+  section.id =
+    "hypeAthleteCountSection";
+
+  section.innerHTML = `
+    <div
+      class="hype-athlete-count-heading"
+    >
+      HYPE COMMUNITY
     </div>
-    <div class="hype-athlete-count-content">
-      <strong
-        id="hypeAthleteCountNumber"
-        class="hype-athlete-count-number"
+
+    <div
+      id="hypeAthleteCount"
+      class="hidden"
+    >
+      <div
+        class="hype-athlete-count-icon"
+        aria-hidden="true"
       >
-        …
-      </strong>
-      <span
-        class="hype-athlete-count-text"
+        ✦
+      </div>
+
+      <div
+        class="hype-athlete-count-content"
       >
-        Athleten trainieren bereits mit HYPE.
-      </span>
+        <strong
+          class="hype-athlete-count-title"
+        >
+          Du bist nicht allein.
+        </strong>
+
+        <span
+          class="hype-athlete-count-text"
+        >
+          <strong
+            id="hypeAthleteCountNumber"
+            class="hype-athlete-count-number"
+          >
+            …
+          </strong>
+          Athleten nutzen bereits HYPE.
+        </span>
+      </div>
     </div>
   `;
+
   /*
-   * GANZ WICHTIG:
-   *
-   * Nicht mehr:
-   *
-   * weeklyInsight.insertAdjacentElement(...)
-   *
-   * sondern:
-   *
-   * planView.appendChild(...)
-   *
-   * Damit landet die Anzeige am Ende
-   * des gesamten Plan-Bereichs.
+   * Ganz unten im kompletten
+   * Plan-Bereich.
    */
   planView.appendChild(
-    container
+    section
   );
-  return container;
+
+  return section.querySelector(
+    "#hypeAthleteCount"
+  );
 }
+
 /*
  * Lädt ausschließlich die öffentliche
  * Anzahl der registrierten HYPE-Athleten.
@@ -453,33 +585,33 @@ function ensureHypeAthleteCountElement() {
  *
  * get_hype_athlete_count()
  *
- * als Supabase RPC mit einer
- * numerischen Rückgabe.
+ * als Supabase RPC mit numerischer
+ * Rückgabe.
  */
 async function loadHypeAthleteCount() {
   const container =
     ensureHypeAthleteCountElement();
+
   if (!container) {
     return;
   }
+
   const numberElement =
     document.getElementById(
       "hypeAthleteCountNumber"
     );
+
   if (!numberElement) {
     return;
   }
+
   /*
    * Supabase kann beim ersten Render
    * noch nicht verfügbar sein.
-   *
-   * In diesem Fall bleibt die Anzeige
-   * zunächst unsichtbar und wird beim
-   * Auth-Event erneut geladen.
    */
   if (
     typeof supabaseClient ===
-    "undefined" ||
+      "undefined" ||
     !supabaseClient
   ) {
     container.classList.add(
@@ -487,6 +619,7 @@ async function loadHypeAthleteCount() {
     );
     return;
   }
+
   try {
     const {
       data,
@@ -495,11 +628,14 @@ async function loadHypeAthleteCount() {
       await supabaseClient.rpc(
         "get_hype_athlete_count"
       );
+
     if (error) {
       throw error;
     }
+
     const athleteCount =
       Number(data);
+
     if (
       !Number.isFinite(
         athleteCount
@@ -509,10 +645,12 @@ async function loadHypeAthleteCount() {
         "Ungültige Athletenzahl."
       );
     }
+
     numberElement.textContent =
       athleteCount.toLocaleString(
         "de-DE"
       );
+
     container.classList.remove(
       "hidden"
     );
@@ -521,6 +659,7 @@ async function loadHypeAthleteCount() {
       "HYPE athlete count error:",
       error
     );
+
     container.classList.add(
       "hidden"
     );
