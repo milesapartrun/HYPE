@@ -6699,6 +6699,268 @@ function attachSessionEvents(
 ========================= */
 
 function renderWeeklyInsight() {
+  /* =========================
+   HYPE ATHLETEN-COUNT
+========================= */
+
+function ensureHypeAthleteCountStyles() {
+  if (
+    document.getElementById(
+      "hypeAthleteCountStyles"
+    )
+  ) {
+    return;
+  }
+
+  const style =
+    document.createElement("style");
+
+  style.id =
+    "hypeAthleteCountStyles";
+
+  style.textContent = `
+    #hypeAthleteCount {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      width: 100%;
+      margin-top: 12px;
+      padding: 16px 17px;
+      border: 1px solid rgba(215,255,63,.16);
+      border-radius: 16px;
+      background:
+        linear-gradient(
+          135deg,
+          rgba(215,255,63,.055),
+          rgba(255,255,255,.012)
+        ),
+        #12151a;
+      box-sizing: border-box;
+    }
+
+    #hypeAthleteCount.hidden {
+      display: none !important;
+    }
+
+    #hypeAthleteCount .hype-athlete-count-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex: 0 0 auto;
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: rgba(215,255,63,.08);
+      color: #d7ff3f;
+      font-size: 19px;
+      line-height: 1;
+    }
+
+    #hypeAthleteCount .hype-athlete-count-content {
+      min-width: 0;
+    }
+
+    #hypeAthleteCount
+    .hype-athlete-count-number {
+      display: inline-block;
+      margin-right: 5px;
+      color: #d7ff3f;
+      font-size: 19px;
+      line-height: 1;
+      font-weight: 900;
+      letter-spacing: -.02em;
+    }
+
+    #hypeAthleteCount
+    .hype-athlete-count-text {
+      color: #9aa1aa;
+      font-size: 12px;
+      line-height: 1.4;
+      font-weight: 650;
+    }
+
+    @media (max-width: 520px) {
+      #hypeAthleteCount {
+        padding: 15px;
+      }
+
+      #hypeAthleteCount
+      .hype-athlete-count-number {
+        font-size: 18px;
+      }
+
+      #hypeAthleteCount
+      .hype-athlete-count-text {
+        font-size: 11px;
+      }
+    }
+  `;
+
+  document.head.appendChild(style);
+}
+
+
+/*
+ * Baut die Community-Anzeige automatisch
+ * unter dem Wochenstatus ein.
+ *
+ * Dadurch ist es egal, ob die Anzeige
+ * bereits im index.html vorhanden ist.
+ */
+function ensureHypeAthleteCountElement() {
+  if (!weeklyInsight) {
+    return null;
+  }
+
+  let container =
+    document.getElementById(
+      "hypeAthleteCount"
+    );
+
+  if (container) {
+    return container;
+  }
+
+  ensureHypeAthleteCountStyles();
+
+  container =
+    document.createElement("div");
+
+  container.id =
+    "hypeAthleteCount";
+
+  container.className =
+    "hidden";
+
+  container.innerHTML = `
+    <div class="hype-athlete-count-icon">
+      ✦
+    </div>
+
+    <div class="hype-athlete-count-content">
+
+      <strong
+        id="hypeAthleteCountNumber"
+        class="hype-athlete-count-number"
+      >
+        …
+      </strong>
+
+      <span
+        class="hype-athlete-count-text"
+      >
+        Athleten sind bereits bei HYPE.
+      </span>
+
+    </div>
+  `;
+
+  /*
+   * Die Anzeige kommt direkt unter
+   * den Wochenstatus.
+   */
+  weeklyInsight.insertAdjacentElement(
+    "afterend",
+    container
+  );
+
+  return container;
+}
+
+
+/*
+ * Lädt ausschließlich die öffentliche
+ * Anzahl der registrierten HYPE-Athleten.
+ *
+ * Die Supabase-Funktion
+ * get_hype_athlete_count()
+ * gibt nur eine Zahl zurück.
+ */
+async function loadHypeAthleteCount() {
+  const container =
+    ensureHypeAthleteCountElement();
+
+  if (!container) {
+    return;
+  }
+
+  const numberElement =
+    document.getElementById(
+      "hypeAthleteCountNumber"
+    );
+
+  if (!numberElement) {
+    return;
+  }
+
+  /*
+   * Falls Supabase noch nicht verfügbar
+   * ist, Anzeige ausblenden.
+   */
+  if (
+    typeof supabaseClient ===
+    "undefined"
+  ) {
+    container.classList.add(
+      "hidden"
+    );
+
+    return;
+  }
+
+  try {
+    const {
+      data,
+      error
+    } =
+      await supabaseClient.rpc(
+        "get_hype_athlete_count"
+      );
+
+    if (error) {
+      throw error;
+    }
+
+    const athleteCount =
+      Number(data);
+
+    /*
+     * Nur eine gültige Zahl anzeigen.
+     */
+    if (
+      !Number.isFinite(
+        athleteCount
+      )
+    ) {
+      throw new Error(
+        "Ungültige Athletenzahl."
+      );
+    }
+
+    numberElement.textContent =
+      athleteCount.toLocaleString(
+        "de-DE"
+      );
+
+    container.classList.remove(
+      "hidden"
+    );
+
+  } catch (error) {
+    console.error(
+      "HYPE athlete count error:",
+      error
+    );
+
+    /*
+     * Wenn die Zahl nicht geladen werden kann,
+     * soll kein kaputtes Element sichtbar sein.
+     */
+    container.classList.add(
+      "hidden"
+    );
+  }
+}
   const weekSessions =
     sessionsForWeek(
       selected
