@@ -8,42 +8,27 @@
     content="width=device-width, initial-scale=1, viewport-fit=cover"
   >
 
-  <meta
-    name="theme-color"
-    content="#0b0d10"
-  >
+  <meta name="theme-color" content="#0b0d10">
 
   <meta
     name="description"
     content="HYPE – HYbrid Plan & Execution"
   >
 
-  <link
-    rel="manifest"
-    href="manifest.json"
-  >
+  <link rel="manifest" href="manifest.json">
 
   <title>HYPE</title>
 
-  <link
-    rel="stylesheet"
-    href="style.css"
-  >
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-  <!-- =========================
-       AUTH SCREEN
-  ========================== -->
+  <!-- AUTH SCREEN -->
 
-  <section
-    id="authScreen"
-    class="auth-screen"
-  >
+  <section id="authScreen" class="auth-screen">
 
     <div class="auth-container">
-
       <div class="auth-card">
 
         <div class="auth-brand">
@@ -54,9 +39,7 @@
 
           <div class="brand-row auth-brand-row">
 
-            <h1>
-              HYPE
-            </h1>
+            <h1>HYPE</h1>
 
             <img
               src="hype-symbol.png"
@@ -67,10 +50,7 @@
 
           </div>
 
-          <div
-            id="authSubtitle"
-            class="auth-subtitle"
-          >
+          <div id="authSubtitle" class="auth-subtitle">
             Deine Trainingsplanung.<br>
             Dein Account.<br>
             Dein HYPE.
@@ -78,18 +58,13 @@
 
         </div>
 
-
-        <form
-          id="authForm"
-          class="auth-form"
-        >
+        <form id="authForm" class="auth-form">
 
           <div
             id="authMessage"
             class="auth-message"
             aria-live="polite"
           ></div>
-
 
           <!-- VORNAME -->
 
@@ -106,9 +81,7 @@
               placeholder="z. B. Tano"
               maxlength="40"
             >
-
           </label>
-
 
           <!-- E-MAIL -->
 
@@ -122,9 +95,7 @@
               placeholder="deine@email.de"
               required
             >
-
           </label>
-
 
           <!-- PASSWORT -->
 
@@ -139,9 +110,7 @@
               minlength="6"
               required
             >
-
           </label>
-
 
           <button
             id="authSubmit"
@@ -151,44 +120,28 @@
             Einloggen
           </button>
 
-
           <button
             id="authSwitch"
             class="auth-switch"
             type="button"
           >
-            <span>
-              Noch keinen Account?
-            </span>
-
-            <span>
-              → Jetzt registrieren
-            </span>
+            <span>Noch keinen Account?</span>
+            <span>→ Jetzt registrieren</span>
           </button>
 
         </form>
 
       </div>
-
     </div>
 
   </section>
 
 
+  <!-- APP -->
 
-  <!-- =========================
-       APP
-  ========================== -->
+  <main id="appContent" class="app hidden">
 
-  <main
-    id="appContent"
-    class="app hidden"
-  >
-
-
-    <!-- =========================
-         HEADER
-    ========================== -->
+    <!-- HEADER -->
 
     <header class="topbar">
 
@@ -200,9 +153,7 @@
 
         <div class="brand-row">
 
-          <h1>
-            HYPE
-          </h1>
+          <h1>HYPE</h1>
 
           <img
             src="hype-symbol.png"
@@ -215,30 +166,18 @@
 
       </div>
 
-
-      <div
-        class="sport-markers"
-        aria-hidden="true"
-      >
-
+      <div class="sport-markers" aria-hidden="true">
         <span>🏃</span>
         <span>⚡</span>
         <span>🏋️</span>
-
       </div>
 
     </header>
 
 
+    <!-- PLAN VIEW -->
 
-    <!-- =========================
-         PLAN VIEW
-    ========================== -->
-
-    <section
-      id="planView"
-      class="view"
-    >
+    <section id="planView" class="view">
 
       <div class="hero">
 
@@ -253,11 +192,7 @@
             ‹
           </button>
 
-
-          <div
-            id="weekTitleArea"
-            class="week-title-area"
-          >
+          <div id="weekTitleArea" class="week-title-area">
 
             <div class="eyebrow">
               DIESE WOCHE
@@ -268,7 +203,6 @@
             </h2>
 
           </div>
-
 
           <button
             id="weekNextBtn"
@@ -281,24 +215,15 @@
 
         </div>
 
-
-        <div
-          id="heroYear"
-          class="hero-year"
-        >
+        <div id="heroYear" class="hero-year">
           2026
         </div>
 
       </div>
 
-
       <!-- WEEK STRIP -->
 
-      <div
-        id="weekStrip"
-        class="week-strip"
-      ></div>
-
+      <div id="weekStrip" class="week-strip"></div>
 
       <!-- TODAY BUTTON -->
 
@@ -313,7 +238,6 @@
         </button>
 
       </div>
-
 
       <!-- TRAINING PLAN -->
 
@@ -334,7 +258,6 @@
 
           </div>
 
-
           <div class="training-actions">
 
             <button
@@ -344,7 +267,6 @@
             >
               🗓 Kalender
             </button>
-
 
             <button
               id="addTrainingBtn"
@@ -358,56 +280,46 @@
 
         </div>
 
-
-        <div
-          id="sessions"
-          class="sessions"
-        ></div>
+        <div id="sessions" class="sessions"></div>
 
       </section>
 
-
       <!-- WEEKLY INSIGHT -->
 
+      <div id="weeklyInsight" class="insight"></div>
+
+      <!-- HYPE COMMUNITY -->
+
       <div
-        id="weeklyInsight"
-        class="insight"
-      ></div>
-<!-- HYPE COMMUNITY -->
+        id="hypeAthleteCount"
+        class="hype-athlete-count"
+        aria-live="polite"
+      >
 
-<div
-  id="hypeAthleteCount"
-  class="hype-athlete-count"
-  aria-live="polite"
->
-  <div class="hype-athlete-count-icon">
-    ✦
-  </div>
+        <div class="hype-athlete-count-icon">
+          ✦
+        </div>
 
-  <div class="hype-athlete-count-content">
+        <div class="hype-athlete-count-content">
 
-    <strong id="hypeAthleteCountNumber">
-      …
-    </strong>
+          <strong id="hypeAthleteCountNumber">
+            …
+          </strong>
 
-    <span>
-      Athleten nutzen HYPE bereits.
-    </span>
+          <span>
+            Athleten nutzen HYPE bereits.
+          </span>
 
-  </div>
-</div>
+        </div>
+
+      </div>
+
     </section>
 
 
+    <!-- OVERVIEW VIEW -->
 
-    <!-- =========================
-         OVERVIEW VIEW
-    ========================== -->
-
-    <section
-      id="overviewView"
-      class="view hidden"
-    >
+    <section id="overviewView" class="view hidden">
 
       <div class="overview-header">
 
@@ -417,14 +329,11 @@
             TRAININGSÜBERSICHT
           </div>
 
-          <h2>
-            Übersicht
-          </h2>
+          <h2>Übersicht</h2>
 
         </div>
 
       </div>
-
 
       <!-- PERIOD SWITCH -->
 
@@ -456,7 +365,6 @@
 
       </div>
 
-
       <!-- PERIOD NAVIGATION -->
 
       <div class="period-navigation">
@@ -470,19 +378,15 @@
           ‹
         </button>
 
-
         <button
           id="periodTodayBtn"
           class="period-title-button"
           type="button"
         >
-
           <span id="periodTitle">
             Diese Woche
           </span>
-
         </button>
-
 
         <button
           id="periodNextBtn"
@@ -495,26 +399,19 @@
 
       </div>
 
-
       <!-- OVERVIEW CONTENT -->
 
-      <div
-        id="overviewContent"
-      ></div>
+      <div id="overviewContent"></div>
 
     </section>
 
 
-
-    <!-- =========================
-         PROFILE VIEW
-    ========================== -->
+    <!-- PROFILE VIEW -->
 
     <section
       id="profileView"
       class="view hidden profile-view"
     >
-
 
       <!-- PROFILE HEADER -->
 
@@ -535,12 +432,9 @@
 
       </div>
 
-
       <!-- ACCOUNT -->
 
       <section class="profile-card profile-account-card">
-
-        <!-- PROFILE AVATAR -->
 
         <div class="profile-avatar-area">
 
@@ -572,14 +466,12 @@
 
           </button>
 
-
           <input
             id="profileAvatarInput"
             type="file"
             accept="image/jpeg,image/png,image/webp"
             hidden
           >
-
 
           <button
             id="profileAvatarUploadBtn"
@@ -589,7 +481,6 @@
             Profilbild ändern
           </button>
 
-
           <div
             id="profileAvatarMessage"
             class="profile-avatar-message"
@@ -597,7 +488,6 @@
           ></div>
 
         </div>
-
 
         <div class="profile-card-head">
 
@@ -607,20 +497,13 @@
               ACCOUNT
             </div>
 
-            <h3 id="profileName">
-              —
-            </h3>
+            <h3 id="profileName">—</h3>
 
           </div>
 
         </div>
 
-
-        <div
-          id="profileEmail"
-          class="profile-email"
-        ></div>
-
+        <div id="profileEmail" class="profile-email"></div>
 
         <button
           id="editProfileBtn"
@@ -631,8 +514,6 @@
         </button>
 
       </section>
-
-
 
       <!-- WEEK SHARE -->
 
@@ -646,16 +527,11 @@
               DEINE WOCHE
             </div>
 
-            <h3>
-              Woche teilen
-            </h3>
+            <h3>Woche teilen</h3>
 
           </div>
 
         </div>
-
-
-        <!-- WEEK SELECTOR -->
 
         <div class="weekly-share-selector">
 
@@ -667,7 +543,6 @@
           >
             ‹
           </button>
-
 
           <button
             id="shareWeekCurrentBtn"
@@ -688,7 +563,6 @@
 
           </button>
 
-
           <button
             id="shareWeekNextBtn"
             class="weekly-share-arrow"
@@ -700,13 +574,9 @@
 
         </div>
 
-
         <!-- SHARE PREVIEW -->
 
-        <div
-          id="weeklyShareCard"
-          class="weekly-share-card"
-        >
+        <div id="weeklyShareCard" class="weekly-share-card">
 
           <div class="weekly-share-brand">
             HYPE
@@ -744,7 +614,6 @@
 
         </div>
 
-
         <button
           id="shareWeekBtn"
           class="primary full profile-share-btn"
@@ -754,8 +623,6 @@
         </button>
 
       </section>
-
-
 
       <!-- RECOMMEND HYPE -->
 
@@ -778,12 +645,10 @@
 
         </div>
 
-
         <p class="profile-description">
           Dann schicke HYPE an einen Freund
           oder einen Trainingspartner.
         </p>
-
 
         <button
           id="shareHypeProfileBtn"
@@ -794,8 +659,6 @@
         </button>
 
       </section>
-
-
 
       <!-- ACCOUNT ACTIONS -->
 
@@ -814,15 +677,9 @@
     </section>
 
 
+    <!-- TODAY VIEW -->
 
-    <!-- =========================
-         TODAY VIEW
-    ========================== -->
-
-    <section
-      id="todayView"
-      class="view hidden"
-    >
+    <section id="todayView" class="view hidden">
 
       <div class="hero today-hero">
 
@@ -832,96 +689,56 @@
             HEUTE
           </div>
 
-          <h2 id="todayTitle">
-            Heute
-          </h2>
+          <h2 id="todayTitle">Heute</h2>
 
         </div>
 
-
-        <div class="today-symbol">
-          ●
-        </div>
+        <div class="today-symbol">●</div>
 
       </div>
 
-
-      <div
-        id="todayContent"
-      ></div>
+      <div id="todayContent"></div>
 
     </section>
 
   </main>
 
 
+  <!-- BOTTOM NAVIGATION -->
 
-  <!-- =========================
-       BOTTOM NAVIGATION
-  ========================== -->
-
-  <nav
-    id="bottomNav"
-    class="bottom-nav hidden"
-  >
+  <nav id="bottomNav" class="bottom-nav hidden">
 
     <button
       class="nav-item active"
       data-view="plan"
       type="button"
     >
-
-      <span class="nav-icon">
-        ▣
-      </span>
-
-      <span>
-        Woche
-      </span>
-
+      <span class="nav-icon">▣</span>
+      <span>Woche</span>
     </button>
-
 
     <button
       class="nav-item"
       data-view="overview"
       type="button"
     >
-
-      <span class="nav-icon">
-        ▦
-      </span>
-
-      <span>
-        Übersicht
-      </span>
-
+      <span class="nav-icon">▦</span>
+      <span>Übersicht</span>
     </button>
-
 
     <button
       class="nav-item"
       data-view="profile"
       type="button"
     >
-
-      <span class="nav-icon">
-        ●
-      </span>
-
-      <span>
-        Profil
-      </span>
-
+      <span class="nav-icon">●</span>
+      <span>Profil</span>
     </button>
 
   </nav>
 
 
-
-  <!-- =========================
-       PROFILE EDIT DIALOG
-  ========================== -->
+  <!-- PROFILE EDIT DIALOG -->
 
   <dialog id="profileDialog">
 
@@ -931,16 +748,11 @@
 
         <div>
 
-          <div class="eyebrow">
-            PROFIL
-          </div>
+          <div class="eyebrow">PROFIL</div>
 
-          <h3>
-            Profil bearbeiten
-          </h3>
+          <h3>Profil bearbeiten</h3>
 
         </div>
-
 
         <button
           type="button"
@@ -953,9 +765,7 @@
 
       </div>
 
-
       <label>
-
         Vorname
 
         <input
@@ -966,20 +776,14 @@
           maxlength="40"
           required
         >
-
       </label>
-
 
       <div
         id="profileEmailEdit"
         class="profile-dialog-email"
       ></div>
 
-
-      <button
-        type="submit"
-        class="primary full"
-      >
+      <button type="submit" class="primary full">
         Profil speichern
       </button>
 
@@ -988,10 +792,7 @@
   </dialog>
 
 
-
-  <!-- =========================
-       TRAINING DIALOG
-  ========================== -->
+  <!-- TRAINING DIALOG -->
 
   <dialog id="trainingDialog">
 
@@ -1001,16 +802,13 @@
 
         <div>
 
-          <div class="eyebrow">
-            TRAINING
-          </div>
+          <div class="eyebrow">TRAINING</div>
 
           <h3 id="dialogTitle">
             Training hinzufügen
           </h3>
 
         </div>
-
 
         <button
           type="button"
@@ -1023,18 +821,12 @@
 
       </div>
 
-
-
       <!-- SPORT -->
 
       <label>
-
         Sport
 
-        <select
-          id="sportInput"
-          required
-        >
+        <select id="sportInput" required>
 
           <option value="running">
             🏃 Laufen
@@ -1067,24 +859,21 @@
           <option value="other">
             🎯 Sonstige Sportart
           </option>
-          
-    <option value="other">
-            ❤️ Cardioeinheit
+
+          <option value="cardio">
+            ❤️ Cardio-Training
           </option>
-          
+
         </select>
 
       </label>
 
-
-
-      <!-- SONSTIGE SPORTART -->
+      <!-- CUSTOM SPORT -->
 
       <label
         id="customSportField"
         class="custom-sport-field hidden"
       >
-
         Sonstige Sportart
 
         <input
@@ -1093,27 +882,16 @@
           placeholder="z. B. Tennis"
           maxlength="50"
         >
-
       </label>
 
-
-
-      <!-- =========================
-           TRAINING METRIC
-      ========================== -->
+      <!-- TRAINING METRIC -->
 
       <div
         id="trainingMetricRow"
         class="training-metric-row standard-mode"
       >
 
-        <!-- LAUF-ANGABE -->
-
-        <label
-          id="runningMetricField"
-          class="hidden"
-        >
-
+        <label id="runningMetricField" class="hidden">
           Angabe
 
           <select id="runningMetricInput">
@@ -1127,11 +905,7 @@
             </option>
 
           </select>
-
         </label>
-
-
-        <!-- WERT -->
 
         <label id="metricValueField">
 
@@ -1152,12 +926,9 @@
 
       </div>
 
-
-
-      <!-- TITEL -->
+      <!-- TITLE -->
 
       <label>
-
         Titel
 
         <input
@@ -1166,15 +937,11 @@
           placeholder="z. B. Easy Run"
           required
         >
-
       </label>
 
-
-
-      <!-- INTENSITÄT -->
+      <!-- INTENSITY -->
 
       <label>
-
         Intensität
 
         <select id="intensityInput">
@@ -1191,10 +958,7 @@
             2 · leicht
           </option>
 
-          <option
-            value="3"
-            selected
-          >
+          <option value="3" selected>
             3 · moderat
           </option>
 
@@ -1207,15 +971,11 @@
           </option>
 
         </select>
-
       </label>
 
-
-
-      <!-- NOTIZEN -->
+      <!-- NOTES -->
 
       <label>
-
         Notizen
 
         <textarea
@@ -1223,17 +983,11 @@
           rows="4"
           placeholder="z. B. 5 × 1 km @ 4:30/km"
         ></textarea>
-
       </label>
 
+      <!-- SAVE -->
 
-
-      <!-- SPEICHERN -->
-
-      <button
-        type="submit"
-        class="primary full"
-      >
+      <button type="submit" class="primary full">
         Training speichern
       </button>
 
@@ -1242,23 +996,81 @@
   </dialog>
 
 
+  <!-- SUPABASE -->
 
-  <!-- =========================
-       SUPABASE
-  ========================== -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <script
-    src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
-  ></script>
-
-
-  <!-- =========================
-       SCRIPTS
-  ========================== -->
+  <!-- SCRIPTS -->
 
   <script src="auth.js"></script>
   <script src="calendar.js"></script>
   <script src="app.js"></script>
+
+  <!-- METRIC SELECTOR: RUNNING AND CYCLING -->
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const sportInput = document.getElementById("sportInput");
+      const metricField = document.getElementById("runningMetricField");
+      const metricSelect = document.getElementById("runningMetricInput");
+      const metricLabel = document.getElementById("metricValueLabel");
+      const durationInput = document.getElementById("durationInput");
+
+      if (
+        !sportInput ||
+        !metricField ||
+        !metricSelect ||
+        !metricLabel ||
+        !durationInput
+      ) {
+        return;
+      }
+
+      function updateMetricOptions() {
+        const sport = sportInput.value;
+        const supportsDistance =
+          sport === "running" || sport === "cycling";
+
+        metricField.classList.toggle(
+          "hidden",
+          !supportsDistance
+        );
+
+        if (!supportsDistance) {
+          metricSelect.value = "duration";
+        }
+
+        updateMetricLabel();
+      }
+
+      function updateMetricLabel() {
+        const isDistance = metricSelect.value === "distance";
+        const sport = sportInput.value;
+
+        if (isDistance) {
+          metricLabel.textContent = "Kilometer";
+          durationInput.placeholder = "z. B. 10";
+          durationInput.min = "0.1";
+          durationInput.step = "0.1";
+
+          if (sport === "cycling") {
+            durationInput.value =
+              durationInput.value === "45" ? "20" : durationInput.value;
+          }
+        } else {
+          metricLabel.textContent = "Dauer (Minuten)";
+          durationInput.placeholder = "z. B. 45";
+          durationInput.min = "1";
+          durationInput.step = "1";
+        }
+      }
+
+      sportInput.addEventListener("change", updateMetricOptions);
+      metricSelect.addEventListener("change", updateMetricLabel);
+
+      updateMetricOptions();
+    });
+  </script>
 
 </body>
 </html>
